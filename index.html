@@ -351,7 +351,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:32px;bottom:32px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
-  .sidecal{display:block;margin-top:8px;border-top:1px solid var(--nline);padding-bottom:6px}
+  .sidecal{display:grid;grid-template-rows:1fr;margin-top:8px;border-top:1px solid var(--nline);padding-bottom:6px;
+    transition:grid-template-rows .5s var(--sheet), padding .5s var(--sheet), margin .5s var(--sheet), border-color .3s var(--ease)}
+  .scinner{min-height:0;overflow:hidden;transition:opacity .3s var(--ease)}
+  #home.cal-in .sidecal{grid-template-rows:0fr;padding-bottom:0;margin-top:0;border-top-color:transparent}
+  #home.cal-in .scinner{opacity:0;pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
   .fabwrap{padding-bottom:20px}
@@ -397,7 +401,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="weekline"></div>
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
       <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      <div class="sidecal" id="sidecal">
+      <div class="sidecal" id="sidecal"><div class="scinner">
         <div class="scnav">
           <div class="seg" role="tablist"><button role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
           <div class="scarrows"><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
@@ -405,7 +409,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
         <div class="todayline sctl" id="scTL"><button data-act="sidetoday" id="scTodayBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
         <div class="scfoot"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span></div>
-      </div>
+      </div></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span></span>
         <button class="calbtn" data-act="calendar" aria-label="Kalender"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3.75" y="5.25" width="16.5" height="15" rx="2.5"/><path d="M3.75 10h16.5M8.5 3v4M15.5 3v4"/><circle cx="15.5" cy="15.2" r="1.6" fill="currentColor" stroke="none"/></svg></button>
@@ -1124,21 +1128,30 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   if (Math.abs(L.scrollTop - target) < 2) return;
   S.autoScrollUntil = performance.now() + 900; L.scrollTo({ top: target, behavior: 'smooth' });
 }
-(function listSync() {
-  const L = $('list'); let raf = 0, settleT = null;
+(function listSync() { // Mac: beim Scrollen fährt der Kalender ein, nur Monat + Jahr bleiben stehen
+  const L = $('list'); let raf = 0, openedAt = 0;
+  const setIn = (on) => { $('home').classList.toggle('cal-in', on); };
   L.addEventListener('scroll', () => {
     if (!isDesktop()) return;
-    const auto = performance.now() < (S.autoScrollUntil || 0);
-    if (!auto && S.side.mode !== 'week' && L.scrollTop > 12 && !S.sideHold) { S.sideHold = true; setSideMode('week'); setTimeout(() => { S.sideHold = false; }, 600); }
+    const auto = performance.now() < (S.autoScrollUntil || 0), y = L.scrollTop, isIn = $('home').classList.contains('cal-in');
+    if (y <= 2) { if (isIn) setIn(false); }
+    else if (!auto && !isIn && Math.abs(y - openedAt) > 24) setIn(true);
     if (!raf) raf = requestAnimationFrame(() => {
-      raf = 0; const row = L.scrollTop > 2 ? topRowOfList() : null;
+      raf = 0; const row = L.scrollTop > 2 && $('home').classList.contains('cal-in') ? topRowOfList() : null;
       if (row) { const d = parseKey(row.dataset.date); S.listTitle = MONTHS[d.getMonth()] + '|' + d.getFullYear(); } else S.listTitle = null;
       S.updateHomeTitle && S.updateHomeTitleSoft();
     });
-    clearTimeout(settleT); settleT = setTimeout(followList, 140);
   }, { passive: true });
+  $('homeTitle').addEventListener('click', () => {
+    if (!isDesktop()) return;
+    if ($('home').classList.contains('cal-in')) { // ausfahren, und zwar dort, wo die Liste gerade steht
+      const row = topRowOfList();
+      if (row) { const d = parseKey(row.dataset.date); if (S.side.mode === 'week') S.side.w = weekOf(d); else { S.side.y = d.getFullYear(); S.side.m = d.getMonth(); } }
+      S.listTitle = null; openedAt = L.scrollTop; setIn(false); renderSide(); updateSideSel(); return;
+    }
+    S.listTitle = null; setSideMode(S.side.mode === 'week' ? 'month' : 'week');
+  });
 })();
-$('homeTitle').addEventListener('click', () => { if (!isDesktop()) return; S.listTitle = null; setSideMode(S.side.mode === 'week' ? 'month' : 'week'); });
 
 /* ---------- gestures: touch ---------- */
 /* Physik: Geschwindigkeit aus den letzten ~100 ms, Wurfweite wird mitgerechnet,
