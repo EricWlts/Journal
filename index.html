@@ -195,7 +195,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .row .d{width:34px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
 .row .n{font-family:var(--serif);font-size:32px;line-height:.95;font-variant-numeric:tabular-nums}
 .row .wd{font-size:12px;font-weight:500;letter-spacing:.12em;color:var(--muted)}
-.row .tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+.row .tx{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.row .th{display:flex;align-items:baseline;gap:12px;min-width:0}
+.row .th .ti{flex:1;min-width:0}
+.row .mt{display:none}
 .row .ti{font-family:var(--serif);font-size:23px;line-height:1.1;overflow-wrap:break-word}
 .row .ex{font-size:14px;line-height:1.5;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .row.is-current{background:var(--stone);margin:0 -12px;padding-left:12px;padding-right:12px;width:calc(100% + 24px);border-radius:3px}
@@ -435,6 +438,26 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
+  /* Seitenleiste: ruhige Karten, gewählter Eintrag als dunkle Fläche wie der Kopf */
+  #list{padding:2px 12px 24px}
+  #list .sep{padding-left:12px;padding-right:12px}
+  #list .row{position:relative;padding:15px 12px 16px;border-bottom:0;border-radius:6px;gap:16px;
+    transition:background-color .25s var(--ease), color .25s var(--ease)}
+  #list .row::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;background:var(--line);transition:opacity .2s var(--ease)}
+  #list .mgroup > .row:first-child::before,#list .sep + .row::before{opacity:0}
+  #list .row.is-current{margin:0;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:6px}
+  #list .row.is-current::before,#list .row.is-current + .row::before{opacity:0}
+  #list .row.is-current .n,#list .row.is-current .ti{color:var(--linen)}
+  #list .row.is-current .wd,#list .row.is-current .ex,#list .row.is-current .mt{color:var(--mist)}
+  #list .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+  #list .row .ph{display:flex;align-items:center;gap:3px}
+  #list .row .ex{-webkit-line-clamp:2}
+  #list .row .d{width:32px}
+  @media (hover:hover) and (pointer:fine){
+    #list .row:not(.is-current):hover{background:rgba(38,48,43,.055)}
+    #list .row:not(.is-current):hover::before,#list .row:not(.is-current):hover + .row::before{opacity:0}
+  }
+  #list .row:not(.is-current):active{background:rgba(38,48,43,.09)}
   .fabwrap{padding-bottom:20px}
   .fab{width:100%;height:44px}
   .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
@@ -763,10 +786,12 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
   setTimeout(() => { trackBusy = false; done(); }, d + 10);
 }
 function shiftWeek(dir, ms) { fadeWith([$('weekStat')], 0); slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); softIn($('weekStat')); }, ms); }
+const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>';
 function rowHTML(e) {
-  const d = parseKey(e.date);
+  const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
+  const meta = '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span>'; // Uhrzeit + Fotos (nur Mac sichtbar)
   return '<button class="row" data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
-    '</span></span><span class="tx"><span class="ti">' + esc(titleOf(e)) + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
+    '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
 }
 function markCurrentRow() {
   document.querySelectorAll('.row.is-current').forEach((r) => r.classList.remove('is-current'));
