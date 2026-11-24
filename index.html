@@ -52,7 +52,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home{box-shadow:none}
 .view.dragging{transition:none}
 .view.sheeting{border-radius:var(--r,0px) var(--r,0px) 0 0;box-shadow:0 -1px 0 rgba(8,10,8,.06), 0 -18px 40px -24px rgba(8,10,8,.55)}
-.view.sheet-under{border-radius:18px;transform-origin:50% 0}
+.view.sheet-under{border-radius:14px;transform-origin:50% 0}
 
 /* shared type */
 .title{margin:8px 0 0;height:64px;display:flex;align-items:baseline;gap:12px;font-family:var(--serif);font-weight:400;white-space:nowrap}
@@ -124,10 +124,18 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #entry.is-typing .floatbtn{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .35s var(--sheet), opacity .2s var(--ease)}
 #home .fabwrap{display:none}
 @media (max-width:959px){#home #list{padding-bottom:calc(var(--safe-b) + 104px)}
+  /* Eintrag gleitet als Blatt von unten herein; die Ansicht darunter tritt leicht verkleinert zurück */
+  .view{transition:transform .5s var(--sheet), border-radius .5s var(--sheet), visibility 0s linear 0s}
+  #entry{top:calc(var(--safe-t) + 10px);border-radius:14px 14px 0 0}
+  #entry.is-top{box-shadow:0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
+  #entry.is-off{transform:translate3d(0,100%,0);transition:transform .5s var(--sheet), visibility 0s linear .5s}
+  #entry .entry{padding-top:8px}
+  #entry .enav{top:var(--vvtop, 0px)}
+  .view.is-under.under-sheet{transform:translate3d(0,10px,0) scale(.94);border-radius:14px;transform-origin:50% 0;--dim:.28}
   #home > .herorest{padding-bottom:28px}
-  #home > .list{position:relative;z-index:1;margin-top:-20px;border-radius:20px 20px 0 0}
+  #home > .list{position:relative;z-index:1;margin-top:-20px;border-radius:14px 14px 0 0}
   #calendar .calhero{padding-bottom:20px}
-  #calendar .calbody{position:relative;margin-top:-20px;border-radius:20px 20px 0 0}}
+  #calendar .calbody{position:relative;margin-top:-20px;border-radius:14px 14px 0 0}}
 .homeplus.off{opacity:0;transform:scale(.8);pointer-events:none;transition:opacity .2s var(--ease), transform .3s var(--sheet)}
 .page.wide{padding-bottom:calc(var(--safe-b) + 110px)}
 .calbody{padding-bottom:calc(var(--safe-b) + 110px);background:var(--paper);min-height:calc(100% - 260px)}
@@ -480,7 +488,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
-  #list{padding:10px 12px 24px} /* oberste Karte mit kleinem Abstand zum dunklen Kopf */
+  #list{padding:0 12px 24px}
   /* Seitenleiste: der dunkle Kalender als schwebende Karte mit runden Ecken – wie das Blatt rechts */
   #home > .hero:first-of-type{margin:12px 12px 0;border-radius:14px 14px 0 0;padding:4px 16px 0}
   #home > .stickytitle{margin:0 12px;padding:0 16px}
@@ -498,7 +506,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:10px}
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:12px} /* Scrollbereich beginnt 12px unter dem Block – nichts rutscht unter das Datum */
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
@@ -1192,6 +1200,8 @@ function applyStack() {
     el.setAttribute('aria-hidden', v === top || (v === 'home' && isDesktop()) ? 'false' : 'true');
   }
   $('home').classList.toggle('set-open', top === 'settings');
+  const under = S.stack[S.stack.length - 2]; // iPhone: unter dem Eintrag liegt die vorige Ansicht als zurückgetretenes Blatt
+  for (const v of VIEWS) $(v).classList.toggle('under-sheet', !isDesktop() && top === 'entry' && v === under);
   document.querySelectorAll('.floatbtn.away').forEach((b) => b.classList.remove('away'));
   if (isDesktop()) updateSideSel();
   $('homePlus').classList.toggle('off', isDesktop() && top !== 'entry');
@@ -1469,7 +1479,7 @@ function followList() { // Kalender auf den obersten Eintrag der Liste stellen
   else if (S.side.mode === 'month' && (d.getFullYear() !== S.side.y || d.getMonth() !== S.side.m)) sideJump({ y: d.getFullYear(), m: d.getMonth() });
 }
 function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben; Klick: nur nachführen, wenn er nicht ganz sichtbar ist
-  if (!isDesktop() || !id) return; const L = $('list'), pad = 10;
+  if (!isDesktop() || !id) return; const L = $('list'), pad = 0;
   const row = L.querySelector('.row[data-id="' + CSS.escape(id) + '"]'); if (!row) return;
   let target;
   if (gentle) {
@@ -1579,9 +1589,9 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
     } else if (mode === 'pull') {
       const y = dy < 0 ? rubber(dy, 20) : dy; const p = Math.max(0, Math.min(1, y / H));
       topEl.style.transform = 'translate3d(0,' + y + 'px,0)';
-      topEl.style.setProperty('--r', Math.min(18, Math.max(0, y) * 0.3).toFixed(1) + 'px');
+      topEl.style.setProperty('--r', Math.max(14, Math.min(18, 14 + Math.max(0, y) * 0.05)).toFixed(1) + 'px');
       // dahinter: Startseite leicht verkleinert und abgedunkelt, wächst mit dem Ziehen zurück
-      underEl.style.transform = 'translate3d(0,' + (10 * (1 - p)).toFixed(1) + 'px,0) scale(' + (0.93 + 0.07 * p).toFixed(4) + ')';
+      underEl.style.transform = 'translate3d(0,' + (10 * (1 - p)).toFixed(1) + 'px,0) scale(' + (0.94 + 0.06 * p).toFixed(4) + ')';
       underEl.style.setProperty('--dim', String((0.3 * (1 - p)).toFixed(3)));
     } else if (mode === 'entry') {
       const blocked = (dx < 0 && !canNext) || (dx > 0 && !canPrev);
@@ -1598,7 +1608,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
     const r = !isDesktop() && (top === 'home' || top === 'search') && sx >= 32 ? e.target.closest('.row') : null;
     rowEl = r && !$('confirm').classList.contains('show') ? r : null;
     if (S.openRow && S.openRow !== rowEl) closeRow();
-    if (!isDesktop() && sx < 32 && S.stack.length > minStack()) cand = 'edge';
+    if (!isDesktop() && sx < 32 && S.stack.length > minStack() && top !== 'entry') cand = 'edge'; // Eintrag: zurück nach unten, nicht zur Seite
     else if (top === 'calendar' && e.target.closest('#calarea')) { cand = 'track'; track = $('caltrack'); }
     else if (top === 'home' && e.target.closest('#weekwrap')) { cand = 'track'; track = $('weektrack'); }
     else if (top === 'entry' && !typing()) cand = 'entry';
@@ -1621,7 +1631,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
         mode = 'pull'; cand = null;
         if (typing()) document.activeElement.blur();
         topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]);
-        topEl.classList.add('dragging', 'sheeting'); underEl.classList.add('dragging', 'sheet-under'); underEl.style.transform = 'translate3d(0,10px,0) scale(.93)';
+        topEl.classList.add('dragging', 'sheeting'); underEl.classList.add('dragging', 'sheet-under'); underEl.style.transform = 'translate3d(0,10px,0) scale(.94)';
       } else { cand = null; rowEl = null; return; }
     }
     e.preventDefault();
@@ -1668,7 +1678,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
         const ms = 380;
         t.style.transition = 'transform ' + ms + 'ms var(--sheet)'; t.style.transform = ''; t.style.setProperty('--r', '0px');
         u.classList.remove('dragging'); void u.offsetWidth;
-        u.style.transition = 'transform ' + ms + 'ms var(--sheet)'; u.style.transform = 'translate3d(0,10px,0) scale(.93)'; u.style.setProperty('--dim', '.3');
+        u.style.transition = 'transform ' + ms + 'ms var(--sheet)'; u.style.transform = 'translate3d(0,10px,0) scale(.94)'; u.style.setProperty('--dim', '.28');
         setTimeout(() => { u.style.transition = 'none'; u.style.transform = ''; clean(); void u.offsetWidth; t.style.transition = ''; u.style.transition = ''; }, ms);
       }
     } else if (m === 'track') {
