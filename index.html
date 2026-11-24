@@ -421,7 +421,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   /* rechts: der Schreibbereich als schwebendes Blatt mit runden Ecken auf dem Papierton */
   .view:not(#home){top:12px;right:12px;bottom:12px;left:calc(var(--side) + 12px);border-radius:14px;background:var(--sheetbg);
     box-shadow:0 0 0 1px rgba(38,48,43,.07), 0 30px 60px -44px rgba(8,10,8,.4)}
-  #list::before{content:'';position:sticky;top:0;display:block;height:12px;margin:-12px -12px 0;background:linear-gradient(var(--paper),rgba(238,236,230,0));z-index:3;pointer-events:none}
   @keyframes rise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
   #settings.is-top .page > *{animation:rise .8s var(--sheet) both}
   #settings.is-top .page > :nth-child(2){animation-delay:.06s} #settings.is-top .page > :nth-child(3){animation-delay:.11s}
@@ -477,14 +476,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
-  #list{padding:12px 12px 24px} /* oberste Karte mit Luft zum dunklen Kopf */
+  #list{padding:20px 12px 24px} /* oberste Karte mit Luft zum dunklen Kopf */
   .fabwrap{padding-bottom:20px}
   .fab{width:100%;height:44px}
   .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0}
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:20px}
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
@@ -1455,7 +1454,7 @@ function followList() { // Kalender auf den obersten Eintrag der Liste stellen
   else if (S.side.mode === 'month' && (d.getFullYear() !== S.side.y || d.getMonth() !== S.side.m)) sideJump({ y: d.getFullYear(), m: d.getMonth() });
 }
 function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben; Klick: nur nachführen, wenn er nicht ganz sichtbar ist
-  if (!isDesktop() || !id) return; const L = $('list'), pad = 12;
+  if (!isDesktop() || !id) return; const L = $('list'), pad = 20;
   const row = L.querySelector('.row[data-id="' + CSS.escape(id) + '"]'); if (!row) return;
   let target;
   if (gentle) {
