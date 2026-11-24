@@ -200,6 +200,27 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   font-size:15px;font-weight:500;box-shadow:0 30px 50px -30px rgba(8,10,8,.55);transition:transform .12s var(--ease)}
 .fab:active{transform:scale(.97)}
 .row{transition:background-color .2s var(--ease)}
+/* iPhone: Eintrag nach links wischen = Löschen anbieten */
+.row{position:relative;--sx:0px}
+.row > span{transform:translate3d(var(--sx),0,0)}
+.row.snap > span{transition:transform .42s var(--sheet)}
+.row::after{content:'Löschen';position:absolute;top:0;bottom:0;right:0;width:calc(-1 * var(--sx));overflow:hidden;white-space:nowrap;
+  display:flex;align-items:center;justify-content:center;background:#9b4434;color:var(--linen);font-size:14px;font-weight:500;pointer-events:none}
+.row.snap::after{transition:width .42s var(--sheet)}
+.row.swiping,.row.is-open{background:transparent !important}
+.confirm{position:fixed;inset:0;z-index:70}
+.confirm .cback{position:absolute;inset:0;background:rgba(8,10,8,.42);opacity:0;transition:opacity .35s var(--ease)}
+.confirm .cpanel{position:absolute;left:0;right:0;bottom:0;background:var(--sheetbg);border-radius:18px 18px 0 0;padding:26px 24px calc(var(--safe-b) + 18px);
+  transform:translate3d(0,100%,0);transition:transform .5s var(--sheet);box-shadow:0 -18px 40px -24px rgba(8,10,8,.5)}
+.confirm.show .cback{opacity:1}
+.confirm.show .cpanel{transform:none}
+.confirm h2{margin:0 0 8px;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.1}
+.confirm p{margin:0 0 22px;font-size:15px;line-height:1.55;color:var(--ink2)}
+.confirm .btn{width:100%;height:52px}
+.confirm .btn + .btn{margin-top:10px}
+.btn.danger{background:#9b4434;color:var(--linen)}
+@media (min-width: 960px){.confirm .cpanel{left:50%;right:auto;bottom:50%;width:420px;border-radius:6px;transform:translate3d(-50%,calc(50% + 24px),0);opacity:0;transition:transform .5s var(--sheet), opacity .3s var(--ease)}
+  .confirm.show .cpanel{transform:translate3d(-50%,50%,0);opacity:1}}
 .row:active{background:var(--stone)}
 .wday .dot,.cell .dot{transition:transform .12s var(--ease)}
 .wday:active .dot,.cell:active .dot{transform:scale(.9)}
@@ -529,6 +550,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   </section>
 </div>
 <div class="toast" id="toast" role="status"></div>
+<div class="confirm" id="confirm" hidden><div class="cback" data-act="canceldel"></div>
+  <div class="cpanel" role="alertdialog" aria-modal="true" aria-labelledby="cTitle" aria-describedby="cText"><h2 id="cTitle">Eintrag löschen?</h2><p id="cText"></p>
+    <button class="btn danger" data-act="confirmdel">Löschen</button><button class="btn ghost" data-act="canceldel">Abbrechen</button></div></div>
 
 <script>
 'use strict';
@@ -825,11 +849,11 @@ function placeStat() { // „x/y Tage“ neben das Jahr, wenn es dort Platz hat 
   const t = h.querySelector('.t'), y = h.querySelector('.y'); if (!t || !y) return;
   const ar = document.querySelector('.scarrows'), br = bar.getBoundingClientRect();
   const btns = ar.querySelectorAll('button'), r1 = btns[0].getBoundingClientRect(), r2 = btns[btns.length - 1].getBoundingClientRect();
-  const center = (r1.left + r2.right) / 2, w = st.offsetWidth, contentRight = br.right - 24;
+  const center = (r1.left + r2.right) / 2, w = st.offsetWidth, lw = st.querySelector('.lbl').offsetWidth, contentRight = br.right - 24;
   const titleRight = br.left + 24 + t.offsetWidth + 12 + y.offsetWidth;
-  if (titleRight + 24 <= center - w / 2) { // passt: rechts, mittig über den Pfeilen
+  if (titleRight + 24 <= center + lw / 2 - w) { // passt: „Tage“ mittig über den Pfeilen, die Zahl links davon
     if (st.parentElement !== bar) bar.appendChild(st);
-    st.style.marginLeft = 'auto'; st.style.marginRight = Math.round(contentRight - (center + w / 2)) + 'px';
+    st.style.marginLeft = 'auto'; st.style.marginRight = Math.round(contentRight - (center + lw / 2)) + 'px';
   } else if (st.parentElement === bar) { st.style.marginLeft = st.style.marginRight = ''; ar.insertBefore(st, ar.firstChild); }
 }
 function updateSideSel() {
@@ -1061,6 +1085,11 @@ document.addEventListener('click', (ev) => {
   else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
     if (b.closest('#caltrack') && S.cal.sel !== b.dataset.key) selectCalDay(b.dataset.key); else openDay(b.dataset.key);
   }
+  else if (a === 'confirmdel') { const id = S.pendingDel; closeConfirm(); if (id) deleteEntry(id); }
+  else if (a === 'canceldel') { closeConfirm(); closeRow(); }
+  else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
+    const r = S.openRow.getBoundingClientRect(); if (S.openRow === b && ev.clientX > r.right - ROW_OPEN) askDelete(b.dataset.id); else closeRow();
+  }
   else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; openEntryById(b.dataset.id); }
   else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
   else if (a === 'entryback') {
@@ -1081,6 +1110,39 @@ function deskSearch(open) {
 }
 $('dq').addEventListener('input', () => { renderHome(); $('list').scrollTop = 0; });
 $('dq').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); deskSearch(false); } else if (e.key === 'Enter') { e.preventDefault(); $('dq').blur(); } });
+/* Löschen (iPhone: Zeile nach links wischen) */
+const ROW_OPEN = 96;
+function setRow(row, x, snap) {
+  if (S.openRow && S.openRow !== row) closeRow();
+  row.classList.toggle('snap', !!snap); row.style.setProperty('--sx', x + 'px');
+  row.classList.toggle('is-open', x < 0); S.openRow = x < 0 ? row : null;
+}
+function closeRow() { const r = S.openRow; if (!r) return; S.openRow = null; r.classList.add('snap'); r.style.setProperty('--sx', '0px'); setTimeout(() => r.classList.remove('is-open'), 420); }
+function askDelete(id) {
+  const e = S.entries.find((x) => x.id === id); if (!e) return;
+  S.pendingDel = id; const d = parseKey(e.date);
+  $('cText').textContent = '„' + titleOf(e) + '“ vom ' + d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' wird auf allen Geräten gelöscht. Das lässt sich nicht rückgängig machen.';
+  const c = $('confirm'); c.hidden = false; void c.offsetWidth; c.classList.add('show');
+  setTimeout(() => c.querySelector('[data-act="canceldel"].btn').focus({ preventScroll: true }), 60);
+}
+function closeConfirm() { const c = $('confirm'); c.classList.remove('show'); S.pendingDel = null; setTimeout(() => { if (!c.classList.contains('show')) c.hidden = true; }, 480); }
+async function deleteEntry(id) {
+  const e = S.entries.find((x) => x.id === id); if (!e) return;
+  const rows = [...document.querySelectorAll('.row[data-id="' + CSS.escape(id) + '"]')];
+  for (const r of rows) { r.style.overflow = 'hidden'; r.animate([{ height: r.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px', borderBottomWidth: '0px' }], { duration: 380, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'forwards' }); }
+  S.openRow = null;
+  await new Promise((r) => setTimeout(r, rows.length ? 360 : 0));
+  S.entries = S.entries.filter((x) => x !== e); reindex();
+  try { await DB.del('entries', id); } catch (err) {}
+  Sync.markDeleted(id); Sync.soon(800);
+  if (S.cur === e) S.cur = null;
+  if (S.searchHits) S.searchHits = S.searchHits.filter((x) => x !== e);
+  if (S.navList) S.navList = S.navList.filter((x) => x !== e);
+  renderHome(); if (S.stack.includes('search')) renderSearch(); if (S.stack.includes('calendar')) renderCalendar();
+  toast('Eintrag gelöscht');
+}
+$('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
+for (const v of ['home', 'search']) $(v).addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
 function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 $('eTitle').addEventListener('input', onEdit);
 $('eBody').addEventListener('input', onEdit);
@@ -1262,6 +1324,7 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
 /* Physik: Geschwindigkeit aus den letzten ~100 ms, Wurfweite wird mitgerechnet,
    Gummiband dort, wo es nicht weitergeht, Dauer der Restanimation passt sich dem Schwung an. */
 (function touch() {
+  let rowEl = null;
   let sx = 0, sy = 0, cand = null, mode = null, dx = 0, dy = 0, W = 0, H = 0, raf = 0, topEl = null, underEl = null, track = null, canNext = true, canPrev = true;
   let samples = [];
   const app = $('app');
@@ -1274,7 +1337,11 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   const restMs = (remaining, v) => Math.max(160, Math.min(420, Math.abs(remaining) / Math.max(Math.abs(v), 0.9)));
   function frame() {
     raf = 0;
-    if (mode === 'edge') {
+    if (mode === 'row') {
+      let x = rowEl._base + dx;
+      if (x > 0) x = rubber(x, 14); else if (x < -ROW_OPEN) x = -ROW_OPEN + (x + ROW_OPEN) * 0.6; // weiterziehen geht, aber zäher
+      rowEl.style.setProperty('--sx', x.toFixed(1) + 'px');
+    } else if (mode === 'edge') {
       const x = dx < 0 ? rubber(dx, 24) : dx;
       topEl.style.transform = 'translate3d(' + x + 'px,0,0)';
       const p = Math.max(0, Math.min(1, x / W));
@@ -1303,6 +1370,9 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
     const p = e.touches[0]; sx = p.clientX; sy = p.clientY; dx = dy = 0; W = innerWidth; H = innerHeight; mode = null; cand = null;
     samples = [{ t: performance.now(), x: sx, y: sy }];
     const top = S.stack[S.stack.length - 1];
+    const r = !isDesktop() && (top === 'home' || top === 'search') && sx >= 32 ? e.target.closest('.row') : null;
+    rowEl = r && !$('confirm').classList.contains('show') ? r : null;
+    if (S.openRow && S.openRow !== rowEl) closeRow();
     if (!isDesktop() && sx < 32 && S.stack.length > minStack()) cand = 'edge';
     else if (top === 'calendar' && e.target.closest('#calarea')) { cand = 'track'; track = $('caltrack'); }
     else if (top === 'home' && e.target.closest('#weekwrap')) { cand = 'track'; track = $('weektrack'); }
@@ -1310,14 +1380,15 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
     else if (top === 'search' || top === 'settings') cand = 'pull';
   }, { passive: true });
   app.addEventListener('touchmove', (e) => {
-    if (!cand && !mode) return;
+    if (!cand && !mode && !rowEl) return;
     const p = e.touches[0]; dx = p.clientX - sx; dy = p.clientY - sy;
     samples.push({ t: performance.now(), x: p.clientX, y: p.clientY }); if (samples.length > 8) samples.shift();
     if (!mode) {
       if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
       if (Math.abs(dx) > Math.abs(dy)) {
-        if (cand === 'pull') { cand = null; return; }
-        mode = cand; cand = null;
+        if (rowEl && (dx < 0 || rowEl === S.openRow)) { mode = 'row'; cand = null; rowEl.classList.remove('snap'); rowEl.classList.add('swiping'); rowEl._base = rowEl === S.openRow ? -ROW_OPEN : 0; }
+        else if (cand === 'pull' || !cand) { cand = null; rowEl = null; return; }
+        else { mode = cand; cand = null; }
         if (mode === 'edge') { topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]); topEl.classList.add('dragging'); underEl.classList.add('dragging'); }
         if (mode === 'track') track.style.transition = 'none';
         if (mode === 'entry') { $('entryInner').style.transition = 'none'; canNext = !!adjacentOf(1); canPrev = !!adjacentOf(-1); }
@@ -1326,7 +1397,7 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
         if (typing()) document.activeElement.blur();
         topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]);
         topEl.classList.add('dragging', 'sheeting'); underEl.classList.add('dragging', 'sheet-under'); underEl.style.transform = 'translate3d(0,10px,0) scale(.93)';
-      } else { cand = null; return; }
+      } else { cand = null; rowEl = null; return; }
     }
     e.preventDefault();
     if (!raf) raf = requestAnimationFrame(frame);
@@ -1336,6 +1407,14 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
     const vx = vel('x'), vy = vel('y'); const m = mode; mode = null;
     const projX = dx + vx * 180, projY = dy + vy * 180; // wohin der Wurf führen würde
+    if (m === 'row') {
+      const row = rowEl; rowEl = null; row.classList.remove('swiping');
+      const x = row._base + dx, px = x + vx * 180;
+      if (x < -W * 0.5) { setRow(row, -ROW_OPEN, true); askDelete(row.dataset.id); } // ganz durchgezogen: gleich nachfragen
+      else if (px < -ROW_OPEN / 2 && vx < 0.3) setRow(row, -ROW_OPEN, true);
+      else { setRow(row, 0, true); }
+      return;
+    }
     if (m === 'edge') {
       const commit = projX > W * 0.45 && vx > -0.2;
       const ms = commit ? restMs(W - dx, vx) : restMs(dx, vx);
