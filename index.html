@@ -377,10 +377,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:32px;bottom:32px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
-  .sidecal{display:block;overflow:hidden;border-top:1px solid var(--nline);margin-top:8px}
+  .sidecal{display:block;overflow:hidden;margin:8px -24px 0;padding:0 24px} /* reicht bis an den Rand: nichts wird vorzeitig abgeschnitten */
   .sidecal.snapping{transition:height .45s var(--sheet)}
-  .scinner{padding-bottom:6px;transform-origin:50% 0}
-  #home.cal-in .sidecal{border-top-color:transparent}
+  .scinner{padding-bottom:6px;transform-origin:50% 0;border-top:1px solid var(--nline)}
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
