@@ -76,6 +76,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .stickysearch{position:absolute;right:14px;top:8px;color:var(--linen);opacity:0;transform:translateY(-12px);pointer-events:none;
   transition:opacity .3s var(--ease), transform .45s var(--sheet)}
 .stickytitle.stuck .stickysearch{opacity:1;transform:none;pointer-events:auto}
+#homeTitle{transform-origin:0 70%;transition:opacity .35s var(--ease), transform .5s var(--sheet)}
 #homeTitle{transition:opacity .35s var(--ease)}
 .topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
 .weekline{height:1px;background:var(--nline);margin-top:16px;position:relative}
@@ -142,7 +143,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home.searching .topbar .setbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
 .hitcount{padding:20px 0 4px}
 /* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
-.scnav{height:52px;display:flex;align-items:center;justify-content:space-between}
+.scnav{height:52px;display:flex;align-items:center;justify-content:space-between;position:relative}
+.schome{position:absolute;right:82px;top:50%;display:flex;align-items:center;gap:6px;height:36px;padding:0 8px;color:var(--linen);
+  font-family:var(--serif);font-style:italic;font-size:20px;line-height:1;opacity:0;pointer-events:none;transform:translate3d(6px,-50%,0);
+  transition:opacity .3s var(--ease), transform .45s var(--sheet)}
+.schome.on{opacity:1;pointer-events:auto;transform:translate3d(0,-50%,0)}
+.schome.dir-r .ar-l,.schome.dir-l .ar-r{display:none}
+.schome:active{opacity:.6}
 .seg{position:relative;display:flex;gap:22px;font-size:14px}
 .seg button{height:44px;color:var(--mist);transition:color .25s var(--ease)}
 .seg button[aria-selected="true"]{color:var(--linen);font-weight:600}
@@ -150,8 +157,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scarrows{display:flex;align-items:center;margin-right:-10px}
 .scarrows button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--mist);transition:color .2s var(--ease), background-color .2s var(--ease)}
 .scarrows button:hover{color:var(--linen);background:rgba(242,243,239,.07)}
-.sctl{height:0;margin:0;opacity:0;transition:height .45s var(--sheet), margin .45s var(--sheet), opacity .3s var(--ease)}
-.sctl.on{height:20px;margin:6px 0 4px;opacity:1} /* im aktuellen Zeitraum keine leere Linie */
 .scview{position:relative;height:312px;margin:0 -24px;overflow:hidden;transition:height .5s var(--sheet)}
 .sidecal.is-week .scview{height:80px}
 .scfoot{transition:height .5s var(--sheet), opacity .3s var(--ease), margin .5s var(--sheet)}
@@ -172,8 +177,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scfoot{height:40px;display:flex;align-items:center;gap:10px;font-size:13px}
 .scfoot .count{font-size:22px;color:var(--linen)}
 .scfoot .lbl{color:var(--mist)}
-#scStat{display:flex;align-items:baseline;gap:6px;margin-right:10px;font-size:12px;transition:opacity .35s var(--ease)}
-#scStat .count{font-size:19px;color:var(--linen)}
+#scStat{display:flex;align-items:baseline;gap:7px;margin-right:10px;font-size:14px;transition:opacity .35s var(--ease)}
+#scStat .count{font-size:26px;color:var(--linen)}
 #scStat .lbl{color:var(--mist)}
 #scStat.is-empty .count,#scStat.is-empty .lbl{opacity:0}
 .minibar{position:sticky;top:0;z-index:5;height:calc(var(--safe-t) + 52px);margin-bottom:calc(-1 * (var(--safe-t) + 52px));
@@ -185,6 +190,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .minibar .mt i{color:var(--dim)}
 .list{background:var(--paper);padding:4px 24px 8px;min-height:55vh}
 .sep{padding:28px 0 6px}
+.mgroup > .sep{position:sticky;top:calc(var(--safe-t) + 86px);z-index:2;margin-top:18px;padding:10px 0 8px;background:var(--paper);
+  box-shadow:0 1px 0 var(--line)} /* wie die Kapitelleiste in WANDER: bleibt stehen, bis der nächste Monat sie hinausschiebt */
+.mgroup > .sep + .row{border-top:0}
+#results .mgroup > .sep{top:var(--safe-t)}
 .row{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line);width:100%;text-align:left;content-visibility:auto;contain-intrinsic-size:auto 104px}
 .row .d{width:34px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
 .row .n{font-family:var(--serif);font-size:32px;line-height:.95;font-variant-numeric:tabular-nums}
@@ -253,7 +262,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .calarea{height:384px;padding-top:18px;display:flex;flex-direction:column;touch-action:pan-y}
 .calviewport{flex:1;overflow:hidden;margin:0 -24px;position:relative}
 .morphghost{position:absolute;inset:0;display:flex;pointer-events:none;transform-origin:50% 30%}
-.morphghost > .calpanel{flex:none;width:100%}
+.morphghost > *{flex:none;width:100%}
 .caltrack .calpanel{transform-origin:50% 30%}
 .caltrack{height:100%}
 .calpanel{flex:0 0 33.3333%;padding:0 20px;display:flex;flex-direction:column}
@@ -298,6 +307,19 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .edate{display:flex;flex-direction:column;gap:2px;min-width:0}
 .edate .wd{font-size:15px;font-weight:600;color:var(--ink)}
 .edate .dt{font-size:13px;font-weight:500;color:var(--olive);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eact{position:relative;width:44px;height:44px;flex-shrink:0}
+.eact > button{position:absolute;inset:0}
+.trash{display:flex;align-items:center;justify-content:center;color:var(--muted);opacity:0;transform:scale(.7);pointer-events:none;
+  transition:opacity .2s var(--ease), transform .35s var(--sheet), color .2s var(--ease)}
+#entry.has-id:not(.is-typing) .trash{opacity:1;transform:none;pointer-events:auto}
+.trash:active{color:#9b4434;transform:scale(.9)}
+@media (hover:hover) and (pointer:fine){.trash:hover{color:#9b4434}}
+.ctxmenu{position:fixed;z-index:80;min-width:180px;padding:6px;background:var(--sheetbg);border-radius:6px;box-shadow:0 0 0 1px var(--line), 0 24px 40px -20px rgba(8,10,8,.45);
+  opacity:0;transform:scale(.96);transform-origin:0 0;transition:opacity .16s var(--ease), transform .22s var(--sheet)}
+.ctxmenu.show{opacity:1;transform:none}
+.ctxmenu button{display:flex;align-items:center;gap:10px;width:100%;height:36px;padding:0 12px;border-radius:4px;font-size:14px;color:var(--ink);text-align:left}
+.ctxmenu button:hover,.ctxmenu button:focus-visible{background:var(--stone);outline:none}
+.ctxmenu .danger{color:#9b4434}
 .done{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6);pointer-events:none;
   transition:opacity .2s var(--ease), transform .35s var(--sheet)}
 #entry.is-typing .done{opacity:1;transform:none;pointer-events:auto}
@@ -321,6 +343,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border-radius:4px;background:var(--night);color:var(--linen);font-size:15px;font-weight:500}
 .btn.ghost{background:transparent;color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
 .btns{display:flex;flex-wrap:wrap;gap:10px}
+.fxsect{display:none}
+.fxseg{display:inline-flex;box-shadow:0 0 0 1px var(--ink) inset;border-radius:4px;padding:3px;gap:3px}
+.fxseg button{height:40px;padding:0 18px;border-radius:2px;font-size:14px;font-weight:500;color:var(--ink);transition:background-color .25s var(--ease), color .25s var(--ease)}
+.fxseg button[aria-checked="true"]{background:var(--night);color:var(--linen)}
+@media (hover:hover) and (pointer:fine){.fxseg button:not([aria-checked="true"]):hover{background:var(--stone)}}
 .note{margin-top:12px;font-size:14px;line-height:1.55;color:var(--muted);min-height:1em}
 .searchbox{margin-top:0;display:flex;align-items:center;gap:10px;height:52px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .searchbox input{flex:1;border:0;background:transparent;font:400 28px/1 var(--serif);color:var(--ink);outline:none;min-width:0}
@@ -335,7 +362,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .ptr.spin .ptr-arc{stroke-dasharray:28 72;stroke-dashoffset:0;transition:stroke-dasharray .3s var(--ease)}
 .ptr.spin svg{animation:ptrspin .9s cubic-bezier(0.5, 0.15, 0.5, 0.85) infinite}
 @keyframes ptrspin{from{transform:rotate(-90deg)}to{transform:rotate(270deg)}}
-@media (min-width: 960px){.ptr{display:none}}
+@media (min-width: 960px){.ptr{display:none} .mgroup > .sep{top:0}}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field span{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
 .field input{height:48px;border:0;border-bottom:1px solid var(--line);background:transparent;font:400 17px var(--sans);color:var(--ink);outline:none;border-radius:0;padding:0}
@@ -363,10 +390,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #settings.is-top .page > *{animation:rise .8s var(--sheet) both}
   #settings.is-top .page > :nth-child(2){animation-delay:.06s} #settings.is-top .page > :nth-child(3){animation-delay:.11s}
   #settings.is-top .page > :nth-child(4){animation-delay:.16s} #settings.is-top .page > :nth-child(5){animation-delay:.21s}
-  #settings.is-top .page > :nth-child(6){animation-delay:.26s}
+  #settings.is-top .page > :nth-child(6){animation-delay:.26s} #settings.is-top .page > :nth-child(7){animation-delay:.31s}
   @keyframes sink{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,-12px,0)}}
   #settings.leaving .page > *{animation:sink .26s cubic-bezier(0.4, 0, 1, 1) both}
-  #settings.leaving .page > :nth-child(5){animation-delay:.02s} #settings.leaving .page > :nth-child(4){animation-delay:.04s}
+  #settings.leaving .page > :nth-child(6){animation-delay:.01s} #settings.leaving .page > :nth-child(5){animation-delay:.02s} #settings.leaving .page > :nth-child(4){animation-delay:.04s}
   #settings.leaving .page > :nth-child(3){animation-delay:.06s} #settings.leaving .page > :nth-child(2){animation-delay:.08s}
   #settings.leaving .page > :nth-child(1){animation-delay:.1s}
   #entry.returning .entry > *{animation:rise .8s var(--sheet) both}
@@ -379,6 +406,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .herofoot{display:none}
   #entry .floatbtn{display:none}
   .homeplus{right:32px;bottom:32px}
+  .fxsect{display:block}
   #list{padding-bottom:24px}
   .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
   .herorest{padding-top:0}
@@ -454,10 +482,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="sidecal" id="sidecal"><div class="scinner">
         <div class="scnav">
           <div class="seg" role="tablist"><button role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
-          <div class="scarrows"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+          <button class="schome" id="scTodayBtn" data-act="sidetoday" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Heute</span><svg class="ar ar-r" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><div class="scarrows"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
         </div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
-        <div class="todayline sctl" id="scTL"><button data-act="sidetoday" id="scTodayBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       </div></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span></span>
@@ -494,7 +521,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
     <div class="entry" id="entryInner">
       <div class="enav">
         <div class="edate"><span class="wd" id="eWd"></span><span class="dt" id="eDt"></span></div>
-        <button class="done" data-act="done" id="doneBtn" aria-label="Fertig"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button>
+        <div class="eact"><button class="trash" data-act="trashcur" id="trashBtn" aria-label="Eintrag löschen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 6.5h15M9.5 6.5V4.75h5V6.5M6.5 6.5l.85 12.2a1.5 1.5 0 0 0 1.5 1.4h6.3a1.5 1.5 0 0 0 1.5-1.4l.85-12.2M10 10.5v6M14 10.5v6"/></svg></button>
+        <button class="done" data-act="done" id="doneBtn" aria-label="Fertig"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button></div>
       </div>
       <div class="etitle" id="eTitle" contenteditable="plaintext-only" role="textbox" aria-label="Titel" data-ph="Titel" spellcheck="true"></div>
       <div class="ebody" id="eBody" contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="Text" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
@@ -541,6 +569,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <div class="btns"><button class="btn" data-act="syncsave">Verbinden</button><button class="btn ghost" data-act="syncnow">Jetzt abgleichen</button></div>
         <div class="note" id="noteSync" aria-live="polite"></div>
       </div>
+      <div class="sect fxsect">
+        <h2>Übergänge</h2>
+        <p>Wie der Kalender in der Seitenleiste beim Blättern wechselt. Probier es direkt links mit den Pfeilen aus.</p>
+        <div class="fxseg" role="radiogroup" aria-label="Übergang"><button role="radio" data-act="setfx" data-fx="fade">Überblenden</button><button role="radio" data-act="setfx" data-fx="slide">Gleiten</button><button role="radio" data-act="setfx" data-fx="roll">Rollen</button></div>
+      </div>
       <div class="sect">
         <h2>Über diese App</h2>
         <p id="about"></p>
@@ -550,6 +583,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   </section>
 </div>
 <div class="toast" id="toast" role="status"></div>
+<div class="ctxmenu" id="ctxmenu" role="menu" hidden><button role="menuitem" data-act="ctxopen">Öffnen</button><button role="menuitem" class="danger" data-act="ctxdel">Löschen …</button></div>
 <div class="confirm" id="confirm" hidden><div class="cback" data-act="canceldel"></div>
   <div class="cpanel" role="alertdialog" aria-modal="true" aria-labelledby="cTitle" aria-describedby="cText"><h2 id="cTitle">Eintrag löschen?</h2><p id="cText"></p>
     <button class="btn danger" data-act="confirmdel">Löschen</button><button class="btn ghost" data-act="canceldel">Abbrechen</button></div></div>
@@ -655,7 +689,8 @@ function renderHome() {
   if (q) { // Suche am Mac: Treffer erscheinen direkt in der Seitenleiste
     const hits = allHits.slice(0, 300);
     S.deskHits = hits; let html = '<div class="hitcount kicker">' + (hits.length ? hits.length + (hits.length === 1 ? ' Treffer' : ' Treffer') : 'Nichts gefunden') + '</div>', last = '';
-    for (const e of hits) { const mk = e.date.slice(0, 7); if (mk !== last) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; } html += rowHTML(e); }
+    for (const e of hits) { const mk = e.date.slice(0, 7); if (mk !== last) { const d = parseKey(e.date); html += (last ? '</div>' : '') + '<div class="mgroup"><div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; } html += rowHTML(e); }
+    if (last) html += '</div>';
     listHTML = html;
   } else if (!S.entries.length) {
     listHTML = '<p class="emptylist">Noch keine Einträge. Schreib heute den ersten, oder hol dir deine Einträge aus Day One über die Einstellungen.</p>';
@@ -665,12 +700,13 @@ function renderHome() {
     for (const e of S.entries) {
       const mk = e.date.slice(0, 7);
       if (mk !== lastMonth) {
+        html += (lastMonth ? '</div>' : '') + '<div class="mgroup">';
         if (mk !== curMonth || lastMonth) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; }
         lastMonth = mk;
       }
       html += rowHTML(e);
     }
-    listHTML = html;
+    listHTML = html + (lastMonth ? '</div>' : '');
   }
   if (listHTML !== S.listHTML) { L.innerHTML = listHTML; S.listHTML = listHTML; }
   const tk = keyOf(t);
@@ -714,9 +750,6 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
   const d = Math.round(ms || 340);
   tr.style.transition = 'transform ' + d + 'ms cubic-bezier(0.2, 0.8, 0.2, 1)';
   tr.style.transform = 'translate3d(' + (dir > 0 ? 2 * trackX(tr) : 0) + 'px,0,0)';
-  const old = tr.children[1]; // der bisherige Zeitraum tritt leicht zurück und blendet aus – wirkt wie Tiefe statt flachem Schieben
-  if (old && old.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-    old.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.94)' }], { duration: Math.round(d * 0.85), easing: 'cubic-bezier(0.4, 0, 0.6, 1)', fill: 'forwards' });
   setTimeout(() => { trackBusy = false; done(); }, d + 10);
 }
 function shiftWeek(dir, ms) { fadeWith([$('weekStat')], 0); slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); softIn($('weekStat')); }, ms); }
@@ -816,13 +849,12 @@ function renderSide() {
   const sel = $({ week: 'scWeek', month: 'scMonth', year: 'scYear' }[mode]), segi = $('segi');
   if (sel.offsetWidth) { segi.style.width = sel.offsetWidth + 'px'; segi.style.transform = 'translateX(' + sel.offsetLeft + 'px)'; }
   const isNow = mode === 'week' ? !w : y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
-  const tl = $('scTL'); tl.classList.toggle('on', !isNow); $('scTodayBtn').tabIndex = isNow ? -1 : 0;
+  const tl = $('scTodayBtn'); tl.classList.toggle('on', !isNow); tl.tabIndex = isNow ? -1 : 0;
   if (!isNow) { const future = mode === 'week' ? w > 0 : (mode === 'month' ? y * 12 + m > t.getFullYear() * 12 + t.getMonth() : y > t.getFullYear()); tl.classList.toggle('dir-l', future); tl.classList.toggle('dir-r', !future); }
-  const tw = $('scTodayBtn').querySelector('.tw').offsetWidth; if (tw) tl.style.setProperty('--hwon', (tw / 2) + 'px');
   if (S.updateHomeTitleSoft) S.updateHomeTitleSoft(); else if (S.updateHomeTitle) S.updateHomeTitle();
   placeStat();
 }
-function animTitle(label, dir) { // Monat gleitet seitlich, Jahr rollt senkrecht; was gleich bleibt, bleibt stehen
+function animTitle(label, dir, vertical) { // Monat gleitet seitlich, Jahr rollt senkrecht; was gleich bleibt, bleibt stehen
   const h = $('homeTitle'), [m2, y2] = label.split('|');
   const t = h.querySelector('.t'), y = h.querySelector('.y');
   if (!t || !y) { h.innerHTML = titleHTML(m2, y2); placeStat(); return; }
@@ -832,9 +864,10 @@ function animTitle(label, dir) { // Monat gleitet seitlich, Jahr rollt senkrecht
     if ((el.dataset.to || el.textContent) === txt) continue;
     el.dataset.to = txt; el.getAnimations().forEach((a) => a.cancel());
     if (still) { el.textContent = txt; continue; }
-    const d = dir || 1, useX = axis === 'x' && dir;
-    const out = useX ? 'translate3d(' + (-d * 18) + 'px,0,0)' : 'translate3d(0,' + (-d * 0.35) + 'em,0)';
-    const inn = useX ? 'translate3d(' + (d * 18) + 'px,0,0)' : 'translate3d(0,' + (d * 0.35) + 'em,0)';
+    const vert = vertical || S.fx === 'roll', dist = S.fx === 'fade' ? 8 : 18;
+    const d = dir || 1, useX = axis === 'x' && dir && !vert;
+    const out = useX ? 'translate3d(' + (-d * dist) + 'px,0,0)' : 'translate3d(0,' + (-d * 0.35) + 'em,0)';
+    const inn = useX ? 'translate3d(' + (d * dist) + 'px,0,0)' : 'translate3d(0,' + (d * 0.35) + 'em,0)';
     el.animate([{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: out, filter: 'blur(2px)' }], { duration: 150, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }).onfinish = () => {
       if (el.dataset.to !== txt) return;
       el.textContent = txt; placeStat();
@@ -864,9 +897,35 @@ function sideTitleOf(st) { if (st.mode === 'week') { const r = weekRef(st.w); re
 function titleWillChange(next) { return !S.dsearch && sideTitleOf(next) !== S.sideTitle && !$('stickyTitle').classList.contains('stuck'); }
 function shiftSide(dir, ms) {
   if (trackBusy) return; S.listTitle = null;
-  const p = sidePeriod(dir), next = Object.assign({}, S.side, { y: p.y, m: p.m, w: p.w || 0 });
-  fadeWith([$('scStat')], 0); if (!trackBusy && !S.dsearch) animTitle(sideTitleOf(next), dir); // Titel gleitet zeitgleich mit dem Kalender
-  slideTrack($('sctrack'), dir, () => { S.side.y = next.y; S.side.m = next.m; S.side.w = next.w; S.titleDir = dir; renderSide(); softIn($('scStat')); }, ms || 420);
+  const p = sidePeriod(dir); sideMove(dir, { y: p.y, m: p.m, w: p.w || 0 }, ms);
+}
+function sidePanelHTML(st) { return st.mode === 'week' ? weekPanelHTML(st.w) : '<div class="calpanel">' + (st.mode === 'month' ? monthGridHTML(st.y, st.m, true) : yearHTML(st.y, 'sidepick')) + '</div>'; }
+/* Wechsel des Zeitraums in der Seitenleiste – drei Varianten (Einstellungen › Übergänge):
+   fade = Überblenden mit kleinem Versatz, slide = Gleiten wie eine Seite, roll = senkrecht rollen wie ein Kapitel */
+function sideMove(dir, next, ms, after) {
+  if (trackBusy) return;
+  const target = Object.assign({}, S.side, next), fx = S.fx, tr = $('sctrack');
+  fadeWith([$('scStat')], 0);
+  if (!S.dsearch && !S.listTitle) animTitle(sideTitleOf(target), dir);
+  if (fx === 'slide' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const nb = tr.children[dir > 0 ? 2 : 0]; if (nb) nb.outerHTML = sidePanelHTML(target); updateSideSel();
+    slideTrack(tr, dir, () => { Object.assign(S.side, next); renderSide(); softIn($('scStat')); if (after) after(); }, ms || 440);
+    return;
+  }
+  trackBusy = true;
+  const vp = tr.parentElement, old = tr.children[1];
+  const off = Math.round(new DOMMatrix(getComputedStyle(tr).transform).m41 - trackX(tr)); // falls das Trackpad den Kalender schon verschoben hat
+  const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true'); ghost.appendChild(old.cloneNode(true)); vp.appendChild(ghost);
+  Object.assign(S.side, next); renderSide(); softIn($('scStat'));
+  const np = tr.children[1], E = 'cubic-bezier(0.32, 0.72, 0, 1)';
+  if (fx === 'roll') {
+    ghost.animate([{ opacity: 1, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + off + 'px,' + (-dir * 34) + 'px,0)' }], { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
+    np.animate([{ opacity: 0, transform: 'translate3d(0,' + (dir * 38) + 'px,0)' }, { opacity: 1, transform: 'none' }], { duration: 540, delay: 150, easing: E, fill: 'backwards' });
+  } else {
+    ghost.animate([{ opacity: 1, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + (off - dir * 10) + 'px,0,0)' }], { duration: 150, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
+    np.animate([{ opacity: 0, transform: 'translate3d(' + (dir * 12) + 'px,0,0)' }, { opacity: 1, transform: 'none' }], { duration: 440, delay: 130, easing: E, fill: 'backwards' });
+  }
+  setTimeout(() => { ghost.remove(); trackBusy = false; if (after) after(); }, 600);
 }
 function sideToday() {
   S.listTitle = null;
@@ -921,6 +980,7 @@ async function renderEntry(dir) {
   const e = S.cur; const d = new Date(e.created);
   $('eWd').textContent = WDLONG[d.getDay()];
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  $('entry').classList.toggle('has-id', !!e.id);
   $('eTitle').textContent = e.title || '';
   $('eBody').textContent = e.text || '';
   const ph = $('ePhotos'); ph.innerHTML = '';
@@ -949,7 +1009,7 @@ function onEdit() {
   e.text = $('eBody').innerText.replace(/ /g, ' ');
   if (!$('eBody').textContent) $('eBody').innerHTML = '';
   if (!$('eTitle').textContent) $('eTitle').innerHTML = '';
-  if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); }
+  if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); $('entry').classList.add('has-id'); }
   clearTimeout(saveTimer); saveTimer = setTimeout(saveCur, 350);
 }
 const sigOf = (e) => (e.title || '') + '\u0001' + (e.text || '') + '\u0001' + (e.photos || []).join(',');
@@ -1016,10 +1076,10 @@ function renderSearch() {
   let html = '', last = '';
   for (const e of hits) {
     const mk = e.date.slice(0, 7);
-    if (mk !== last) { const d = parseKey(e.date); html += '<div class="sep kicker">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; }
+    if (mk !== last) { const d = parseKey(e.date); html += (last ? '</div>' : '') + '<div class="mgroup"><div class="sep kicker">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; }
     html += rowHTML(e);
   }
-  R.innerHTML = html;
+  R.innerHTML = html + '</div>';
 }
 
 /* ---------- navigation ---------- */
@@ -1085,6 +1145,10 @@ document.addEventListener('click', (ev) => {
   else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
     if (b.closest('#caltrack') && S.cal.sel !== b.dataset.key) selectCalDay(b.dataset.key); else openDay(b.dataset.key);
   }
+  else if (a === 'setfx') { S.fx = b.dataset.fx; try { localStorage.setItem('journal.fx', S.fx); } catch (e) {} markFx(); }
+  else if (a === 'trashcur') { if (S.cur && S.cur.id) askDelete(S.cur.id); }
+  else if (a === 'ctxopen') { const id = S.ctxId; hideCtx(); if (id) { S.navList = null; openEntryById(id); } }
+  else if (a === 'ctxdel') { const id = S.ctxId; hideCtx(); if (id) askDelete(id); }
   else if (a === 'confirmdel') { const id = S.pendingDel; closeConfirm(); if (id) deleteEntry(id); }
   else if (a === 'canceldel') { closeConfirm(); closeRow(); }
   else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
@@ -1128,6 +1192,7 @@ function askDelete(id) {
 function closeConfirm() { const c = $('confirm'); c.classList.remove('show'); S.pendingDel = null; setTimeout(() => { if (!c.classList.contains('show')) c.hidden = true; }, 480); }
 async function deleteEntry(id) {
   const e = S.entries.find((x) => x.id === id); if (!e) return;
+  const nb = S.cur === e ? (adjacentOf(-1) || adjacentOf(1)) : null;
   const rows = [...document.querySelectorAll('.row[data-id="' + CSS.escape(id) + '"]')];
   for (const r of rows) { r.style.overflow = 'hidden'; r.animate([{ height: r.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px', borderBottomWidth: '0px' }], { duration: 380, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'forwards' }); }
   S.openRow = null;
@@ -1135,12 +1200,28 @@ async function deleteEntry(id) {
   S.entries = S.entries.filter((x) => x !== e); reindex();
   try { await DB.del('entries', id); } catch (err) {}
   Sync.markDeleted(id); Sync.soon(800);
-  if (S.cur === e) S.cur = null;
+  if (S.cur === e) { // offener Eintrag: iPhone zurück zur Liste, Mac zum Nachbarn
+    if (isDesktop()) { S.cur = null; openEntry(nb || draftFor(keyOf(today()))); }
+    else { S.cur = null; if (S.stack[S.stack.length - 1] === 'entry') back(); }
+  }
   if (S.searchHits) S.searchHits = S.searchHits.filter((x) => x !== e);
   if (S.navList) S.navList = S.navList.filter((x) => x !== e);
   renderHome(); if (S.stack.includes('search')) renderSearch(); if (S.stack.includes('calendar')) renderCalendar();
   toast('Eintrag gelöscht');
 }
+function markFx() { document.querySelectorAll('.fxseg button').forEach((x) => x.setAttribute('aria-checked', x.dataset.fx === S.fx)); }
+try { S.fx = localStorage.getItem('journal.fx') || 'fade'; } catch (e) { S.fx = 'fade'; }
+markFx();
+function hideCtx() { const c = $('ctxmenu'); c.classList.remove('show'); S.ctxId = null; setTimeout(() => { if (!c.classList.contains('show')) c.hidden = true; }, 180); }
+document.addEventListener('contextmenu', (e) => { // Mac: Rechtsklick auf einen Eintrag
+  const row = e.target.closest && e.target.closest('#list .row, #results .row'); if (!row || !isDesktop()) return;
+  e.preventDefault(); S.ctxId = row.dataset.id; const c = $('ctxmenu'); c.hidden = false;
+  const x = Math.min(e.clientX, innerWidth - c.offsetWidth - 8), y = Math.min(e.clientY, innerHeight - c.offsetHeight - 8);
+  c.style.left = x + 'px'; c.style.top = y + 'px'; void c.offsetWidth; c.classList.add('show'); c.querySelector('button').focus({ preventScroll: true });
+});
+document.addEventListener('pointerdown', (e) => { if (S.ctxId && !e.target.closest('#ctxmenu')) hideCtx(); }, true);
+document.addEventListener('keydown', (e) => { if (S.ctxId && e.key === 'Escape') { e.stopPropagation(); hideCtx(); } }, true);
+$('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passive: true });
 $('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
 for (const v of ['home', 'search']) $(v).addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
 function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
@@ -1211,16 +1292,24 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
   home.addEventListener('touchcancel', release, { passive: true });
 })();
 
+function fitStuck(stuck) { // eingeklappt: Titel so weit verkleinern, dass er die Lupe nicht berührt
+  const h = $('homeTitle'), t = h.querySelector('.t'), y = h.querySelector('.y'); if (!t || !y) return;
+  const w = t.offsetWidth + 12 + y.offsetWidth, room = $('stickyTitle').clientWidth - 24 - 58;
+  const k = stuck && w > room ? Math.max(0.7, room / w) : 1;
+  h.style.transform = k < 1 ? 'scale(' + k.toFixed(3) + ')' : '';
+}
 /* Startseite: Monatstitel bleibt oben stehen und folgt dem Monat der Einträge darunter */
 (function stickyTitle() {
-  const home = $('home'), bar = $('stickyTitle'); let raf = 0, shown = '';
+  const home = $('home'), bar = $('stickyTitle'); let raf = 0, shown = '', lastY = 0;
   function update() {
     raf = 0;
     const barRect = bar.getBoundingClientRect(), homeRect = home.getBoundingClientRect();
     const stuck = home.scrollTop > 0 && barRect.top <= homeRect.top + (parseFloat(getComputedStyle(bar).top) || 0) + 0.5;
     bar.classList.toggle('stuck', stuck); bar.querySelector('.stickysearch').tabIndex = stuck ? 0 : -1;
+    if (!isDesktop()) fitStuck(stuck);
     let label = isDesktop() ? (S.listTitle || S.sideTitle) : S.weekTitle;
-    if (isDesktop()) { if (label) { shown = label; animTitle(label, S.titleDir || 0); S.titleDir = 0; } return; }
+    if (isDesktop()) { if (label) { shown = label; animTitle(label, S.titleDir || 0, S.titleVert); S.titleDir = 0; S.titleVert = false; } return; }
+    const dirY = home.scrollTop >= lastY ? 1 : -1; lastY = home.scrollTop;
     const listTop = $('list').getBoundingClientRect().top;
     if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
       const x = homeRect.left + 60, y = barRect.bottom + 14;
@@ -1230,8 +1319,9 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     }
     if (label && label !== shown) {
       const [mname, yr] = label.split('|'); const changed = !!shown; shown = label;
-      $('homeTitle').innerHTML = titleHTML(mname, yr);
-      if (changed) softIn($('homeTitle'));
+      if (changed && $('homeTitle').querySelector('.t')) animTitle(label, dirY, true); // rutscht mit der Liste nach oben (bzw. unten)
+      else $('homeTitle').innerHTML = titleHTML(mname, yr);
+      setTimeout(() => fitStuck(bar.classList.contains('stuck')), 160);
     }
   }
   home.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
@@ -1242,7 +1332,7 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
 /* Mac: Liste und Kalender gehen zusammen */
 function topRowOfList() {
   const L = $('list'), r = L.getBoundingClientRect();
-  const el = document.elementFromPoint(r.left + 60, r.top + 16); let row = el && el.closest('.row, .sep');
+  const el = document.elementFromPoint(r.left + 60, r.top + 52); let row = el && el.closest('.row, .sep');
   if (row && row.classList.contains('sep')) row = row.nextElementSibling;
   return row && row.classList.contains('row') ? row : null;
 }
@@ -1250,11 +1340,7 @@ function sideJump(next, manual, after) { // zu einem Zeitraum gleiten; der Zieli
   const cur = S.side; const dir = cur.mode === 'week' ? Math.sign(next.w - cur.w) : cur.mode === 'month' ? Math.sign((next.y * 12 + next.m) - (cur.y * 12 + cur.m)) : Math.sign(next.y - cur.y);
   if (!dir || trackBusy) return;
   if (manual) S.listTitle = null;
-  const tr = $('sctrack'), nb = tr.children[dir > 0 ? 2 : 0];
-  if (nb) nb.outerHTML = cur.mode === 'week' ? weekPanelHTML(next.w) : '<div class="calpanel">' + (cur.mode === 'month' ? monthGridHTML(next.y, next.m, true) : yearHTML(next.y, 'sidepick')) + '</div>';
-  updateSideSel();
-  fadeWith([$('scStat')], 0); if (!S.listTitle) animTitle(sideTitleOf(Object.assign({}, cur, next)), dir);
-  slideTrack(tr, dir, () => { Object.assign(S.side, next); S.titleDir = dir; renderSide(); softIn($('scStat')); if (after) after(); }, 460);
+  sideMove(dir, next, 460, after);
 }
 function followList() { // Kalender auf den obersten Eintrag der Liste stellen
   if (!isDesktop() || performance.now() < (S.autoScrollUntil || 0)) return; const row = topRowOfList(); if (!row) return;
@@ -1265,7 +1351,8 @@ function followList() { // Kalender auf den obersten Eintrag der Liste stellen
 function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   if (!isDesktop() || !id) return; const L = $('list');
   const row = L.querySelector('.row[data-id="' + CSS.escape(id) + '"]'); if (!row) return;
-  let target = row.offsetTop - 4; const prev = row.previousElementSibling; if (prev && prev.classList.contains('sep')) target = prev.offsetTop;
+  const sep = row.parentElement.querySelector(':scope > .sep'); // die haftende Monatsleiste darf den Eintrag nicht verdecken
+  let target = row.offsetTop - (sep ? sep.offsetHeight : 0) - 4;
   target = Math.max(0, Math.min(target, L.scrollHeight - L.clientHeight));
   if (Math.abs(L.scrollTop - target) < 2) return;
   S.autoScrollUntil = performance.now() + 900; L.scrollTo({ top: target, behavior: 'smooth' });
@@ -1291,6 +1378,7 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
     if (raf) return; raf = requestAnimationFrame(() => {
       raf = 0; const row = L.scrollTop > 2 && $('home').classList.contains('cal-in') ? topRowOfList() : null;
       if (row) { const d = parseKey(row.dataset.date); S.listTitle = MONTHS[d.getMonth()] + '|' + d.getFullYear(); } else S.listTitle = null;
+      S.titleDir = L.scrollTop >= (updateTitle.y || 0) ? 1 : -1; S.titleVert = true; updateTitle.y = L.scrollTop;
       S.updateHomeTitleSoft && S.updateHomeTitleSoft();
     });
   }
@@ -1509,10 +1597,11 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
     g.acc += e.deltaX; clearTimeout(settleT); settleT = setTimeout(settle, 180);
     const dir = g.acc > 0 ? 1 : -1;
     if (g.area === 'side') { // Kalender folgt dem Finger, ab einem Viertel der Breite blättert er weiter
-      const tr = $('sctrack'), w = tr.parentElement.clientWidth, x = Math.max(-w, Math.min(w, -g.acc));
+      const tr = $('sctrack'), w = tr.parentElement.clientWidth, a = Math.abs(g.acc), sl = S.fx === 'slide';
+      const x = sl ? Math.max(-w, Math.min(w, -g.acc)) : -dir * 22 * (1 - 1 / (a / 70 + 1)); // Gleiten folgt 1:1, sonst nur ein leichter Zug
       tr.style.transition = 'none'; tr.style.transform = 'translate3d(' + trackX(tr, x) + 'px,0,0)';
-      fadeWith([$('scStat')], Math.max(0, 1 - Math.abs(x) / (w * 0.4)));
-      if (Math.abs(x) > w * 0.25) { g.fired = true; shiftSide(dir, Math.round(Math.max(200, 380 * (1 - Math.abs(x) / w)))); }
+      fadeWith([$('scStat')], Math.max(0, 1 - a / (w * 0.4)));
+      if (a > w * 0.25) { g.fired = true; shiftSide(dir, Math.round(Math.max(200, 380 * (1 - Math.abs(x) / w)))); }
     }
     else if (g.area === 'cal') { if (Math.abs(g.acc) > 90) { g.fired = true; shiftCal(dir); } }
     else if (g.area === 'entry') {
