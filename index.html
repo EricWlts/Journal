@@ -242,7 +242,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .btn.ghost{background:transparent;color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
 .btns{display:flex;flex-wrap:wrap;gap:10px}
 .note{margin-top:12px;font-size:14px;line-height:1.55;color:var(--muted);min-height:1em}
-.searchbox{margin-top:16px;display:flex;align-items:center;gap:10px;height:52px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.searchbox{margin-top:8px;display:flex;align-items:center;gap:10px;height:52px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .searchbox input{flex:1;border:0;background:transparent;font:400 28px/1 var(--serif);color:var(--ink);outline:none;min-width:0}
 .searchbox input::placeholder{color:var(--dim)}
 .searchbox:focus-within{outline:none}
@@ -351,7 +351,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   <section class="view is-off" id="search" aria-label="Suche">
     <div class="page wide">
       <div class="pnav"></div>
-      <h1 class="ptitle">Suche</h1>
+      <h1 class="sr">Suche</h1>
       <label class="searchbox"><span class="sr">Suchbegriff</span><input id="q" type="search" enterkeyhint="search" placeholder="Wonach suchst du?" autocomplete="off"></label>
       <div id="results"></div>
     </div>
