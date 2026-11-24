@@ -75,7 +75,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .dark .is-today .dot{box-shadow:0 0 0 1px var(--linen) inset}
 .dark .is-missed .dot{font-weight:400;color:var(--linen)}
 .dark .is-future .dot{font-weight:400;color:var(--dim)}
-.herofoot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px}
+.herofoot{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;font-size:13px;gap:16px}
+.herofoot .linkbtn{height:auto;padding:14px 0;align-items:baseline}
+.herofoot .linkbtn svg{align-self:center}
+.herofoot .links{display:flex;align-items:baseline;gap:20px}
 .herofoot .stat{display:flex;align-items:baseline;gap:10px}
 .herofoot .count{font-size:26px;color:var(--linen)}
 .herofoot .lbl{color:var(--mist)}
@@ -259,8 +262,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="minimonth" id="minimonth"></div>
       <div class="herofoot">
         <span class="stat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
-        <button class="linkbtn" data-act="thisweek" id="thisWeekBtn" hidden aria-label="Zurück zu heute"></button>
-        <button class="linkbtn" data-act="calendar">Kalender <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        <span class="links"><button class="linkbtn" data-act="thisweek" id="thisWeekBtn" hidden aria-label="Zurück zu heute"></button>
+        <button class="linkbtn" data-act="calendar">Kalender <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></span>
       </div>
     </header>
     <div class="list" id="list"></div>
