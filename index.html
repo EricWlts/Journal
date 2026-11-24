@@ -968,7 +968,7 @@ document.addEventListener('click', (ev) => {
   const b = ev.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act;
   if (a === 'search') { if (isDesktop()) deskSearch(!S.dsearch); else { go('search'); $('q').focus({ preventScroll: true }); } }
-  else if (a === 'settings') { renderAbout(); go('settings'); }
+  else if (a === 'settings') { if (S.stack[S.stack.length - 1] === 'settings') back(); else { renderAbout(); go('settings'); } } // zweiter Klick schließt
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); S.cal.sel = null; renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; S.cal.sel = null; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
   else if (a === 'pickmonth') { morphSwap($('caltrack'), false, () => { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }); softIn($('calTitle'), $('calStats')); }
