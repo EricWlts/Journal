@@ -171,7 +171,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scfoot{height:40px;display:flex;align-items:center;gap:10px;font-size:13px}
 .scfoot .count{font-size:22px;color:var(--linen)}
 .scfoot .lbl{color:var(--mist)}
-#scStat{display:flex;align-items:baseline;gap:10px;transition:opacity .35s var(--ease)}
+#scStat{display:flex;align-items:baseline;gap:6px;margin-right:10px;font-size:12px;transition:opacity .35s var(--ease)}
+#scStat .count{font-size:19px;color:var(--linen)}
+#scStat .lbl{color:var(--mist)}
 #scStat.is-empty .count,#scStat.is-empty .lbl{opacity:0}
 .minibar{position:sticky;top:0;z-index:5;height:calc(var(--safe-t) + 52px);margin-bottom:calc(-1 * (var(--safe-t) + 52px));
   background:rgba(18,21,15,.9);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);color:var(--linen);
@@ -417,11 +419,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="sidecal" id="sidecal"><div class="scinner">
         <div class="scnav">
           <div class="seg" role="tablist"><button role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
-          <div class="scarrows"><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+          <div class="scarrows"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
         </div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
         <div class="todayline sctl" id="scTL"><button data-act="sidetoday" id="scTodayBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-        <div class="scfoot"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span></div>
       </div></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span></span>
