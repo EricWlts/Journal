@@ -1,0 +1,44 @@
+# Journal-App – Übergabe für neue Sitzungen
+
+Persönliche Journal-App von Eric (Ersatz für Day One), läuft als Web-App (PWA) auf iPhone und MacBook.
+Online: https://ericwlts.github.io/Journal/ (GitHub Pages, Branch `main`, Ordner `/`).
+Antworten und Texte in der App immer auf Deutsch.
+
+## Arbeitsweise
+- Änderungen direkt in `index.html` machen, committen und auf `main` pushen. GitHub Pages veröffentlicht nach ca. 1–2 Minuten.
+- Bei jeder Veröffentlichung in `sw.js` die Konstante `VERSION` hochzählen (`journal-vNN`), sonst bekommen installierte Apps das Update nicht. Die App lädt neue Versionen beim nächsten Öffnen selbst nach.
+- Vor dem Push im Browser testen (Playwright mit Chrome: iPhone 390×844 mit Touch, MacBook 1280×800). Touch-Gesten über CDP `Input.dispatchTouchEvent` simulieren.
+- Kein Framework, kein Build-Schritt: eine Datei `index.html` mit CSS und JS. Umstieg auf React (Vaul, NumberFlow, cmdk, Sonner) ist besprochen, aber vertagt – frühestens wenn die App stark wächst.
+- Eric möchte Premium-Feinschliff: kleine Abstände und Ausrichtungen sind ihm wichtig. Nach jeder Änderung kurz zusammenfassen, was sich ändert.
+
+## Dateien
+- `index.html` – gesamte App
+- `sw.js` – Service Worker (offline, Updates)
+- `manifest.webmanifest`, `icons/` – Installation auf Home-Bildschirm/Dock
+- `LIESMICH.md` – Anleitung für Eric
+
+## Design (Entwurf „A · Ausgabe“, angelehnt an WANDER)
+- Farben: Papier `#eeece6`, Stein `#e3e2dc`, Tinte `#26302b`, Oliv `#506055`, Linie `#cfd0c8`, Nacht `#12150f`, Leinen `#f2f3ef`, Nebel `#b1bdb3`, gedämpft `#8d998f`, Nachtlinie `#3b4740`.
+- Schriften: Instrument Serif (Titel, Zahlen, *Heute* kursiv) + Manrope (UI). Kaum Rundungen, feine Linien statt Schatten.
+- Kurven: `--ease` cubic-bezier(0.2,0.7,0.2,1), `--sheet` cubic-bezier(0.32,0.72,0,1) (wie Vaul).
+- Titelmuster: großes Wort 64px + Jahr kursiv 44px grau („November *2026*“). Erste Linie liegt auf allen Seiten auf gleicher Höhe.
+- Kalender-Zeichen: gefüllter Kreis = geschrieben, Ring = heute, blass = leer/zukünftig.
+
+## Ansichten
+- **Startseite**: dunkler Kopf (Lupe + Einstellungen oben rechts), fixierter Monatstitel (folgt beim Scrollen dem Monat der Einträge, Lupe gleitet dann in die Leiste), Wochenleiste (wischbar), darunter Linie mit *Heute* (fest mittig, nur der Pfeil wechselt die Seite), „x/y Tage geschrieben“ (keine Serien/Streaks – bewusst ohne Druck), runder Mini-Kalender-Knopf rechts. Liste: alle Einträge gleich groß, Monats-Zwischenüberschriften. „Heute schreiben“ unten. Nach unten ziehen = aktualisieren (Ring zeichnet sich).
+- **Kalender**: dunkler Kopf, Tabs „Woche · Monat · Jahr“ (Woche = zurück), Monat/Jahr wischbar, Jahr in Siebenerblöcken (1·8·15·22·29), „An diesem Tag“ unten. Monat und Jahr müssen deckungsgleich bleiben (feste Höhen).
+- **Schreiben**: oben links Wochentag fett + Datum, keine Initiale, keine Linie unter dem Titel. Runder Knopf unten rechts: Pfeil = zurück, beim Tippen Haken = Tastatur schließen. Links/rechts wischen = vorheriger/nächster Eintrag (aus der Suche: nur zwischen Treffern). Nach unten ziehen = schließen.
+- **Suche**: nur Suchfeld „Wonach suchst du?“, Treffer mit Monats-Überschriften, Enter schließt Tastatur, nach unten wischen schließt.
+- **Einstellungen**: Day-One-Import (JSON-ZIP mit Fotos), Sicherung speichern/laden, Abgleich.
+- **MacBook** (ab 960px): links Seitenleiste (dunkler Kopf mit Monatskalender + Einträge), rechts Schreiben.
+- Gesten mit Schwung/Gummiband (Geschwindigkeit der letzten ~100 ms). Runder Zurück-Knopf weicht beim Runterscrollen aus.
+
+## Daten und Abgleich
+- Lokal in IndexedDB (`entries`, `photos`). Einträge: `{id, date, created, modified, title, text, photos, source}`; intern `_dirty`, `_savedSig`.
+- Abgleich über privates Repo **EricWlts/journal-daten** per GitHub-REST (Git-Data-API): `entries/<id>.json`, `photos/<id>`. Hochladen ~2 s nach dem Speichern, Abholen beim Öffnen und alle 30 s. Konflikt: zuletzt geänderte Fassung gewinnt. Fotos werden auf dem anderen Gerät erst beim Öffnen geladen.
+- Zugangsschlüssel (fine-grained PAT, nur journal-daten, Contents read/write) gibt Eric selbst in der App ein; er liegt nur in localStorage. Niemals einen Schlüssel im Chat annehmen oder verwenden – falls Eric einen schickt, zum Löschen und Neuerstellen raten.
+
+## Offene Ideen
+- Feinschliff nach Erics Tests auf dem iPhone.
+- Evtl. sanfte abendliche Erinnerung, ⌘K-Suche auf dem Mac, NumberFlow für die Zählung.
+- Mac-Ansicht und Import-Seite im Canvas-Entwurf „Journal-App – Entwurf“ (claude.ai Artifact) gibt es als Design-Vorlage.
