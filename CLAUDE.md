@@ -18,19 +18,20 @@ Antworten und Texte in der App immer auf Deutsch.
 - `LIESMICH.md` – Anleitung für Eric
 
 ## Design (Entwurf „A · Ausgabe“, angelehnt an WANDER)
-- Farben: Papier `#eeece6`, Stein `#e3e2dc`, Tinte `#26302b`, Oliv `#506055`, Linie `#cfd0c8`, Nacht `#12150f`, Leinen `#f2f3ef`, Nebel `#b1bdb3`, gedämpft `#8d998f`, Nachtlinie `#3b4740`.
+- Farben: Papier `#eeece6`, Stein `#e3e2dc`, Tinte `#26302b`, Oliv `#506055`, Linie `#cfd0c8`, Blatt (Schreiben) `#f6f5f1`, Nacht `#12150f`, Leinen `#f2f3ef`, Nebel `#b1bdb3`, gedämpft `#8d998f`, Nachtlinie `#3b4740`.
 - Schriften: Instrument Serif (Titel, Zahlen, *Heute* kursiv) + Manrope (UI). Kaum Rundungen, feine Linien statt Schatten.
 - Kurven: `--ease` cubic-bezier(0.2,0.7,0.2,1), `--sheet` cubic-bezier(0.32,0.72,0,1) (wie Vaul).
 - Titelmuster: großes Wort 64px + Jahr kursiv 44px grau („November *2026*“). Erste Linie liegt auf allen Seiten auf gleicher Höhe.
 - Kalender-Zeichen: gefüllter Kreis = geschrieben, Ring = heute, blass = leer/zukünftig.
 
 ## Ansichten
-- **Startseite**: dunkler Kopf (Lupe + Einstellungen oben rechts), fixierter Monatstitel (folgt beim Scrollen dem Monat der Einträge, Lupe gleitet dann in die Leiste), Wochenleiste (wischbar), darunter Linie mit *Heute* (fest mittig, nur der Pfeil wechselt die Seite), „x/y Tage geschrieben“ (keine Serien/Streaks – bewusst ohne Druck), runder Mini-Kalender-Knopf rechts. Liste: alle Einträge gleich groß, Monats-Zwischenüberschriften. „Heute schreiben“ unten. Nach unten ziehen = aktualisieren (Ring zeichnet sich).
-- **Kalender**: dunkler Kopf, Tabs „Woche · Monat · Jahr“ (Woche = zurück), Monat/Jahr wischbar, Jahr in Siebenerblöcken (1·8·15·22·29), „An diesem Tag“ unten. Monat und Jahr müssen deckungsgleich bleiben (feste Höhen).
-- **Schreiben**: oben links Wochentag fett + Datum, keine Initiale, keine Linie unter dem Titel. Runder Knopf unten rechts: Pfeil = zurück, beim Tippen Haken = Tastatur schließen. Links/rechts wischen = vorheriger/nächster Eintrag (aus der Suche: nur zwischen Treffern). Nach unten ziehen = schließen.
+- **Startseite**: dunkler Kopf (Lupe + Einstellungen oben rechts), fixierter Monatstitel (folgt beim Scrollen dem Monat der Einträge, Lupe gleitet dann in die Leiste), Wochenleiste (wischbar), darunter Linie mit *Heute* (fest mittig, nur der Pfeil wechselt die Seite), „x/y Tage geschrieben“ (keine Serien/Streaks – bewusst ohne Druck), rechts Kalender-Symbol (Strich-Icon wie Lupe/Einstellungen, ohne Ring). Bereich unter den Tagen bewusst kompakt. Liste: alle Einträge gleich groß, Monats-Zwischenüberschriften. iPhone: runder Plus-Knopf unten rechts (wie der Zurück-Knopf); Mac: Knopf „Heute schreiben“ in der Seitenleiste. Nach unten ziehen = aktualisieren (Ring zeichnet sich).
+- **Kalender**: dunkler Kopf, Tabs „Woche · Monat · Jahr“ (Woche = zurück), Monat/Jahr wischbar, Wechsel Monat ⇄ Jahr mit Zoom-Überblendung (`morphSwap`), Jahr in Siebenerblöcken (1·8·15·22·29), „An diesem Tag“ unten. Monat und Jahr müssen deckungsgleich bleiben (feste Höhen).
+- **Schreiben**: oben links Wochentag fett + Datum, keine Initiale, keine Linie unter dem Titel. Runder Zurück-Knopf unten rechts; beim Tippen verschwindet er und oben rechts erscheint fest der Haken (Fertig = Tastatur schließen). Blatt etwas heller als das Papier. Links/rechts wischen = vorheriger/nächster Eintrag (aus der Suche: nur zwischen Treffern). Nach unten ziehen = schließen (Blatt bekommt runde Ecken, Startseite dahinter leicht verkleinert und abgedunkelt).
 - **Suche**: nur Suchfeld „Wonach suchst du?“, Treffer mit Monats-Überschriften, Enter schließt Tastatur, nach unten wischen schließt.
 - **Einstellungen**: Day-One-Import (JSON-ZIP mit Fotos), Sicherung speichern/laden, Abgleich.
-- **MacBook** (ab 960px): links Seitenleiste (dunkler Kopf mit Monatskalender + Einträge), rechts Schreiben.
+- **MacBook** (ab 960px): links Seitenleiste 420px (dunkler Kopf mit großem Kalender: Tabs „Monat · Jahr“ mit gleitender Linie, Pfeile, „Heute“; feste Höhe 312px, Zustand `S.side`; darunter Einträge), rechts Schreiben. Trackpad: eine Wischgeste = ein Wechsel (Schwung wird geschluckt), über dem Kalender = Monat/Jahr blättern, sonst Eintrag wechseln – auch beim Tippen. Horizontales Wischen ruft nie Zurück/Vor des Browsers auf (`preventDefault` + `overscroll-behavior:none`).
+- Liste wird nur neu aufgebaut, wenn sich ihr Inhalt ändert (`S.listHTML`) – vermeidet Ruckler beim Zurückgehen.
 - Gesten mit Schwung/Gummiband (Geschwindigkeit der letzten ~100 ms). Runder Zurück-Knopf weicht beim Runterscrollen aus.
 
 ## Daten und Abgleich
