@@ -446,7 +446,12 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
   #homeTitle .y{transition:color .2s var(--ease)}
-  .entry .title,.etitle{font-size:64px;line-height:1;padding-top:0;display:block}
+  /* rechts an der Seitenleiste ausgerichtet: Datum = Höhe der Tabs, Titel = Grundlinie des Monats, Text = Höhe des Kalenders */
+  .entry,.page{padding-top:12px}
+  .entry .title,.etitle{font-size:56px;line-height:64px;letter-spacing:-.03em;margin-top:0;padding-top:8px;min-height:72px;display:block}
+  .page .title{margin:0;padding-top:8px;height:72px}
+  .page .title .t{font-size:56px;line-height:64px} .page .title .y{font-size:38px}
+  .page .title + .sect{margin-top:8px} /* erste Linie auf derselben Höhe wie links */
   .ebody{font-size:20px;line-height:1.75}
   .view,.view.is-top{will-change:auto}
   .enav{position:static;margin:0;padding:0}
