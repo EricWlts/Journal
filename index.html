@@ -123,7 +123,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .floatbtn svg{position:static}
 #entry.is-typing .floatbtn{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .35s var(--sheet), opacity .2s var(--ease)}
 #home .fabwrap{display:none}
-@media (max-width:959px){#home #list{padding-bottom:calc(var(--safe-b) + 104px)}}
+@media (max-width:959px){#home #list{padding-bottom:calc(var(--safe-b) + 104px)}
+  #home > .herorest{padding-bottom:28px}
+  #home > .list{position:relative;z-index:1;margin-top:-20px;border-radius:20px 20px 0 0}
+  #calendar .calhero{padding-bottom:20px}
+  #calendar .calbody{position:relative;margin-top:-20px;border-radius:20px 20px 0 0}}
 .homeplus.off{opacity:0;transform:scale(.8);pointer-events:none;transition:opacity .2s var(--ease), transform .3s var(--sheet)}
 .page.wide{padding-bottom:calc(var(--safe-b) + 110px)}
 .calbody{padding-bottom:calc(var(--safe-b) + 110px);background:var(--paper);min-height:calc(100% - 260px)}
@@ -410,7 +414,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 @media (min-width: 960px){
   .view{left:var(--side)}
   #home::after{display:none}
-  #home{left:0;width:var(--side);right:auto;transform:none !important;visibility:visible !important;opacity:1 !important;border-right:1px solid var(--line);z-index:10}
+  #home{left:0;width:var(--side);right:auto;transform:none !important;visibility:visible !important;opacity:1 !important;border-right:0;z-index:10;background:var(--paper)}
   /* Mac: Ansichten wechseln als ruhige Überblendung mit leichtem Zoom statt Hereinschieben */
   .view{transition:transform .7s var(--sheet), opacity .42s var(--ease) .08s, visibility 0s linear 0s}
   .view.is-top{box-shadow:none}
@@ -476,14 +480,25 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
-  #list{padding:20px 12px 24px} /* oberste Karte mit Luft zum dunklen Kopf */
+  #list{padding:10px 12px 24px} /* oberste Karte mit kleinem Abstand zum dunklen Kopf */
+  /* Seitenleiste: der dunkle Kalender als schwebende Karte mit runden Ecken – wie das Blatt rechts */
+  #home > .hero:first-of-type{margin:12px 12px 0;border-radius:14px 14px 0 0;padding:4px 16px 0}
+  #home > .stickytitle{margin:0 12px;padding:0 16px}
+  #home > .herorest{margin:0 12px;border-radius:0 0 14px 14px;padding:0 16px 8px}
+  #home .sidecal{margin:8px -16px 0;padding:0 16px}
+  #home .scview{margin:10px -16px 0}
+  #home .scview .calpanel,#sidecal .weekpanel{padding:0 16px}
+  .stickytitle .titlenext{left:16px}
+  #list .sep{padding-left:16px;padding-right:16px}
+  #list .row,#list .row.is-current{padding-left:16px;padding-right:16px}
+  #list .row::before{left:16px;right:16px}
   .fabwrap{padding-bottom:20px}
   .fab{width:100%;height:44px}
   .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:20px}
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:10px}
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
@@ -1454,7 +1469,7 @@ function followList() { // Kalender auf den obersten Eintrag der Liste stellen
   else if (S.side.mode === 'month' && (d.getFullYear() !== S.side.y || d.getMonth() !== S.side.m)) sideJump({ y: d.getFullYear(), m: d.getMonth() });
 }
 function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben; Klick: nur nachführen, wenn er nicht ganz sichtbar ist
-  if (!isDesktop() || !id) return; const L = $('list'), pad = 20;
+  if (!isDesktop() || !id) return; const L = $('list'), pad = 10;
   const row = L.querySelector('.row[data-id="' + CSS.escape(id) + '"]'); if (!row) return;
   let target;
   if (gentle) {
