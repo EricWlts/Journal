@@ -24,7 +24,7 @@
   --safe-t:env(safe-area-inset-top, 0px); --safe-b:env(safe-area-inset-bottom, 0px);
   --ease:cubic-bezier(0.2, 0.7, 0.2, 1);
   --sheet:cubic-bezier(0.32, 0.72, 0, 1); /* iOS-artige Kurve, wie bei Vaul */
-  --side:420px; --sheetbg:#f6f5f1;
+  --side:480px; --sheetbg:#f6f5f1;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{touch-action:manipulation;overscroll-behavior:none}
@@ -369,6 +369,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .dsearch input::placeholder{color:var(--dim)}
   .dsearch input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
   .stickysearch{display:none}
+  .stickytitle{display:flex;align-items:baseline}
+  .stickytitle .title{flex:none}
+  .stickytitle #scStat{margin:0 0 0 22px;transition:opacity .3s var(--ease)}
+  #home.cal-in .stickytitle #scStat{opacity:0}
   .weekwrap,.weekline,#todayLine{display:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:32px;bottom:32px}
@@ -787,6 +791,15 @@ function renderSide() {
   if (!isNow) { const future = mode === 'week' ? w > 0 : (mode === 'month' ? y * 12 + m > t.getFullYear() * 12 + t.getMonth() : y > t.getFullYear()); tl.classList.toggle('dir-l', future); tl.classList.toggle('dir-r', !future); }
   const tw = $('scTodayBtn').querySelector('.tw').offsetWidth; if (tw) tl.style.setProperty('--hwon', (tw / 2) + 'px');
   if (S.updateHomeTitle) S.updateHomeTitle();
+  placeStat();
+}
+function placeStat() { // „x/y Tage“ neben das Jahr, wenn es dort Platz hat – sonst in die Tab-Zeile
+  if (!isDesktop()) return;
+  const st = $('scStat'), bar = $('stickyTitle'), h = $('homeTitle');
+  const t = h.querySelector('.t'), y = h.querySelector('.y'); if (!t || !y) return;
+  const need = t.offsetWidth + 12 + y.offsetWidth + 22 + st.offsetWidth, avail = bar.clientWidth - 48 - 8;
+  if (need <= avail) { if (st.parentElement !== bar) bar.appendChild(st); }
+  else if (st.parentElement === bar) { const ar = document.querySelector('.scarrows'); ar.insertBefore(st, ar.firstChild); }
 }
 function updateSideSel() {
   const k = S.cur && S.stack[S.stack.length - 1] === 'entry' ? S.cur.date : null;
@@ -1112,7 +1125,7 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     const stuck = home.scrollTop > 0 && barRect.top <= homeRect.top + (parseFloat(getComputedStyle(bar).top) || 0) + 0.5;
     bar.classList.toggle('stuck', stuck); bar.querySelector('.stickysearch').tabIndex = stuck ? 0 : -1;
     let label = isDesktop() ? (S.listTitle || S.sideTitle) : S.weekTitle;
-    if (isDesktop()) { if (label && label !== shown) { const [mname, yr] = label.split('|'); const changed = !!shown; shown = label; $('homeTitle').innerHTML = titleHTML(mname, yr); if (changed) softIn($('homeTitle')); } return; }
+    if (isDesktop()) { if (label && label !== shown) { const [mname, yr] = label.split('|'); const changed = !!shown; shown = label; $('homeTitle').innerHTML = titleHTML(mname, yr); if (changed) softIn($('homeTitle')); placeStat(); } return; }
     const listTop = $('list').getBoundingClientRect().top;
     if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
       const x = homeRect.left + 60, y = barRect.bottom + 14;
