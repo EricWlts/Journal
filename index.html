@@ -71,19 +71,26 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:var(--night);opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
   box-shadow:0 1px 0 var(--nline)}
 .stickytitle.stuck::after{opacity:1}
+.stickysearch{position:absolute;right:14px;top:8px;color:var(--linen);opacity:0;transform:translateY(-12px);pointer-events:none;
+  transition:opacity .3s var(--ease), transform .45s var(--sheet)}
+.stickytitle.stuck .stickysearch{opacity:1;transform:none;pointer-events:auto}
 #homeTitle{transition:opacity .35s var(--ease)}
 .topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
 .weekline{height:1px;background:var(--nline);margin-top:16px;position:relative}
-.todayline{position:relative;height:30px;margin-top:10px;display:flex;align-items:center;justify-content:center}
-.todayline::before,.todayline::after{content:'';flex:1;height:1px;background:var(--nline)}
-#thisWeekBtn{position:relative;height:40px;max-width:150px;padding:0 30px;overflow:hidden;white-space:nowrap;display:flex;align-items:center;justify-content:center;
-  color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1;
-  transition:max-width .55s var(--sheet), padding .55s var(--sheet), opacity .4s var(--ease)}
-.todayline.off #thisWeekBtn{max-width:0;padding:0;opacity:0;pointer-events:none}
-#thisWeekBtn .ar{position:absolute;top:50%;margin-top:-9px}
-#thisWeekBtn .ar-r{right:6px} #thisWeekBtn .ar-l{left:6px}
-#thisWeekBtn.dir-r{padding:0 30px 0 8px} #thisWeekBtn.dir-l{padding:0 8px 0 30px}
-#thisWeekBtn:active{opacity:.6}
+.todayline{position:relative;height:30px;margin-top:10px;--hw:0px;--gl:0px;--gr:0px;--c:-4px} /* --c: optische Mitte für die Kursive */
+.todayline::before,.todayline::after{content:'';position:absolute;top:50%;height:1px;background:var(--nline);transition:width .55s var(--sheet)}
+.todayline::before{left:0;width:calc(50% + var(--c) - var(--hw) - var(--gl))}
+.todayline::after{right:0;width:calc(50% - var(--c) - var(--hw) - var(--gr))}
+.todayline.on{--hw:var(--hwon,28px)}
+.todayline.on.dir-r{--gl:10px;--gr:36px} .todayline.on.dir-l{--gl:36px;--gr:10px}
+#thisWeekBtn{position:absolute;left:50%;top:50%;width:180px;height:44px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;transition:opacity .45s var(--ease)}
+.todayline.on #thisWeekBtn{opacity:1;pointer-events:auto}
+#thisWeekBtn .tw{position:absolute;left:50%;top:50%;transform:translate(calc(-50% + var(--c)),-50%);color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1;white-space:nowrap}
+#thisWeekBtn .ar{position:absolute;top:50%;margin-top:-9px;color:var(--linen);transition:opacity .3s var(--ease)}
+#thisWeekBtn .ar-r{left:calc(50% + var(--c) + var(--hw) + 9px)}
+#thisWeekBtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
+.todayline.dir-r .ar-l,.todayline.dir-l .ar-r{opacity:0}
+#thisWeekBtn:active .tw,#thisWeekBtn:active .ar{opacity:.6}
 .weekwrap{margin:0 -24px;padding-top:18px;overflow:hidden;touch-action:pan-y}
 .weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
 .weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
@@ -111,6 +118,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .floatbtn .i-check{opacity:0;transform:scale(.5) rotate(-25deg)}
 #entry.is-typing .floatbtn .i-back{opacity:0;transform:scale(.5) rotate(25deg)}
 #entry.is-typing .floatbtn .i-check{opacity:1;transform:none}
+.page.wide{padding-bottom:calc(var(--safe-b) + 110px)}
 .calbody{padding-bottom:calc(var(--safe-b) + 110px);background:var(--paper);min-height:calc(100% - 260px)}
 #calendar{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
 .herofoot .stat{display:flex;align-items:baseline;gap:10px}
@@ -218,8 +226,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .etitle{margin-top:8px;min-height:64px;padding-top:14px;font-family:var(--serif);font-weight:400;font-size:44px;line-height:1.05;letter-spacing:-.02em;outline:none;overflow-wrap:break-word}
 .etitle:empty::before{content:attr(data-ph);color:var(--dim)}
 .eline{height:1px;background:var(--line);margin-top:16px}
-.ebody{margin-top:24px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--olive)}
-.ebody:not(:empty)::first-letter{font-family:var(--serif);font-size:70px;float:left;line-height:.82;margin:6px 10px 0 -2px}
+.ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--olive)}
 .ebody:empty::before{content:attr(data-ph);color:var(--dim)}
 .ephotos{display:grid;gap:8px;margin-top:28px}
 .ephotos img{width:100%;height:auto;display:block;border-radius:2px;background:var(--stone)}
@@ -238,6 +245,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .searchbox{margin-top:16px;display:flex;align-items:center;gap:10px;height:52px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .searchbox input{flex:1;border:0;background:transparent;font:400 28px/1 var(--serif);color:var(--ink);outline:none;min-width:0}
 .searchbox input::placeholder{color:var(--dim)}
+.searchbox:focus-within{outline:none}
+.searchbox input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
 .toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 90px);transform:translate(-50%,10px);opacity:0;background:var(--night);color:var(--linen);
   padding:12px 18px;border-radius:4px;font-size:14px;z-index:60;transition:opacity .32s var(--ease), transform .32s var(--ease);pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -268,7 +277,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .entry .title,.etitle{font-size:64px;line-height:1;padding-top:0;display:block}
   .ebody{font-size:20px;line-height:1.75}
   .view,.view.is-top{will-change:auto}
-  .ebody:not(:empty)::first-letter{font-size:84px;margin:8px 12px 0 -2px}
   .enav{position:static;margin:0;padding:0}
   .page{max-width:448px}
   .page.wide{max-width:688px}
@@ -291,11 +299,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <button class="iconbtn" data-act="search" aria-label="Suchen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
       </div>
     </header>
-    <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1></div>
+    <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1><button class="iconbtn stickysearch" data-act="search" aria-label="Suchen" tabindex="-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button></div>
     <header class="hero dark herorest">
       <div class="weekline"></div>
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
-      <div class="todayline off" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" aria-label="Zurück zu heute" tabindex="-1"></button></div>
+      <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       <div class="minimonth" id="minimonth"></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
@@ -333,7 +341,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <div class="edate"><span class="wd" id="eWd"></span><span class="dt" id="eDt"></span></div>
       </div>
       <div class="etitle" id="eTitle" contenteditable="plaintext-only" role="textbox" aria-label="Titel" data-ph="Titel" spellcheck="true"></div>
-      <div class="eline"></div>
       <div class="ebody" id="eBody" contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="Text" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
       <div class="ephotos" id="ePhotos"></div>
     </div>
@@ -343,17 +350,18 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   <!-- Suche -->
   <section class="view is-off" id="search" aria-label="Suche">
     <div class="page wide">
-      <div class="pnav"><button class="back" data-act="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button></div>
+      <div class="pnav"></div>
       <h1 class="ptitle">Suche</h1>
       <label class="searchbox"><span class="sr">Suchbegriff</span><input id="q" type="search" placeholder="Wonach suchst du?" autocomplete="off"></label>
       <div id="results"></div>
     </div>
+    <button class="floatbtn" data-act="back" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 
   <!-- Einstellungen -->
   <section class="view is-off" id="settings" aria-label="Einstellungen">
     <div class="page wide">
-      <div class="pnav"><button class="back" data-act="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück</button></div>
+      <div class="pnav"></div>
       <h1 class="title"><span class="t">Import</span><span class="y">Day One</span></h1>
       <div class="sect" style="border-top-color:var(--line)">
         <p>In Day One unter Einstellungen › Import/Export als <b>Day One JSON (.zip)</b> exportieren, mit Medien. Dann die Datei hier auswählen. In Day One bleibt alles, wie es ist.</p>
@@ -374,6 +382,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <p id="about"></p>
       </div>
     </div>
+    <button class="floatbtn" data-act="back" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -514,9 +523,9 @@ function renderWeek() {
   const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
   $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '0';
   $('weekStat').classList.toggle('is-empty', !elapsed);
-  $('todayLine').classList.toggle('off', off === 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
-  if (off !== 0) $('thisWeekBtn').className = off > 0 ? 'dir-l' : 'dir-r';
-  if (off !== 0) $('thisWeekBtn').innerHTML = (off > 0 ? '<svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>' : '<svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>') + '<span>Heute</span>'; // Pfeil hängt außerhalb, das Wort bleibt mittig
+  const tl = $('todayLine'); tl.classList.toggle('on', off !== 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
+  if (off !== 0) { tl.classList.toggle('dir-l', off > 0); tl.classList.toggle('dir-r', off < 0); }
+  const tw = $('thisWeekBtn').querySelector('.tw').offsetWidth; if (tw) tl.style.setProperty('--hwon', (tw / 2) + 'px');
 }
 function softIn(...els) { for (const el of els) { if (el.classList.contains('is-empty')) { el.style.transition = ''; el.style.opacity = ''; continue; } el.style.transition = ''; el.style.opacity = ''; el.classList.remove('soft-in'); void el.offsetWidth; el.classList.add('soft-in'); } }
 function fadeWith(els, f) { for (const el of els) { el.style.transition = 'none'; el.style.opacity = String(el.classList.contains('is-empty') ? 0 : f); } }
@@ -646,24 +655,24 @@ function renderHomeSoon() { clearTimeout(homeTimer); homeTimer = setTimeout(rend
 function openEntry(e, dir) { S.cur = e; renderEntry(dir); }
 function openEntryById(id) { const e = S.entries.find((x) => x.id === id); if (e) { go('entry'); openEntry(e); } }
 function openDay(k) {
+  S.navList = null;
   const list = S.byDate.get(k);
   go('entry');
   openEntry(list && list.length ? list[0] : draftFor(k));
 }
+function navNeighbour(dir) { // innerhalb der Suchtreffer (neueste zuerst)
+  const L = S.navList, i = L ? L.indexOf(S.cur) : -1;
+  return i < 0 ? undefined : (L[i - dir] || null);
+}
 function adjacentOf(dir) {
   const e = S.cur; if (!e) return null;
+  const nn = navNeighbour(dir); if (nn !== undefined) return nn;
   const asc = S.entries.slice().reverse(); const i = e.id ? asc.indexOf(e) : -1;
   if (i >= 0) return asc[i + dir] || null;
   return dir < 0 ? (S.entries.find((x) => x.created < e.created) || null) : (asc.find((x) => x.created > e.created) || null);
 }
 function adjacent(dir) { // dir -1 = older, +1 = newer
-  const e = S.cur; if (!e) return;
-  const asc = S.entries.slice().reverse();
-  let n = null;
-  const i = e.id ? asc.indexOf(e) : -1;
-  if (i >= 0) n = asc[i + dir];
-  else if (dir < 0) n = S.entries.find((x) => x.created < e.created) || null;
-  else n = asc.find((x) => x.created > e.created) || null;
+  const n = adjacentOf(dir);
   if (n) { saveCur(); openEntry(n, dir < 0 ? -1 : 1); return true; }
   return false;
 }
@@ -671,9 +680,17 @@ function adjacent(dir) { // dir -1 = older, +1 = newer
 /* ---------- search ---------- */
 function renderSearch() {
   const q = $('q').value.trim().toLowerCase(); const R = $('results');
-  if (!q) { R.innerHTML = ''; return; }
+  if (!q) { R.innerHTML = ''; S.searchHits = []; return; }
   const hits = S.entries.filter((e) => ((e.title || '') + '\n' + (e.text || '')).toLowerCase().includes(q)).slice(0, 200);
-  R.innerHTML = hits.length ? hits.map(rowHTML).join('') : '<p class="emptylist">Nichts gefunden.</p>';
+  S.searchHits = hits;
+  if (!hits.length) { R.innerHTML = '<p class="emptylist">Nichts gefunden.</p>'; return; }
+  let html = '', last = '';
+  for (const e of hits) {
+    const mk = e.date.slice(0, 7);
+    if (mk !== last) { const d = parseKey(e.date); html += '<div class="sep kicker">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; }
+    html += rowHTML(e);
+  }
+  R.innerHTML = html;
 }
 
 /* ---------- navigation ---------- */
@@ -718,7 +735,7 @@ document.addEventListener('click', (ev) => {
   else if (a === 'pickmonth') { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }
   else if (a === 'thisweek') { const dir = S.weekOff > 0 ? -1 : 1; fadeWith([$('weekStat')], 0); S.weekOff -= dir; slideTrack($('weektrack'), dir, () => { S.weekOff = 0; renderWeek(); softIn($('weekStat')); }); }
   else if (a === 'day') openDay(b.dataset.key);
-  else if (a === 'open') openEntryById(b.dataset.id);
+  else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : null; openEntryById(b.dataset.id); }
   else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
   else if (a === 'entryback') {
     if (typing()) { document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
@@ -758,7 +775,7 @@ if (window.visualViewport) {
 window.addEventListener('resize', () => { resetTrack($('weektrack')); resetTrack($('caltrack')); });
 
 /* runder Knopf weicht beim Runterscrollen aus und kommt beim Hochscrollen zurück */
-for (const v of ['calendar', 'entry']) {
+for (const v of ['calendar', 'entry', 'search', 'settings']) {
   const view = $(v), btn = view.querySelector('.floatbtn'); let last = 0;
   view.addEventListener('scroll', () => {
     const y = view.scrollTop, atEnd = y + view.clientHeight >= view.scrollHeight - 8;
@@ -776,7 +793,7 @@ for (const v of ['calendar', 'entry']) {
     raf = 0;
     const barRect = bar.getBoundingClientRect(), homeRect = home.getBoundingClientRect();
     const stuck = home.scrollTop > 0 && barRect.top <= homeRect.top + (parseFloat(getComputedStyle(bar).top) || 0) + 0.5;
-    bar.classList.toggle('stuck', stuck);
+    bar.classList.toggle('stuck', stuck); bar.querySelector('.stickysearch').tabIndex = stuck ? 0 : -1;
     let label = S.weekTitle;
     const listTop = $('list').getBoundingClientRect().top;
     if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
@@ -841,6 +858,7 @@ for (const v of ['calendar', 'entry']) {
     else if (top === 'calendar' && e.target.closest('#calarea')) { cand = 'track'; track = $('caltrack'); }
     else if (top === 'home' && e.target.closest('#weekwrap')) { cand = 'track'; track = $('weektrack'); }
     else if (top === 'entry' && !typing()) cand = 'entry';
+    else if (top === 'search' || top === 'settings') cand = 'pull';
   }, { passive: true });
   app.addEventListener('touchmove', (e) => {
     if (!cand && !mode) return;
@@ -849,13 +867,15 @@ for (const v of ['calendar', 'entry']) {
     if (!mode) {
       if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
       if (Math.abs(dx) > Math.abs(dy)) {
+        if (cand === 'pull') { cand = null; return; }
         mode = cand; cand = null;
         if (mode === 'edge') { topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]); topEl.classList.add('dragging'); underEl.classList.add('dragging'); }
         if (mode === 'track') track.style.transition = 'none';
         if (mode === 'entry') { $('entryInner').style.transition = 'none'; canNext = !!adjacentOf(1); canPrev = !!adjacentOf(-1); }
-      } else if (cand === 'entry' && dy > 0 && $('entry').scrollTop <= 0 && S.stack.length > minStack() && !isDesktop()) {
+      } else if ((cand === 'entry' || cand === 'pull') && dy > 0 && $(S.stack[S.stack.length - 1]).scrollTop <= 0 && S.stack.length > minStack() && !isDesktop()) {
         mode = 'pull'; cand = null;
-        topEl = $('entry'); underEl = $(S.stack[S.stack.length - 2]);
+        if (typing()) document.activeElement.blur();
+        topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]);
         topEl.classList.add('dragging'); underEl.classList.add('dragging'); underEl.style.transform = 'translate3d(0,0,0)';
       } else { cand = null; return; }
     }
@@ -1102,6 +1122,7 @@ async function renderAbout() {
   reindex();
   const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth();
   renderHome();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderWeek());
   if (isDesktop()) { S.stack = ['home', 'entry']; openEntry((S.byDate.get(keyOf(t)) || [])[0] || draftFor(keyOf(t))); }
   applyStack();
   matchMedia('(min-width: 960px)').addEventListener('change', () => {
