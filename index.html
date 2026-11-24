@@ -328,9 +328,21 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .view{left:var(--side)}
   #home::after{display:none}
   #home{left:0;width:var(--side);right:auto;transform:none !important;visibility:visible !important;opacity:1 !important;border-right:1px solid var(--line);z-index:10}
-  .view{transition:transform .44s var(--sheet), opacity .32s var(--ease), visibility 0s linear 0s}
-  .view.is-off{transition:transform .44s var(--sheet), opacity .32s var(--ease), visibility 0s linear .44s}
-  .view.is-under{transform:translateX(-3%);opacity:0}
+  /* Mac: Ansichten wechseln als ruhige Überblendung mit leichtem Zoom statt Hereinschieben */
+  .view{transition:transform .7s var(--sheet), opacity .42s var(--ease) .08s, visibility 0s linear 0s}
+  .view.is-top{box-shadow:none}
+  .view.is-off{transform:translate3d(0,14px,0) scale(.99);opacity:0;transition:transform .5s var(--sheet), opacity .2s var(--ease), visibility 0s linear .5s}
+  .view.is-under{transform:scale(.988);opacity:0;transition:transform .5s var(--sheet), opacity .2s var(--ease), visibility 0s}
+  .view::after{display:none}
+  .app{background:var(--sheetbg)} /* heller Untergrund, damit die Überblendung nicht dunkel durchscheint */
+  @keyframes rise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
+  #settings.is-top .page > *{animation:rise .8s var(--sheet) both}
+  #settings.is-top .page > :nth-child(2){animation-delay:.06s} #settings.is-top .page > :nth-child(3){animation-delay:.11s}
+  #settings.is-top .page > :nth-child(4){animation-delay:.16s} #settings.is-top .page > :nth-child(5){animation-delay:.21s}
+  #settings.is-top .page > :nth-child(6){animation-delay:.26s}
+  .setbtn circle{transition:transform .55s var(--sheet)}
+  #home.set-open .setbtn circle:first-of-type{transform:translateX(-8px)}
+  #home.set-open .setbtn circle:last-of-type{transform:translateX(8px)}
   .hero{padding-top:28px}
   .herofoot{display:none}
   #entry .floatbtn{display:none}
@@ -351,11 +363,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:32px;bottom:32px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
-  .sidecal{display:grid;grid-template-rows:1fr;margin-top:8px;border-top:1px solid var(--nline);padding-bottom:6px;
-    transition:grid-template-rows .5s var(--sheet), padding .5s var(--sheet), margin .5s var(--sheet), border-color .3s var(--ease)}
-  .scinner{min-height:0;overflow:hidden;transition:opacity .3s var(--ease)}
-  #home.cal-in .sidecal{grid-template-rows:0fr;padding-bottom:0;margin-top:0;border-top-color:transparent}
-  #home.cal-in .scinner{opacity:0;pointer-events:none}
+  .sidecal{display:block;overflow:hidden;border-top:1px solid var(--nline);margin-top:8px}
+  .sidecal.snapping{transition:height .45s var(--sheet)}
+  .scinner{padding-bottom:6px;transform-origin:50% 0}
+  #home.cal-in .sidecal{border-top-color:transparent}
+  #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
   .fabwrap{padding-bottom:20px}
@@ -377,6 +389,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .page.wide{max-width:768px}
 }
 @media (prefers-reduced-motion: reduce){
+  #settings.is-top .page > *{animation:none}
   .view,.view.is-off,.view::after{transition:none}
   .entry.in-l,.entry.in-r{animation:none}
 }
@@ -943,6 +956,7 @@ function applyStack() {
     else el.classList.add('is-off');
     el.setAttribute('aria-hidden', v === top || (v === 'home' && isDesktop()) ? 'false' : 'true');
   }
+  $('home').classList.toggle('set-open', top === 'settings');
   document.querySelectorAll('.floatbtn.away').forEach((b) => b.classList.remove('away'));
   if (isDesktop()) updateSideSel();
   $('homePlus').classList.toggle('off', isDesktop() && top !== 'entry');
@@ -1128,26 +1142,51 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   if (Math.abs(L.scrollTop - target) < 2) return;
   S.autoScrollUntil = performance.now() + 900; L.scrollTo({ top: target, behavior: 'smooth' });
 }
-(function listSync() { // Mac: beim Scrollen fährt der Kalender ein, nur Monat + Jahr bleiben stehen
-  const L = $('list'); let raf = 0, openedAt = 0;
-  const setIn = (on) => { $('home').classList.toggle('cal-in', on); };
-  L.addEventListener('scroll', () => {
-    if (!isDesktop()) return;
-    const auto = performance.now() < (S.autoScrollUntil || 0), y = L.scrollTop, isIn = $('home').classList.contains('cal-in');
-    if (y <= 2) { if (isIn) setIn(false); }
-    else if (!auto && !isIn && Math.abs(y - openedAt) > 24) setIn(true);
-    if (!raf) raf = requestAnimationFrame(() => {
+(function listSync() {
+  /* Mac: der Kalender fährt beim Scrollen mit dem Finger ein (wie eine einfahrende Leiste in iOS).
+     Erst wird die Leiste kleiner, dann scrollt die Liste. Nach oben: am Listenanfang fährt sie wieder aus. */
+  const L = $('list'), cal = $('sidecal'), inner = cal.querySelector('.scinner'); let h = null, snapT = null, raf = 0;
+  const full = () => inner.offsetHeight;
+  function apply(nh, snap) {
+    const f = full(); h = Math.max(0, Math.min(f, nh));
+    cal.classList.toggle('snapping', !!snap);
+    if (h >= f && snap) { cal.style.height = f + 'px'; clearTimeout(apply.t); apply.t = setTimeout(() => { if (h >= full()) { cal.classList.remove('snapping'); cal.style.height = ''; } }, 470); }
+    else if (h >= f) { cal.style.height = ''; }
+    else cal.style.height = h + 'px';
+    const p = f ? h / f : 1;
+    inner.style.transition = snap ? 'opacity .45s var(--sheet)' : 'none';
+    inner.style.opacity = String(Math.max(0, (p - 0.25) / 0.75).toFixed(3));
+    $('home').classList.toggle('cal-in', h <= 0.5);
+    updateTitle();
+  }
+  function updateTitle() {
+    if (raf) return; raf = requestAnimationFrame(() => {
       raf = 0; const row = L.scrollTop > 2 && $('home').classList.contains('cal-in') ? topRowOfList() : null;
       if (row) { const d = parseKey(row.dataset.date); S.listTitle = MONTHS[d.getMonth()] + '|' + d.getFullYear(); } else S.listTitle = null;
-      S.updateHomeTitle && S.updateHomeTitleSoft();
+      S.updateHomeTitleSoft && S.updateHomeTitleSoft();
     });
-  }, { passive: true });
+  }
+  function settle() { // nach dem Loslassen sanft ganz ein- oder ausfahren
+    const f = full(); if (h == null || h <= 0 || h >= f) return;
+    apply(h > f * 0.5 && L.scrollTop <= 0 ? f : 0, true);
+  }
+  L.addEventListener('wheel', (e) => {
+    if (!isDesktop() || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    const f = full(); if (h == null) h = f;
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    if (dy > 0 && h > 0) { e.preventDefault(); apply(h - dy); }
+    else if (dy < 0 && L.scrollTop <= 0 && h < f) { e.preventDefault(); apply(h - dy); }
+    else return;
+    clearTimeout(snapT); snapT = setTimeout(settle, 160);
+  }, { passive: false });
+  L.addEventListener('scroll', () => { if (isDesktop()) updateTitle(); }, { passive: true });
+  S.calExpand = () => apply(full(), true);
   $('homeTitle').addEventListener('click', () => {
     if (!isDesktop()) return;
-    if ($('home').classList.contains('cal-in')) { // ausfahren, und zwar dort, wo die Liste gerade steht
+    if ($('home').classList.contains('cal-in') || (h != null && h < full())) { // ausfahren, und zwar dort, wo die Liste gerade steht
       const row = topRowOfList();
       if (row) { const d = parseKey(row.dataset.date); if (S.side.mode === 'week') S.side.w = weekOf(d); else { S.side.y = d.getFullYear(); S.side.m = d.getMonth(); } }
-      S.listTitle = null; openedAt = L.scrollTop; setIn(false); renderSide(); updateSideSel(); return;
+      S.listTitle = null; renderSide(); updateSideSel(); apply(full(), true); return;
     }
     S.listTitle = null; setSideMode(S.side.mode === 'week' ? 'month' : 'week');
   });
