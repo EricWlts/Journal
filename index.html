@@ -1208,12 +1208,7 @@ function back() {
   if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(); }
   applyStack();
   if (leaving === 'entry' || S.homeDirty) { renderHome(); if (S.stack.includes('calendar')) renderCalendar(); }
-  if (leaving === 'entry' && !isDesktop() && S.cur && S.cur.id) { // iPhone: die Karte des eben gelesenen Eintrags leuchtet kurz dunkel auf
-    for (const r of document.querySelectorAll('.row[data-id="' + CSS.escape(S.cur.id) + '"]')) {
-      r.style.transition = 'none'; r.classList.add('is-current'); void r.offsetWidth; r.style.transition = '';
-      setTimeout(() => { r.style.transition = 'background-color .9s var(--ease), color .9s var(--ease)'; r.classList.remove('is-current'); setTimeout(() => { r.style.transition = ''; }, 950); }, 650);
-    }
-  }
+
 }
 
 /* ---------- actions ---------- */
