@@ -209,6 +209,30 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   font-size:15px;font-weight:500;box-shadow:0 30px 50px -30px rgba(8,10,8,.55);transition:transform .12s var(--ease)}
 .fab:active{transform:scale(.97)}
 .row{transition:background-color .2s var(--ease)}
+/* Einträge als ruhige Karten (iPhone + Mac); gewählter/eben geöffneter Eintrag als dunkle Fläche wie der Kopf */
+.list{padding-left:12px;padding-right:12px}
+#results{margin:0 -12px}
+:is(#list,#results) .sep{padding-left:12px;padding-right:12px}
+:is(#list,#results) .row{position:relative;overflow:hidden;padding:15px 12px 16px;border-bottom:0;border-radius:6px;gap:16px;
+    transition:background-color .25s var(--ease), color .25s var(--ease)}
+:is(#list,#results) .row::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;background:var(--line);transition:opacity .2s var(--ease)}
+:is(#list,#results) .mgroup > .row:first-child::before,:is(#list,#results) .sep + .row::before{opacity:0}
+:is(#list,#results) .row.is-current{margin:0;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:6px}
+:is(#list,#results) .row.is-current::before,:is(#list,#results) .row.is-current + .row::before{opacity:0}
+:is(#list,#results) .row.is-current .n,:is(#list,#results) .row.is-current .ti{color:var(--linen)}
+:is(#list,#results) .row.is-current .wd,:is(#list,#results) .row.is-current .ex,:is(#list,#results) .row.is-current .mt{color:var(--mist)}
+:is(#list,#results) .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+:is(#list,#results) .row .ph{display:flex;align-items:center;gap:3px}
+:is(#list,#results) .row .ex{-webkit-line-clamp:2}
+:is(#list,#results) .row .d{width:40px}
+:is(#list,#results) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
+:is(#list,#results) .row.is-current .tm{color:var(--mist)}
+@media (hover:hover) and (pointer:fine){
+    :is(#list,#results) .row:not(.is-current):hover{background:rgba(38,48,43,.055)}
+    :is(#list,#results) .row:not(.is-current):hover::before,:is(#list,#results) .row:not(.is-current):hover + .row::before{opacity:0}
+}
+:is(#list,#results) .row:not(.is-current):active{background:rgba(38,48,43,.09);transition-duration:0s}
+
 /* iPhone: Eintrag nach links wischen = Löschen anbieten */
 .row{position:relative;--sx:0px}
 .row > span{transform:translate3d(var(--sx),0,0)}
@@ -217,6 +241,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   display:flex;align-items:center;justify-content:center;background:#9b4434;color:var(--linen);font-size:14px;font-weight:500;pointer-events:none}
 .row.snap::after{transition:width .42s var(--sheet)}
 .row.swiping,.row.is-open{background:transparent !important}
+.row.is-open::before,.row.swiping::before{opacity:0}
 .confirm{position:fixed;inset:0;z-index:70}
 .confirm .cback{position:absolute;inset:0;background:rgba(8,10,8,.42);opacity:0;transition:opacity .35s var(--ease)}
 .confirm .cpanel{position:absolute;left:0;right:0;bottom:0;background:var(--sheetbg);border-radius:18px 18px 0 0;padding:26px 24px calc(var(--safe-b) + 18px);
@@ -438,28 +463,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
-  /* Seitenleiste: ruhige Karten, gewählter Eintrag als dunkle Fläche wie der Kopf */
   #list{padding:2px 12px 24px}
-  #list .sep{padding-left:12px;padding-right:12px}
-  #list .row{position:relative;padding:15px 12px 16px;border-bottom:0;border-radius:6px;gap:16px;
-    transition:background-color .25s var(--ease), color .25s var(--ease)}
-  #list .row::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;background:var(--line);transition:opacity .2s var(--ease)}
-  #list .mgroup > .row:first-child::before,#list .sep + .row::before{opacity:0}
-  #list .row.is-current{margin:0;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:6px}
-  #list .row.is-current::before,#list .row.is-current + .row::before{opacity:0}
-  #list .row.is-current .n,#list .row.is-current .ti{color:var(--linen)}
-  #list .row.is-current .wd,#list .row.is-current .ex,#list .row.is-current .mt{color:var(--mist)}
-  #list .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
-  #list .row .ph{display:flex;align-items:center;gap:3px}
-  #list .row .ex{-webkit-line-clamp:2}
-  #list .row .d{width:40px}
-  #list .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
-  #list .row.is-current .tm{color:var(--mist)}
-  @media (hover:hover) and (pointer:fine){
-    #list .row:not(.is-current):hover{background:rgba(38,48,43,.055)}
-    #list .row:not(.is-current):hover::before,#list .row:not(.is-current):hover + .row::before{opacity:0}
-  }
-  #list .row:not(.is-current):active{background:rgba(38,48,43,.09)}
   .fabwrap{padding-bottom:20px}
   .fab{width:100%;height:44px}
   .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
@@ -473,10 +477,17 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #homeTitle .y{transition:color .2s var(--ease)}
   /* rechts an der Seitenleiste ausgerichtet: Datum = Höhe der Tabs, Titel = Grundlinie des Monats, Text = Höhe des Kalenders */
   .page{padding-top:12px}
-  .entry{padding-top:56px}
-  .entry .enav{height:72px;align-items:flex-end;padding-bottom:12px} /* Datum in der Zeile des großen Monats, unten bündig */
+  .entry{padding-top:150px}
+  /* Datum als Kicker direkt über der Überschrift (wie bei WANDER), Mülleimer in derselben Zeile rechts */
+  .entry .enav{height:44px;align-items:center;padding:0}
+  .entry .edate{flex-direction:row;align-items:baseline;gap:0;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+  .entry .edate .wd{font-size:12px;font-weight:600;color:var(--olive)}
+  .entry .edate .wd::after{content:'·';margin:0 .7em;font-weight:500;color:var(--dim)}
+  .entry .edate .dt{font-size:12px;font-weight:500;color:var(--dim)}
+  .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
+  #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
   /* Überschrift + Text: erste Titelzeile beginnt knapp über dem Ende des dunklen Blocks in der Woche (291px) */
-  .entry .title,.etitle{font-size:56px;line-height:64px;letter-spacing:-.03em;margin-top:81px;padding-top:0;min-height:64px;display:block}
+  .entry .title,.etitle{font-size:56px;line-height:64px;letter-spacing:-.03em;margin-top:15px;padding-top:0;min-height:64px;display:block}
   .ebody{margin-top:22px}
   .page .title{margin:0;padding-top:8px;height:72px}
   .page .title .t{font-size:56px;line-height:64px} .page .title .y{font-size:38px}
@@ -797,7 +808,8 @@ function rowHTML(e) {
 }
 function markCurrentRow() {
   document.querySelectorAll('.row.is-current').forEach((r) => r.classList.remove('is-current'));
-  if (isDesktop() && S.cur && S.cur.id) { const r = document.querySelector('#list .row[data-id="' + CSS.escape(S.cur.id) + '"]'); if (r) r.classList.add('is-current'); }
+  if (!isDesktop()) return;
+  if (S.cur && S.cur.id) { const r = document.querySelector('#list .row[data-id="' + CSS.escape(S.cur.id) + '"]'); if (r) r.classList.add('is-current'); }
 }
 function monthGridHTML(y, m, compact) {
   const first = new Date(y, m, 1); const lead = mondayIdx(first); const n = daysIn(y, m);
@@ -1177,6 +1189,12 @@ function back() {
   if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(); }
   applyStack();
   if (leaving === 'entry' || S.homeDirty) { renderHome(); if (S.stack.includes('calendar')) renderCalendar(); }
+  if (leaving === 'entry' && !isDesktop() && S.cur && S.cur.id) { // iPhone: die Karte des eben gelesenen Eintrags leuchtet kurz dunkel auf
+    for (const r of document.querySelectorAll('.row[data-id="' + CSS.escape(S.cur.id) + '"]')) {
+      r.style.transition = 'none'; r.classList.add('is-current'); void r.offsetWidth; r.style.transition = '';
+      setTimeout(() => { r.style.transition = 'background-color .9s var(--ease), color .9s var(--ease)'; r.classList.remove('is-current'); setTimeout(() => { r.style.transition = ''; }, 950); }, 650);
+    }
+  }
 }
 
 /* ---------- actions ---------- */
