@@ -64,6 +64,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 /* home */
 #home{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
 .hero{background:var(--night);color:var(--linen);padding:calc(var(--safe-t) + 8px) 24px 20px}
+#home > .hero:first-of-type{padding-bottom:0}
+.herorest{padding-top:0}
+.stickytitle{position:sticky;top:var(--safe-t);z-index:6;background:var(--night);color:var(--linen);padding:0 24px}
+.stickytitle .title{margin:0;padding-top:8px;height:72px}
+.stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:var(--night);opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
+  box-shadow:0 1px 0 var(--nline)}
+.stickytitle.stuck::after{opacity:1}
+#homeTitle{transition:opacity .35s var(--ease)}
 .topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
 .weekline{height:1px;background:var(--nline);margin-top:16px;position:relative}
 .todayline{position:relative;height:30px;margin-top:10px;display:flex;align-items:center;justify-content:center;transition:opacity .45s var(--ease)}
@@ -238,7 +246,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home{left:0;width:var(--side);right:auto;transform:none !important;visibility:visible !important;opacity:1 !important;border-right:1px solid var(--line);z-index:10}
   .view.is-under{transform:translateX(-4%);opacity:0}
   .hero{padding-top:40px}
-  .hero .title .t{font-size:56px;line-height:64px} .hero .title .y{font-size:38px}
+  .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
+  .herorest{padding-top:0}
   .topbar{justify-content:space-between;margin-left:-10px}
   .weekwrap,.weekline,.todayline{display:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
@@ -273,16 +282,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 
   <!-- Übersicht -->
   <section class="view is-top" id="home" aria-label="Übersicht">
-    <div class="minibar" id="minibar">
-      <span class="mt" id="miniTitle"></span>
-      <button class="iconbtn" data-act="search" aria-label="Suchen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
-    </div>
     <header class="hero dark">
       <div class="topbar">
         <button class="iconbtn" data-act="settings" aria-label="Einstellungen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
         <button class="iconbtn" data-act="search" aria-label="Suchen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
       </div>
-      <h1 class="title" id="homeTitle"></h1>
+    </header>
+    <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1></div>
+    <header class="hero dark herorest">
       <div class="weekline"></div>
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
       <div class="todayline off" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" aria-label="Zurück zu heute" tabindex="-1"></button></div>
@@ -471,7 +478,7 @@ function renderHome() {
     for (const e of S.entries) {
       const mk = e.date.slice(0, 7);
       if (mk !== lastMonth) {
-        if (mk !== curMonth || lastMonth) { const d = parseKey(e.date); html += '<div class="sep kicker">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; }
+        if (mk !== curMonth || lastMonth) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; }
         lastMonth = mk;
       }
       html += rowHTML(e);
@@ -482,6 +489,7 @@ function renderHome() {
   $('fabLabel').textContent = hasEntry(tk) ? 'Heute weiterschreiben' : 'Heute schreiben';
   markCurrentRow();
   S.homeDirty = false;
+  if (S.updateHomeTitle) S.updateHomeTitle();
 }
 function weekStart(off) { const t = today(); const d = new Date(t); d.setDate(t.getDate() - mondayIdx(t) + off * 7); return d; }
 function weekPanelHTML(off) {
@@ -496,8 +504,8 @@ function weekPanelHTML(off) {
 function renderWeek() {
   const off = S.weekOff, t = today(), mon = weekStart(off), sun = new Date(mon); sun.setDate(mon.getDate() + 6);
   const ref = off === 0 ? t : new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 3); // Donnerstag bestimmt den Monat
-  $('homeTitle').innerHTML = titleHTML(MONTHS[ref.getMonth()], ref.getFullYear());
-  $('miniTitle').innerHTML = esc(MONTHS[ref.getMonth()]) + ' <i>' + ref.getFullYear() + '</i>';
+  S.weekTitle = MONTHS[ref.getMonth()] + '|' + ref.getFullYear();
+  if (S.updateHomeTitle) S.updateHomeTitle(); else $('homeTitle').innerHTML = titleHTML(MONTHS[ref.getMonth()], ref.getFullYear());
   $('weektrack').innerHTML = weekPanelHTML(off - 1) + weekPanelHTML(off) + weekPanelHTML(off + 1);
   resetTrack($('weektrack'));
   const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
@@ -506,7 +514,7 @@ function renderWeek() {
   $('todayLine').classList.toggle('off', off === 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
   $('thisWeekBtn').innerHTML = off > 0 ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Heute' : 'Heute<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 }
-function softIn(...els) { for (const el of els) { el.style.transition = ''; el.style.opacity = ''; el.classList.remove('soft-in'); void el.offsetWidth; el.classList.add('soft-in'); } }
+function softIn(...els) { for (const el of els) { if (el.classList.contains('is-empty')) { el.style.transition = ''; el.style.opacity = ''; continue; } el.style.transition = ''; el.style.opacity = ''; el.classList.remove('soft-in'); void el.offsetWidth; el.classList.add('soft-in'); } }
 function fadeWith(els, f) { for (const el of els) { el.style.transition = 'none'; el.style.opacity = String(f); } }
 const trackX = (tr, extra) => Math.round(-tr.parentElement.clientWidth + (extra || 0)); // ganze Pixel = scharfe Schrift
 function resetTrack(tr) { tr.style.transition = 'none'; tr.style.transform = 'translate3d(' + trackX(tr) + 'px,0,0)'; }
@@ -521,7 +529,7 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
 function shiftWeek(dir, ms) { fadeWith([$('weekStat')], 0); slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); softIn($('weekStat')); }, ms); }
 function rowHTML(e) {
   const d = parseKey(e.date);
-  return '<button class="row" data-act="open" data-id="' + esc(e.id) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
+  return '<button class="row" data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
     '</span></span><span class="tx"><span class="ti">' + esc(titleOf(e)) + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
 }
 function markCurrentRow() {
@@ -757,9 +765,31 @@ for (const v of ['calendar', 'entry']) {
   }, { passive: true });
 }
 
-/* compact bar on scroll (home) */
-new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classList.toggle('show', !en.isIntersecting); },
-  { root: $('home'), threshold: 0, rootMargin: '-60px 0px 0px 0px' }).observe($('homeTitle'));
+/* Startseite: Monatstitel bleibt oben stehen und folgt dem Monat der Einträge darunter */
+(function stickyTitle() {
+  const home = $('home'), bar = $('stickyTitle'); let raf = 0, shown = '';
+  function update() {
+    raf = 0;
+    const barRect = bar.getBoundingClientRect(), homeRect = home.getBoundingClientRect();
+    const stuck = home.scrollTop > 0 && barRect.top <= homeRect.top + (parseFloat(getComputedStyle(bar).top) || 0) + 0.5;
+    bar.classList.toggle('stuck', stuck);
+    let label = S.weekTitle;
+    const listTop = $('list').getBoundingClientRect().top;
+    if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
+      const x = homeRect.left + 60, y = barRect.bottom + 14;
+      const el = document.elementFromPoint(x, y); const row = el && el.closest('.row, .sep');
+      const dk = row && (row.dataset.date || row.dataset.month);
+      if (dk) { const d = parseKey(dk.length === 7 ? dk + '-01' : dk); label = MONTHS[d.getMonth()] + '|' + d.getFullYear(); }
+    }
+    if (label && label !== shown) {
+      const [mname, yr] = label.split('|'); const changed = !!shown; shown = label;
+      $('homeTitle').innerHTML = titleHTML(mname, yr);
+      if (changed) softIn($('homeTitle'));
+    }
+  }
+  home.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  S.updateHomeTitle = () => { shown = ''; update(); };
+})();
 
 /* ---------- gestures: touch ---------- */
 /* Physik: Geschwindigkeit aus den letzten ~100 ms, Wurfweite wird mitgerechnet,
