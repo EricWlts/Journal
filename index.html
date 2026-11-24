@@ -76,8 +76,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .stickysearch{position:absolute;right:14px;top:8px;color:var(--linen);opacity:0;transform:translateY(-12px);pointer-events:none;
   transition:opacity .3s var(--ease), transform .45s var(--sheet)}
 .stickytitle.stuck .stickysearch{opacity:1;transform:none;pointer-events:auto}
-#homeTitle{transform-origin:0 70%;transition:opacity .35s var(--ease), transform .5s var(--sheet)}
-#homeTitle{transition:opacity .35s var(--ease)}
+#homeTitle,#homeTitleNext{transform-origin:0 70%;transition:scale .5s var(--sheet)}
+.stickytitle .titlenext{position:absolute;left:24px;top:0;opacity:0;pointer-events:none}
 .topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
 .weekline{height:1px;background:var(--nline);margin-top:16px;position:relative}
 .todayline{position:relative;height:20px;margin-top:4px;--hw:0px;--gl:0px;--gr:0px;--c:-4px} /* --c: optische Mitte für die Kursive */
@@ -133,7 +133,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .herofoot .lbl{color:var(--mist)}
 .linkbtn{display:flex;align-items:center;gap:6px;height:44px;font-weight:500}
 .sidecal{display:none}
-.sctabs{display:none}
+.topbar .sctabs{display:none} /* iPhone: Woche · Monat · Jahr nur in der Kalender-Ansicht */
 .dsearch{display:none}
 .searchbtn{position:relative}
 .searchbtn svg{position:absolute;transition:opacity .2s var(--ease), transform .45s var(--sheet)}
@@ -191,10 +191,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .minibar .mt i{color:var(--dim)}
 .list{background:var(--paper);padding:4px 24px 8px;min-height:55vh}
 .sep{padding:28px 0 6px}
-.mgroup > .sep{position:sticky;top:calc(var(--safe-t) + 86px);z-index:2;margin-top:18px;padding:10px 0 8px;background:var(--paper);
-  box-shadow:0 1px 0 var(--line)} /* wie die Kapitelleiste in WANDER: bleibt stehen, bis der nächste Monat sie hinausschiebt */
-.mgroup > .sep + .row{border-top:0}
-#results .mgroup > .sep{top:var(--safe-t)}
 .row{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line);width:100%;text-align:left;content-visibility:auto;contain-intrinsic-size:auto 104px}
 .row .d{width:34px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
 .row .n{font-family:var(--serif);font-size:32px;line-height:.95;font-variant-numeric:tabular-nums}
@@ -363,7 +359,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .ptr.spin .ptr-arc{stroke-dasharray:28 72;stroke-dashoffset:0;transition:stroke-dasharray .3s var(--ease)}
 .ptr.spin svg{animation:ptrspin .9s cubic-bezier(0.5, 0.15, 0.5, 0.85) infinite}
 @keyframes ptrspin{from{transform:rotate(-90deg)}to{transform:rotate(270deg)}}
-@media (min-width: 960px){.ptr{display:none} .mgroup > .sep{top:0}}
+@media (min-width: 960px){.ptr{display:none}}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field span{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
 .field input{height:48px;border:0;border-bottom:1px solid var(--line);background:transparent;font:400 17px var(--sans);color:var(--ink);outline:none;border-radius:0;padding:0}
@@ -412,7 +408,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
   .herorest{padding-top:0}
   .topbar{justify-content:flex-end;position:relative}
-  .sctabs{display:flex;margin-right:14px;transition:opacity .25s var(--ease)}
+  .topbar .sctabs{display:flex;margin-right:14px;margin-left:0;transition:opacity .25s var(--ease)}
   #home.searching .sctabs{opacity:0;pointer-events:none}
   .dsearch{display:flex;align-items:center;position:absolute;right:44px;top:0;height:44px;width:0;opacity:0;overflow:hidden;pointer-events:none;
     border-bottom:1px solid var(--nline);transition:width .55s var(--sheet), opacity .3s var(--ease), border-color .3s var(--ease)}
@@ -447,7 +443,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #home > *{flex:none}
   #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0}
   .stickytitle::after{display:none}
-  #homeTitle{cursor:pointer;transition:opacity .35s var(--ease)}
+  #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
   #homeTitle .y{transition:color .2s var(--ease)}
   .entry .title,.etitle{font-size:64px;line-height:1;padding-top:0;display:block}
@@ -479,7 +475,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       </div>
     </header>
     <div class="ptr" id="ptr" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle class="ptr-track" cx="15" cy="15" r="11"/><circle class="ptr-arc" cx="15" cy="15" r="11" pathLength="100"/></svg></div>
-    <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1><button class="iconbtn stickysearch" data-act="search" aria-label="Suchen" tabindex="-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button></div>
+    <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1><div class="title titlenext" id="homeTitleNext" aria-hidden="true"></div><button class="iconbtn stickysearch" data-act="search" aria-label="Suchen" tabindex="-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button></div>
     <header class="hero dark herorest">
       <div class="weekline"></div>
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
@@ -1297,14 +1293,41 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
 })();
 
 function fitStuck(stuck) { // eingeklappt: Titel so weit verkleinern, dass er die Lupe nicht berührt
-  const h = $('homeTitle'), t = h.querySelector('.t'), y = h.querySelector('.y'); if (!t || !y) return;
-  const w = t.offsetWidth + 12 + y.offsetWidth, room = $('stickyTitle').clientWidth - 24 - 58;
-  const k = stuck && w > room ? Math.max(0.7, room / w) : 1;
-  h.style.transform = k < 1 ? 'scale(' + k.toFixed(3) + ')' : '';
+  for (const h of [$('homeTitle'), $('homeTitleNext')]) {
+    const t = h.querySelector('.t'), y = h.querySelector('.y'); if (!t || !y) continue;
+    const w = t.offsetWidth + 12 + y.offsetWidth, room = $('stickyTitle').clientWidth - 24 - 58;
+    const k = stuck && w > room ? Math.max(0.7, room / w) : 1;
+    h.style.scale = k < 1 ? k.toFixed(3) : '';
+  }
+}
+/* Monatstitel an die Liste gekoppelt: kommt der kleine Monat der Liste unten an der Kante an,
+   schiebt sich der große Monat im selben Tempo nach oben weg und der neue gleitet von unten nach. */
+const monthLabel = (mk) => { const d = parseKey(mk + '-01'); return MONTHS[d.getMonth()] + '|' + d.getFullYear(); };
+function listMonthAt(edge) { // aktueller Monat an der Kante + der nächste kleine Monat darunter samt Fortschritt
+  const L = $('list'), Z = 96; let cur = null, next = null, p = 0;
+  for (const s of L.querySelectorAll('.sep[data-month]')) {
+    const top = s.getBoundingClientRect().top;
+    if (top <= edge) cur = s.dataset.month;
+    else { if (top < edge + Z) { next = s.dataset.month; p = 1 - (top - edge) / Z; } break; }
+  }
+  if (!cur) { const r = L.querySelector('.row'); cur = r ? r.dataset.date.slice(0, 7) : null; }
+  return { cur: cur && monthLabel(cur), next: next && monthLabel(next), p };
+}
+function setTitleNow(label) {
+  const h = $('homeTitle'), [m, y] = label.split('|'); const t = h.querySelector('.t'), yy = h.querySelector('.y');
+  if (t && yy && (t.dataset.to || t.textContent) === m && (yy.dataset.to || yy.textContent) === y) return false;
+  h.innerHTML = titleHTML(m, y); return true;
+}
+function linkTitle(next, p) {
+  const h = $('homeTitle'), n = $('homeTitleNext');
+  if (next && n.dataset.l !== next) { const [m, y] = next.split('|'); n.innerHTML = titleHTML(m, y); n.dataset.l = next; }
+  const e = p * p * (3 - 2 * p), D = 34; // weich beschleunigen und abbremsen
+  h.style.translate = e ? '0 ' + (-e * D).toFixed(1) + 'px' : ''; h.style.opacity = e ? String(Math.max(0, 1 - e * 1.5).toFixed(3)) : '';
+  n.style.translate = '0 ' + ((1 - e) * D).toFixed(1) + 'px'; n.style.opacity = next ? String(Math.max(0, (e - 0.25) / 0.75).toFixed(3)) : '0';
 }
 /* Startseite: Monatstitel bleibt oben stehen und folgt dem Monat der Einträge darunter */
 (function stickyTitle() {
-  const home = $('home'), bar = $('stickyTitle'); let raf = 0, shown = '', lastY = 0;
+  const home = $('home'), bar = $('stickyTitle'); let raf = 0, shown = '';
   function update() {
     raf = 0;
     const barRect = bar.getBoundingClientRect(), homeRect = home.getBoundingClientRect();
@@ -1312,22 +1335,16 @@ function fitStuck(stuck) { // eingeklappt: Titel so weit verkleinern, dass er di
     bar.classList.toggle('stuck', stuck); bar.querySelector('.stickysearch').tabIndex = stuck ? 0 : -1;
     if (!isDesktop()) fitStuck(stuck);
     let label = isDesktop() ? (S.listTitle || S.sideTitle) : S.weekTitle;
-    if (isDesktop()) { if (label) { shown = label; animTitle(label, S.titleDir || 0, S.titleVert); S.titleDir = 0; S.titleVert = false; } return; }
-    const dirY = home.scrollTop >= lastY ? 1 : -1; lastY = home.scrollTop;
-    const listTop = $('list').getBoundingClientRect().top;
-    if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
-      const x = homeRect.left + 60, y = barRect.bottom + 30;
-      const el = document.elementFromPoint(x, y); const row = el && el.closest('.row, .sep, .mgroup');
-      const dk = row && (row.dataset.date || row.dataset.month || (row.querySelector('.row') || {}).dataset?.date);
-      if (dk) { const d = parseKey(dk.length === 7 ? dk + '-01' : dk); label = MONTHS[d.getMonth()] + '|' + d.getFullYear(); }
-      else if (shown) label = shown; // Lücke zwischen Einträgen getroffen: Monat behalten statt neu einblenden
+    if (isDesktop()) {
+      if (!label) return; shown = label;
+      if (S.listTitle) setTitleNow(label); else { linkTitle(null, 0); animTitle(label, S.titleDir || 0, S.titleVert); }
+      S.titleDir = 0; S.titleVert = false; return;
     }
-    if (label && label !== shown) {
-      const [mname, yr] = label.split('|'); const changed = !!shown; shown = label;
-      if (changed && $('homeTitle').querySelector('.t')) animTitle(label, dirY, true); // rutscht mit der Liste nach oben (bzw. unten)
-      else $('homeTitle').innerHTML = titleHTML(mname, yr);
-      setTimeout(() => fitStuck(bar.classList.contains('stuck')), 160);
-    }
+    const edge = barRect.bottom + (stuck ? 14 : 0);
+    let link = { next: null, p: 0 };
+    if (stuck && $('list').getBoundingClientRect().top < edge) { link = listMonthAt(edge); if (link.cur) label = link.cur; }
+    if (label && label !== shown) { shown = label; if (setTitleNow(label)) fitStuck(stuck); }
+    linkTitle(link.next, link.p);
   }
   home.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   S.updateHomeTitle = () => { shown = ''; update(); };
@@ -1381,10 +1398,11 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   }
   function updateTitle() {
     if (raf) return; raf = requestAnimationFrame(() => {
-      raf = 0; const row = L.scrollTop > 2 && $('home').classList.contains('cal-in') ? topRowOfList() : null;
-      if (row) { const d = parseKey(row.dataset.date); S.listTitle = MONTHS[d.getMonth()] + '|' + d.getFullYear(); } else S.listTitle = null;
-      S.titleDir = L.scrollTop >= (updateTitle.y || 0) ? 1 : -1; S.titleVert = true; updateTitle.y = L.scrollTop;
+      raf = 0; const on = L.scrollTop > 2 && $('home').classList.contains('cal-in');
+      const link = on ? listMonthAt(L.getBoundingClientRect().top) : null;
+      S.listTitle = link && link.cur ? link.cur : null;
       S.updateHomeTitleSoft && S.updateHomeTitleSoft();
+      if (link) linkTitle(link.next, link.p);
     });
   }
   function settle() { // nach dem Loslassen sanft ganz ein- oder ausfahren
