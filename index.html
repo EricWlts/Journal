@@ -962,18 +962,19 @@ function sideMove(dir, next, ms, after) {
   trackBusy = true;
   const vp = tr.parentElement, old = tr.children[1];
   const off = Math.round(new DOMMatrix(getComputedStyle(tr).transform).m41 - trackX(tr)); // falls das Trackpad den Kalender schon verschoben hat
-  const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true'); ghost.appendChild(old.cloneNode(true)); vp.appendChild(ghost);
+  const o0 = parseFloat(getComputedStyle(old).opacity) || 1, clone = old.cloneNode(true); clone.style.opacity = ''; clone.style.transition = '';
+  const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true'); ghost.appendChild(clone); vp.appendChild(ghost);
   Object.assign(S.side, next); renderSide(); softIn($('scStat'));
   const np = tr.children[1], E = 'cubic-bezier(0.32, 0.72, 0, 1)';
   if (fx === 'roll') {
-    ghost.animate([{ opacity: 1, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + off + 'px,' + (-dir * 34) + 'px,0)' }], { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
+    ghost.animate([{ opacity: o0, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + off + 'px,' + (-dir * 34) + 'px,0)' }], { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
     np.animate([{ opacity: 0, transform: 'translate3d(0,' + (dir * 38) + 'px,0)' }, { opacity: 1, transform: 'none' }], { duration: 540, delay: 150, easing: E, fill: 'backwards' });
   } else {
-    ghost.animate([{ opacity: 1, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + (off - dir * 10) + 'px,0,0)' }], { duration: 150, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
-    np.animate([{ opacity: 0, transform: 'translate3d(' + (dir * 12) + 'px,0,0)' }, { opacity: 1, transform: 'none' }], { duration: 440, delay: 130, easing: E, fill: 'backwards' });
+    ghost.animate([{ opacity: o0, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + (off - dir * 18) + 'px,0,0)' }], { duration: 260, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'forwards' });
+    np.animate([{ opacity: 0, transform: 'translate3d(' + (dir * 22) + 'px,0,0)' }, { opacity: 1, transform: 'none' }], { duration: 620, delay: 90, easing: E, fill: 'backwards' });
   }
   if (after) setTimeout(after, 260);
-  setTimeout(() => { ghost.remove(); trackBusy = false; }, 600);
+  setTimeout(() => { ghost.remove(); trackBusy = false; }, 720);
 }
 function sideToday() {
   S.listTitle = null;
@@ -982,21 +983,11 @@ function sideToday() {
   // Heute: der heutige Zeitraum liegt schon im Nachbarfeld, gleitet herein, dann pulsiert der heutige Tag kurz
   sideJump({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, true, () => markToday());
 }
-function markToday() { // „Heute“: um den heutigen Tag zeichnet sich ein Ring in einem Strich, dann löst er sich auf
+function markToday() { // „Heute“: der heutige Tag setzt ganz sanft auf – ohne Ring
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const vp = $('scview'), panel = $('sctrack').children[1]; if (!panel) return;
+  const panel = $('sctrack').children[1]; if (!panel) return;
   const dot = panel.querySelector('[data-key="' + keyOf(today()) + '"] .dot') || panel.querySelector('.yd.t');
-  if (!dot) return;
-  const r = dot.getBoundingClientRect(), v = vp.getBoundingClientRect(), size = r.width + 14;
-  const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg'), c = document.createElementNS(ns, 'circle');
-  svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size); svg.setAttribute('aria-hidden', 'true');
-  Object.assign(svg.style, { position: 'absolute', left: (r.left - v.left - 7) + 'px', top: (r.top - v.top - 7) + 'px', pointerEvents: 'none', overflow: 'visible', transform: 'rotate(-90deg)' });
-  c.setAttribute('cx', size / 2); c.setAttribute('cy', size / 2); c.setAttribute('r', size / 2 - 1); c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#f2f3ef');
-  c.setAttribute('stroke-width', '1.25'); c.setAttribute('stroke-linecap', 'round'); c.setAttribute('pathLength', '1'); c.setAttribute('stroke-dasharray', '1');
-  svg.appendChild(c); vp.appendChild(svg);
-  c.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 760, easing: 'cubic-bezier(0.4, 0, 0.3, 1)', fill: 'both' });
-  dot.animate([{ transform: 'scale(.82)', opacity: .5 }, { transform: 'scale(1)', opacity: 1 }], { duration: 620, delay: 240, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'backwards' });
-  svg.animate([{ opacity: 1, transform: 'rotate(-90deg) scale(1)' }, { opacity: 0, transform: 'rotate(-90deg) scale(1.12)' }], { duration: 420, delay: 820, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }).onfinish = () => svg.remove();
+  if (dot) dot.animate([{ transform: 'scale(1.18)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 700, delay: 80, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'backwards' });
 }
 function setSideMode(mode, y, m) {
   const needOpen = S.calIsOpen && !S.calIsOpen(); // teilweise oder ganz eingefahren: nach dem Wechsel ganz ausfahren
@@ -1695,7 +1686,7 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   let g = null, last = 0, settleT = null;
   function settle() {
     if (!g || g.fired) return;
-    if (g.area === 'side') { const tr = $('sctrack'); tr.style.transition = 'transform .4s var(--sheet)'; tr.style.transform = 'translate3d(' + trackX(tr) + 'px,0,0)'; const st = $('scStat'); st.style.transition = 'opacity .4s var(--ease)'; st.style.opacity = ''; g.acc = 0; return; }
+    if (g.area === 'side') { const tr = $('sctrack'); if (tr.children[1]) { tr.children[1].style.transition = 'opacity .4s var(--ease)'; tr.children[1].style.opacity = ''; } tr.style.transition = 'transform .4s var(--sheet)'; tr.style.transform = 'translate3d(' + trackX(tr) + 'px,0,0)'; const st = $('scStat'); st.style.transition = 'opacity .4s var(--ease)'; st.style.opacity = ''; g.acc = 0; return; }
     if (g.area !== 'entry') return;
     const el = $('entryInner'); el.style.transition = 'transform .36s var(--sheet), opacity .36s var(--sheet)'; el.style.transform = ''; el.style.opacity = '';
     setTimeout(() => { if (!g || g.fired || !g.acc) el.style.transition = ''; }, 380); g.acc = 0;
@@ -1715,8 +1706,9 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
     const dir = g.acc > 0 ? 1 : -1;
     if (g.area === 'side') { // Kalender folgt dem Finger, ab einem Viertel der Breite blättert er weiter
       const tr = $('sctrack'), w = tr.parentElement.clientWidth, a = Math.abs(g.acc), sl = S.fx === 'slide';
-      const x = sl ? Math.max(-w, Math.min(w, -g.acc)) : -dir * 22 * (1 - 1 / (a / 70 + 1)); // Gleiten folgt 1:1, sonst nur ein leichter Zug
+      const x = sl ? Math.max(-w, Math.min(w, -g.acc)) : -dir * 44 * (1 - 1 / (a / 110 + 1)); // Gleiten folgt 1:1, sonst ein weicher, gedämpfter Zug
       tr.style.transition = 'none'; tr.style.transform = 'translate3d(' + trackX(tr, x) + 'px,0,0)';
+      if (!sl && tr.children[1]) { tr.children[1].style.transition = 'none'; tr.children[1].style.opacity = String((1 - 0.55 * Math.min(1, a / (w * 0.25))).toFixed(3)); }
       fadeWith([$('scStat')], Math.max(0, 1 - a / (w * 0.4)));
       if (a > w * 0.25) { g.fired = true; shiftSide(dir, Math.round(Math.max(200, 380 * (1 - Math.abs(x) / w)))); }
     }
