@@ -141,7 +141,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scarrows button:hover{color:var(--linen);background:rgba(242,243,239,.07)}
 .scarrows .sctoday{width:auto;padding:0 12px;border-radius:18px;font-family:var(--serif);font-style:italic;font-size:19px;color:var(--linen);opacity:0;pointer-events:none;transform:translateX(6px);transition:opacity .3s var(--ease), transform .45s var(--sheet), background-color .2s var(--ease)}
 .scarrows .sctoday.on{opacity:1;pointer-events:auto;transform:none}
-.scview{position:relative;height:312px;margin:0 -24px;overflow:hidden}
+.scview{position:relative;height:312px;margin:0 -24px;overflow:hidden;transition:height .5s var(--sheet)}
+.sidecal.is-week .scview{height:80px}
+.scfoot{transition:height .5s var(--sheet), opacity .3s var(--ease), margin .5s var(--sheet)}
+.sidecal.is-week .scfoot{height:0;margin-top:0;opacity:0;border-top-color:transparent;overflow:hidden}
+.sidecal .wday .wd{color:var(--mist)}
+.sidecal .wday:hover .dot{box-shadow:0 0 0 1px rgba(242,243,239,.28) inset}
+.sidecal .wday.is-entry:hover .dot{background:#fff}
 .scview .caltrack{height:100%}
 .scview .calpanel{padding:0 24px}
 .sidecal .wdhead{margin-bottom:4px}
@@ -249,6 +255,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .otd .ti{font-family:var(--serif);font-size:26px;line-height:1.1}
 .otd .ex{font-size:14px;line-height:1.55;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .otd .none{font-size:14px;line-height:1.55;color:var(--muted)}
+.otd .kicker{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.otd .go{display:flex;align-items:center;gap:4px;letter-spacing:.12em;color:var(--ink)}
+.otd.is-prev .ti.muted{color:var(--dim)}
+#otd.swap{animation:softin .4s var(--ease)}
 
 /* entry */
 #entry{background:var(--sheetbg)}
@@ -330,13 +340,16 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .row .ti{font-size:21px} .row .n{font-size:28px}
   .fabwrap{padding-bottom:20px}
   .fab{width:100%;height:44px}
-  .entry,.page{max-width:688px;margin:0 auto;padding-top:40px}
+  .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
+  .ephotos{grid-template-columns:1fr 1fr}
+  #home.side-week .herorest{position:sticky;top:72px;z-index:5}
+  #home.side-week .stickytitle::after{display:none}
   .entry .title,.etitle{font-size:64px;line-height:1;padding-top:0;display:block}
   .ebody{font-size:20px;line-height:1.75}
   .view,.view.is-top{will-change:auto}
   .enav{position:static;margin:0;padding:0}
-  .page{max-width:448px}
-  .page.wide{max-width:688px}
+  .page{max-width:576px}
+  .page.wide{max-width:768px}
 }
 @media (prefers-reduced-motion: reduce){
   .view,.view.is-off,.view::after{transition:none}
@@ -364,7 +377,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       <div class="sidecal" id="sidecal">
         <div class="scnav">
-          <div class="seg" role="tablist"><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
+          <div class="seg" role="tablist"><button role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
           <div class="scarrows"><button class="sctoday" id="scToday" data-act="sidetoday">Heute</button><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
         </div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
@@ -516,7 +529,7 @@ const S = {
   byDate: new Map(),
   stack: ['home'],
   cal: { mode: 'month', y: 0, m: 0 },
-  side: { mode: 'month', y: 0, m: 0 }, // Kalender in der Seitenleiste (Mac)
+  side: { mode: 'week', y: 0, m: 0, w: 0 }, // Kalender in der Seitenleiste (Mac)
   cur: null,              // entry being edited (object, may be unsaved draft)
   homeDirty: true,
   weekOff: 0
@@ -667,11 +680,22 @@ function renderCalendar() {
   $('calStats').classList.toggle('is-empty', !elapsed);
   $('caltrack').innerHTML = [-1, 0, 1].map((o) => { const p = periodOf(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, false) : yearHTML(p.y)) + '</div>'; }).join('');
   resetTrack($('caltrack'));
+  if (S.cal.sel) document.querySelectorAll('#caltrack .cell').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === S.cal.sel));
   $('calLegend').innerHTML = '<span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="box-shadow:0 0 0 1px var(--ink) inset"></i>Heute</span>' +
     (mode === 'year' ? '<span><i style="background:var(--empty)"></i>Leer</span>' : '');
   renderOnThisDay();
 }
+function dayLabel(k) { const d = parseKey(k); return WDLONG[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()]; }
+const GO = '<span class="go">Öffnen<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>';
 function renderOnThisDay() {
+  const k = S.cal.mode === 'month' ? S.cal.sel : null;
+  if (k) { // Vorschau des angetippten Tages: noch einmal tippen öffnet ihn
+    const list = S.byDate.get(k) || [], e = list[0], past = parseKey(k) <= today();
+    $('otd').innerHTML = '<button class="otd is-prev" data-act="day" data-key="' + k + '"><span class="kicker"><span>' + dayLabel(k) + (list.length > 1 ? ' · ' + list.length + ' Einträge' : '') + '</span>' + GO + '</span>' +
+      (e ? '<span class="ti">' + esc(titleOf(e)) + '</span><span class="ex">' + esc(excerptOf(e)) + '</span>'
+         : '<span class="ti muted">' + (past ? 'Noch nichts geschrieben' : 'Noch nicht da') + '</span><span class="ex">Tippe noch einmal, um ' + (past ? 'für diesen Tag zu schreiben.' : 'schon etwas vorzumerken.') + '</span>') + '</button>';
+    return;
+  }
   const t = today(); const md = keyOf(t).slice(5);
   const past = S.entries.filter((e) => e.date.slice(5) === md && e.date < keyOf(t));
   const box = $('otd');
@@ -680,43 +704,56 @@ function renderOnThisDay() {
   box.innerHTML = '<button class="otd" data-act="open" data-id="' + esc(e.id) + '"><span class="kicker">An diesem Tag · ' + e.date.slice(0, 4) + '</span><span class="ti">' + esc(titleOf(e)) + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></button>';
 }
 /* Seitenleiste (Mac): Monat/Jahr mit eigenem Zustand */
-function sidePeriod(o) { let { y, m } = S.side; if (S.side.mode === 'month') { m += o; while (m < 0) { m += 12; y--; } while (m > 11) { m -= 12; y++; } } else y += o; return { y, m }; }
+const SIDE_ORDER = { week: 0, month: 1, year: 2 };
+const weekOf = (d) => { const mon = new Date(d); mon.setHours(0, 0, 0, 0); mon.setDate(mon.getDate() - mondayIdx(mon)); return Math.round((mon - weekStart(0)) / (7 * 864e5)); };
+const weekRef = (w) => { if (!w) return today(); const mon = weekStart(w); return new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 3); }; // Donnerstag bestimmt den Monat
+function sidePeriod(o) { if (S.side.mode === 'week') return { w: S.side.w + o, y: S.side.y, m: S.side.m }; let { y, m } = S.side; if (S.side.mode === 'month') { m += o; while (m < 0) { m += 12; y--; } while (m > 11) { m -= 12; y++; } } else y += o; return { y, m }; }
 function renderSide() {
   if (!isDesktop()) return;
-  const { mode, y, m } = S.side; const t = today();
-  $('sctrack').innerHTML = [-1, 0, 1].map((o) => { const p = sidePeriod(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, true) : yearHTML(p.y, 'sidepick')) + '</div>'; }).join('');
+  const { mode, y, m, w } = S.side; const t = today();
+  $('sctrack').innerHTML = [-1, 0, 1].map((o) => { const p = sidePeriod(o); return mode === 'week' ? weekPanelHTML(p.w) : '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, true) : yearHTML(p.y, 'sidepick')) + '</div>'; }).join('');
   resetTrack($('sctrack'));
-  S.sideTitle = (mode === 'month' ? MONTHS[m] : 'Das Jahr') + '|' + y;
-  const first = mode === 'month' ? new Date(y, m, 1) : new Date(y, 0, 1);
-  const last = mode === 'month' ? new Date(y, m, daysIn(y, m)) : new Date(y, 11, 31);
+  $('sidecal').classList.toggle('is-week', mode === 'week'); $('home').classList.toggle('side-week', mode === 'week');
+  const ref = weekRef(w);
+  S.sideTitle = mode === 'week' ? MONTHS[ref.getMonth()] + '|' + ref.getFullYear() : (mode === 'month' ? MONTHS[m] : 'Das Jahr') + '|' + y;
+  const mon = weekStart(w), sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const first = mode === 'week' ? mon : mode === 'month' ? new Date(y, m, 1) : new Date(y, 0, 1);
+  const last = mode === 'week' ? sun : mode === 'month' ? new Date(y, m, daysIn(y, m)) : new Date(y, 11, 31);
   const end = last < t ? last : t; const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
   $('scCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '0';
   $('scStat').classList.toggle('is-empty', !elapsed);
-  $('scMonth').setAttribute('aria-selected', mode === 'month'); $('scYear').setAttribute('aria-selected', mode === 'year');
-  const sel = $(mode === 'month' ? 'scMonth' : 'scYear'), segi = $('segi');
+  $('scWeek').setAttribute('aria-selected', mode === 'week'); $('scMonth').setAttribute('aria-selected', mode === 'month'); $('scYear').setAttribute('aria-selected', mode === 'year');
+  const sel = $({ week: 'scWeek', month: 'scMonth', year: 'scYear' }[mode]), segi = $('segi');
   if (sel.offsetWidth) { segi.style.width = sel.offsetWidth + 'px'; segi.style.transform = 'translateX(' + sel.offsetLeft + 'px)'; }
-  const isNow = y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
+  const isNow = mode === 'week' ? !w : y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
   $('scToday').classList.toggle('on', !isNow); $('scToday').tabIndex = isNow ? -1 : 0;
   if (S.updateHomeTitle) S.updateHomeTitle();
 }
 function updateSideSel() {
   const k = S.cur && S.stack[S.stack.length - 1] === 'entry' ? S.cur.date : null;
-  document.querySelectorAll('#sctrack .cell').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k));
+  document.querySelectorAll('#sctrack .cell, #sctrack .wday').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k));
 }
 function shiftSide(dir, ms) {
   fadeWith([$('scStat')], 0); $('homeTitle').style.transition = 'none'; $('homeTitle').style.opacity = '0';
-  slideTrack($('sctrack'), dir, () => { const p = sidePeriod(dir); S.side.y = p.y; S.side.m = p.m; renderSide(); softIn($('scStat'), $('homeTitle')); }, ms || 380);
+  slideTrack($('sctrack'), dir, () => { const p = sidePeriod(dir); S.side.y = p.y; S.side.m = p.m; S.side.w = p.w || 0; renderSide(); softIn($('scStat'), $('homeTitle')); }, ms || 380);
 }
 function sideToday() {
-  const t = today(); const { mode, y, m } = S.side;
-  const diff = mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
+  const t = today(); const { mode, y, m, w } = S.side;
+  const diff = mode === 'week' ? -w : mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
   fadeWith([$('scStat')], 0); $('homeTitle').style.transition = 'none'; $('homeTitle').style.opacity = '0';
-  slideTrack($('sctrack'), diff > 0 ? 1 : -1, () => { S.side.y = t.getFullYear(); S.side.m = t.getMonth(); renderSide(); softIn($('scStat'), $('homeTitle')); }, 380);
+  slideTrack($('sctrack'), diff > 0 ? 1 : -1, () => { S.side.y = t.getFullYear(); S.side.m = t.getMonth(); S.side.w = 0; renderSide(); softIn($('scStat'), $('homeTitle')); }, 380);
 }
 function setSideMode(mode, y, m) {
   if (mode === S.side.mode && y == null) return;
-  const zoomOut = mode === 'year';
-  morphSwap($('sctrack'), zoomOut, () => { S.side.mode = mode; if (y != null) { S.side.y = y; S.side.m = m; } renderSide(); });
+  const from = S.side.mode, zoomOut = SIDE_ORDER[mode] > SIDE_ORDER[from], t = today();
+  morphSwap($('sctrack'), zoomOut, () => {
+    if (from === 'week' && y == null) { const r = weekRef(S.side.w); S.side.y = r.getFullYear(); S.side.m = r.getMonth(); }
+    if (mode === 'week') { // Woche: die aktuelle, wenn sie im gezeigten Zeitraum liegt, sonst die erste
+      const inView = from === 'month' ? (S.side.y === t.getFullYear() && S.side.m === t.getMonth()) : S.side.y === t.getFullYear();
+      S.side.w = inView ? 0 : weekOf(new Date(S.side.y, from === 'month' ? S.side.m : 0, 1));
+    }
+    S.side.mode = mode; if (y != null) { S.side.y = y; S.side.m = m; } renderSide();
+  });
   softIn($('homeTitle'), $('scStat'));
 }
 /* Wechsel Monat ⇄ Jahr: alter Inhalt zoomt weg und blendet aus, neuer zoomt aus der Gegenrichtung herein */
@@ -732,7 +769,12 @@ function morphSwap(track, zoomOut, render) {
   const np = track.children[1];
   if (np) np.animate([{ opacity: 0, transform: 'scale(' + (zoomOut ? 1.06 : 0.94) + ')' }, { opacity: 1, transform: 'scale(1)' }], { duration: 420, delay: 60, easing: ease, fill: 'backwards' });
 }
-function shiftCal(dir, ms) { fadeWith([$('calStats'), $('calTitle')], 0); slideTrack($('caltrack'), dir, () => { const p = periodOf(dir); S.cal.y = p.y; S.cal.m = p.m; renderCalendar(); softIn($('calStats'), $('calTitle')); }, ms); }
+function selectCalDay(k) {
+  S.cal.sel = k;
+  document.querySelectorAll('#caltrack .cell').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k));
+  renderOnThisDay(); const o = $('otd'); o.classList.remove('swap'); void o.offsetWidth; o.classList.add('swap');
+}
+function shiftCal(dir, ms) { const hadSel = !!S.cal.sel; S.cal.sel = null; if (hadSel) { const o = $('otd'); o.classList.remove('swap'); void o.offsetWidth; o.classList.add('swap'); } fadeWith([$('calStats'), $('calTitle')], 0); slideTrack($('caltrack'), dir, () => { const p = periodOf(dir); S.cal.y = p.y; S.cal.m = p.m; renderCalendar(); softIn($('calStats'), $('calTitle')); }, ms); }
 
 /* ---------- rendering: entry ---------- */
 const photoURLs = new Map();
@@ -751,7 +793,9 @@ async function renderEntry(dir) {
   const inner = $('entryInner'); inner.classList.remove('in-l', 'in-r'); void inner.offsetWidth;
   if (dir) inner.classList.add(dir < 0 ? 'in-l' : 'in-r');
   $('entry').scrollTop = 0;
-  if (isDesktop()) { const d0 = parseKey(e.date); if (S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m) && dir) { S.side.y = d0.getFullYear(); S.side.m = d0.getMonth(); renderSide(); } updateSideSel(); markCurrentRow(); }
+  if (isDesktop()) { const d0 = parseKey(e.date);
+    if (dir && S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m)) { S.side.y = d0.getFullYear(); S.side.m = d0.getMonth(); renderSide(); }
+    if (dir && S.side.mode === 'week' && weekOf(d0) !== S.side.w) { S.side.w = weekOf(d0); renderSide(); } updateSideSel(); markCurrentRow(); }
 }
 function draftFor(k) {
   const now = new Date(); const d = parseKey(k);
@@ -876,15 +920,17 @@ document.addEventListener('click', (ev) => {
   const a = b.dataset.act;
   if (a === 'search') { go('search'); $('q').focus({ preventScroll: true }); }
   else if (a === 'settings') { renderAbout(); go('settings'); }
-  else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); renderCalendar(); go('calendar'); }
-  else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
+  else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); S.cal.sel = null; renderCalendar(); go('calendar'); }
+  else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; S.cal.sel = null; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
   else if (a === 'pickmonth') { morphSwap($('caltrack'), false, () => { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }); softIn($('calTitle'), $('calStats')); }
   else if (a === 'sidemode') setSideMode(b.dataset.mode);
   else if (a === 'sidepick') setSideMode('month', +b.dataset.y, +b.dataset.m);
   else if (a === 'sideshift') shiftSide(+b.dataset.dir);
   else if (a === 'sidetoday') sideToday();
   else if (a === 'thisweek') { const dir = S.weekOff > 0 ? -1 : 1; fadeWith([$('weekStat')], 0); S.weekOff -= dir; slideTrack($('weektrack'), dir, () => { S.weekOff = 0; renderWeek(); softIn($('weekStat')); }); }
-  else if (a === 'day') openDay(b.dataset.key);
+  else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
+    if (b.closest('#caltrack') && S.cal.sel !== b.dataset.key) selectCalDay(b.dataset.key); else openDay(b.dataset.key);
+  }
   else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : null; openEntryById(b.dataset.id); }
   else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
   else if (a === 'entryback') {
