@@ -41,7 +41,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 
 .app{position:fixed;inset:0;overflow:hidden}
 .view{position:absolute;inset:0;background:var(--paper);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
-  transition:transform .44s var(--sheet), visibility 0s linear 0s; will-change:transform}
+  transition:transform .44s var(--sheet), visibility 0s linear 0s}
+.view.dragging{will-change:transform}
 .view::after{content:'';position:fixed;inset:0;background:#080a08;opacity:0;pointer-events:none;transition:opacity .44s var(--sheet);z-index:20}
 .view.is-under::after{opacity:var(--dim,.12)}
 .view.dragging::after{transition:none}
@@ -65,14 +66,15 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .hero{background:var(--night);color:var(--linen);padding:calc(var(--safe-t) + 8px) 24px 20px}
 .topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
 .weekline{height:1px;background:var(--nline);margin-top:16px;position:relative}
-#thisWeekBtn{position:absolute;left:50%;top:50%;height:40px;padding:0 14px;display:flex;align-items:center;gap:8px;
-  transform:translate(-50%,-50%);background:var(--night);color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1;
-  transition:opacity .45s var(--ease), transform .45s var(--ease)}
-#thisWeekBtn svg{margin-top:1px}
-#thisWeekBtn.off{opacity:0;transform:translate(-50%,-50%) scale(.94);pointer-events:none}
+.todayline{position:relative;height:30px;margin-top:10px;display:flex;align-items:center;justify-content:center;transition:opacity .45s var(--ease)}
+.todayline::before,.todayline::after{content:'';flex:1;height:1px;background:var(--nline);transition:transform .5s var(--ease)}
+.todayline::before{transform-origin:left} .todayline::after{transform-origin:right}
+.todayline.off{opacity:0;pointer-events:none}
+.todayline.off::before,.todayline.off::after{transform:scaleX(.6)}
+#thisWeekBtn{height:40px;padding:0 14px;display:flex;align-items:center;gap:8px;color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1}
 #thisWeekBtn:active{opacity:.6}
 .weekwrap{margin:0 -24px;padding-top:18px;overflow:hidden;touch-action:pan-y}
-.weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%);will-change:transform}
+.weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
 .weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .wday{display:flex;flex-direction:column;align-items:center;gap:8px}
 .wday .wd{font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--mist)}
@@ -81,7 +83,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .dark .is-today .dot{box-shadow:0 0 0 1px var(--linen) inset}
 .dark .is-missed .dot{font-weight:400;color:var(--linen)}
 .dark .is-future .dot{font-weight:400;color:var(--dim)}
-.herofoot{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;font-size:13px;gap:16px}
+.herofoot{display:flex;justify-content:space-between;align-items:baseline;margin-top:0;font-size:13px;gap:16px}
 .herofoot .linkbtn{height:auto;padding:14px 0;align-items:baseline}
 .herofoot .linkbtn svg{align-self:center}
 @keyframes softin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -93,6 +95,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   box-shadow:0 16px 32px -14px rgba(8,10,8,.6), 0 2px 6px rgba(8,10,8,.12), inset 0 0 0 1px rgba(242,243,239,.07);
   transition:transform .18s var(--ease), bottom .3s var(--sheet)}
 .floatbtn:active{transform:scale(.92)}
+.floatbtn.away{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .35s var(--sheet), opacity .25s var(--ease)}
 .floatbtn svg{position:absolute;transition:opacity .22s var(--ease), transform .3s var(--sheet)}
 .floatbtn .i-check{opacity:0;transform:scale(.5) rotate(-25deg)}
 #entry.is-typing .floatbtn .i-back{opacity:0;transform:scale(.5) rotate(25deg)}
@@ -237,7 +240,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .hero{padding-top:40px}
   .hero .title .t{font-size:56px;line-height:64px} .hero .title .y{font-size:38px}
   .topbar{justify-content:space-between;margin-left:-10px}
-  .weekwrap,.weekline{display:none}
+  .weekwrap,.weekline,.todayline{display:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:32px;bottom:32px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
@@ -252,6 +255,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .entry,.page{max-width:688px;margin:0 auto;padding-top:40px}
   .entry .title,.etitle{font-size:64px;line-height:1;padding-top:0;display:block}
   .ebody{font-size:20px;line-height:1.75}
+  .view,.view.is-top{will-change:auto}
   .ebody:not(:empty)::first-letter{font-size:84px;margin:8px 12px 0 -2px}
   .enav{position:static;margin:0;padding:0}
   .page{max-width:448px}
@@ -279,8 +283,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <button class="iconbtn" data-act="search" aria-label="Suchen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
       </div>
       <h1 class="title" id="homeTitle"></h1>
-      <div class="weekline"><button data-act="thisweek" id="thisWeekBtn" class="off" aria-label="Zurück zu heute" tabindex="-1"></button></div>
+      <div class="weekline"></div>
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
+      <div class="todayline off" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" aria-label="Zurück zu heute" tabindex="-1"></button></div>
       <div class="minimonth" id="minimonth"></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
@@ -296,6 +301,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
     <header class="hero dark calhero">
       <div class="pnav">
         <div class="tabs" role="tablist">
+          <button class="tab" role="tab" data-act="back" aria-selected="false">Woche</button>
           <button class="tab" role="tab" id="tabMonth" data-act="calmode" data-mode="month">Monat</button>
           <button class="tab" role="tab" id="tabYear" data-act="calmode" data-mode="year">Jahr</button>
         </div>
@@ -497,18 +503,19 @@ function renderWeek() {
   const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
   $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '0';
   $('weekStat').classList.toggle('is-empty', !elapsed);
-  $('thisWeekBtn').classList.toggle('off', off === 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
+  $('todayLine').classList.toggle('off', off === 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
   $('thisWeekBtn').innerHTML = off > 0 ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Heute' : 'Heute<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 }
 function softIn(...els) { for (const el of els) { el.style.transition = ''; el.style.opacity = ''; el.classList.remove('soft-in'); void el.offsetWidth; el.classList.add('soft-in'); } }
 function fadeWith(els, f) { for (const el of els) { el.style.transition = 'none'; el.style.opacity = String(f); } }
-function resetTrack(tr) { tr.style.transition = 'none'; tr.style.transform = ''; }
+const trackX = (tr, extra) => Math.round(-tr.parentElement.clientWidth + (extra || 0)); // ganze Pixel = scharfe Schrift
+function resetTrack(tr) { tr.style.transition = 'none'; tr.style.transform = 'translate3d(' + trackX(tr) + 'px,0,0)'; }
 let trackBusy = false;
 function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben)
   if (trackBusy) return; trackBusy = true;
   const d = Math.round(ms || 340);
   tr.style.transition = 'transform ' + d + 'ms cubic-bezier(0.2, 0.8, 0.2, 1)';
-  tr.style.transform = 'translateX(' + (dir > 0 ? '-66.6667%' : '0%') + ')';
+  tr.style.transform = 'translate3d(' + (dir > 0 ? 2 * trackX(tr) : 0) + 'px,0,0)';
   setTimeout(() => { trackBusy = false; done(); }, d + 10);
 }
 function shiftWeek(dir, ms) { fadeWith([$('weekStat')], 0); slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); softIn($('weekStat')); }, ms); }
@@ -670,6 +677,7 @@ function applyStack() {
     else el.classList.add('is-off');
     el.setAttribute('aria-hidden', v === top || (v === 'home' && isDesktop()) ? 'false' : 'true');
   }
+  document.querySelectorAll('.floatbtn.away').forEach((b) => b.classList.remove('away'));
   if (top === 'home' && S.homeDirty) renderHome();
 }
 function go(v) {
@@ -735,6 +743,20 @@ if (window.visualViewport) {
   visualViewport.addEventListener('resize', kb); visualViewport.addEventListener('scroll', kb);
 }
 
+window.addEventListener('resize', () => { resetTrack($('weektrack')); resetTrack($('caltrack')); });
+
+/* runder Knopf weicht beim Runterscrollen aus und kommt beim Hochscrollen zurück */
+for (const v of ['calendar', 'entry']) {
+  const view = $(v), btn = view.querySelector('.floatbtn'); let last = 0;
+  view.addEventListener('scroll', () => {
+    const y = view.scrollTop, atEnd = y + view.clientHeight >= view.scrollHeight - 8;
+    if (typing()) btn.classList.remove('away');
+    else if (y > last + 6 && y > 40 && !atEnd) btn.classList.add('away');
+    else if (y < last - 6 || atEnd || y <= 40) btn.classList.remove('away');
+    last = y;
+  }, { passive: true });
+}
+
 /* compact bar on scroll (home) */
 new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classList.toggle('show', !en.isIntersecting); },
   { root: $('home'), threshold: 0, rootMargin: '-60px 0px 0px 0px' }).observe($('homeTitle'));
@@ -762,7 +784,7 @@ new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classLi
       underEl.style.transform = 'translate3d(' + (-28 + 28 * p) + '%,0,0)';
       underEl.style.setProperty('--dim', String(0.12 * (1 - p)));
     } else if (mode === 'track') {
-      track.style.transform = 'translate3d(calc(-33.3333% + ' + dx + 'px),0,0)';
+      track.style.transform = 'translate3d(' + trackX(track, dx) + 'px,0,0)';
       const f = Math.max(0, 1 - Math.abs(dx) / (W * 0.45));
       fadeWith(track.id === 'caltrack' ? [$('calStats'), $('calTitle')] : [$('weekStat')], f);
     } else if (mode === 'pull') {
@@ -838,7 +860,7 @@ new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classLi
         const dir = dx < 0 ? 1 : -1; const ms = restMs(w - Math.abs(dx), vx);
         if (track.id === 'caltrack') shiftCal(dir, ms); else shiftWeek(dir, ms);
       } else {
-        track.style.transition = 'transform .38s var(--sheet)'; track.style.transform = '';
+        track.style.transition = 'transform .38s var(--sheet)'; track.style.transform = 'translate3d(' + trackX(track) + 'px,0,0)';
         for (const el of (track.id === 'caltrack' ? [$('calStats'), $('calTitle')] : [$('weekStat')])) { el.style.transition = 'opacity .38s var(--ease)'; el.style.opacity = ''; }
       }
     } else if (m === 'entry') {
@@ -862,7 +884,7 @@ new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classLi
     if (!typing() || S.stack[S.stack.length - 1] !== 'entry') return;
     const sel = getSelection(); if (!sel.rangeCount) return;
     const r = sel.getRangeAt(0).getBoundingClientRect(); if (!r || (!r.top && !r.bottom)) return;
-    const limit = vv.height - 48;
+    const limit = vv.height - 100; // Platz für den runden Knopf
     if (r.bottom > limit) $('entry').scrollBy({ top: r.bottom - limit, behavior: 'smooth' });
   }
   vv.addEventListener('resize', () => setTimeout(keep, 60));
