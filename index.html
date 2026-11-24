@@ -85,14 +85,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .todayline::after{right:0;width:calc(50% - var(--c) - var(--hw) - var(--gr))}
 .todayline.on{--hw:var(--hwon,28px)}
 .todayline.on.dir-r{--gl:10px;--gr:36px} .todayline.on.dir-l{--gl:36px;--gr:10px}
-#thisWeekBtn{position:absolute;left:50%;top:50%;width:180px;height:44px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;transition:opacity .45s var(--ease)}
-.todayline.on #thisWeekBtn{opacity:1;pointer-events:auto}
-#thisWeekBtn .tw{position:absolute;left:50%;top:50%;transform:translate(calc(-50% + var(--c)),-50%);color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1;white-space:nowrap}
-#thisWeekBtn .ar{position:absolute;top:50%;margin-top:-9px;color:var(--linen);transition:opacity .3s var(--ease)}
-#thisWeekBtn .ar-r{left:calc(50% + var(--c) + var(--hw) + 9px)}
-#thisWeekBtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
+.twbtn{position:absolute;left:50%;top:50%;width:180px;height:44px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;transition:opacity .45s var(--ease)}
+.todayline.on .twbtn{opacity:1;pointer-events:auto}
+.twbtn .tw{position:absolute;left:50%;top:50%;transform:translate(calc(-50% + var(--c)),-50%);color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1;white-space:nowrap}
+.twbtn .ar{position:absolute;top:50%;margin-top:-9px;color:var(--linen);transition:opacity .3s var(--ease)}
+.twbtn .ar-r{left:calc(50% + var(--c) + var(--hw) + 9px)}
+.twbtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
 .todayline.dir-r .ar-l,.todayline.dir-l .ar-r{opacity:0}
-#thisWeekBtn:active .tw,#thisWeekBtn:active .ar{opacity:.6}
+.twbtn:active .tw,.twbtn:active .ar{opacity:.6}
 .weekwrap{margin:0 -24px;padding-top:16px;overflow:hidden;touch-action:pan-y}
 .weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
 .weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
@@ -121,7 +121,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .floatbtn svg{position:absolute;transition:opacity .22s var(--ease), transform .3s var(--sheet)}
 .floatbtn svg{position:static}
 #entry.is-typing .floatbtn{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .35s var(--sheet), opacity .2s var(--ease)}
-@media (max-width:959px){#home .fabwrap{display:none} #home #list{padding-bottom:calc(var(--safe-b) + 104px)}}
+#home .fabwrap{display:none}
+@media (max-width:959px){#home #list{padding-bottom:calc(var(--safe-b) + 104px)}}
+.homeplus.off{opacity:0;transform:scale(.8);pointer-events:none;transition:opacity .2s var(--ease), transform .3s var(--sheet)}
 .page.wide{padding-bottom:calc(var(--safe-b) + 110px)}
 .calbody{padding-bottom:calc(var(--safe-b) + 110px);background:var(--paper);min-height:calc(100% - 260px)}
 #calendar{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
@@ -130,6 +132,15 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .herofoot .lbl{color:var(--mist)}
 .linkbtn{display:flex;align-items:center;gap:6px;height:44px;font-weight:500}
 .sidecal{display:none}
+.dsearch{display:none}
+.searchbtn{position:relative}
+.searchbtn svg{position:absolute;transition:opacity .2s var(--ease), transform .45s var(--sheet)}
+.searchbtn .i-x{opacity:0;transform:rotate(-90deg) scale(.5)}
+#home.searching .searchbtn .i-mag{opacity:0;transform:rotate(90deg) scale(.5)}
+#home.searching .searchbtn .i-x{opacity:1;transform:none}
+.topbar .setbtn{transition:opacity .25s var(--ease), transform .45s var(--sheet)}
+#home.searching .topbar .setbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
+.hitcount{padding:20px 0 4px}
 /* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
 .scnav{height:52px;display:flex;align-items:center;justify-content:space-between}
 .seg{position:relative;display:flex;gap:22px;font-size:14px}
@@ -139,30 +150,26 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scarrows{display:flex;align-items:center;margin-right:-10px}
 .scarrows button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--mist);transition:color .2s var(--ease), background-color .2s var(--ease)}
 .scarrows button:hover{color:var(--linen);background:rgba(242,243,239,.07)}
-.scarrows .sctoday{width:auto;padding:0 12px;border-radius:18px;font-family:var(--serif);font-style:italic;font-size:19px;color:var(--linen);opacity:0;pointer-events:none;transform:translateX(6px);transition:opacity .3s var(--ease), transform .45s var(--sheet), background-color .2s var(--ease)}
-.scarrows .sctoday.on{opacity:1;pointer-events:auto;transform:none}
+.sctl{margin:6px 0 2px}
 .scview{position:relative;height:312px;margin:0 -24px;overflow:hidden;transition:height .5s var(--sheet)}
 .sidecal.is-week .scview{height:80px}
 .scfoot{transition:height .5s var(--sheet), opacity .3s var(--ease), margin .5s var(--sheet)}
-.sidecal.is-week .scfoot{height:0;margin-top:0;opacity:0;border-top-color:transparent;overflow:hidden}
+.sidecal.is-week .scfoot{height:0;opacity:0;overflow:hidden}
 .sidecal .wday .wd{color:var(--mist)}
-.sidecal .wday:hover .dot{box-shadow:0 0 0 1px rgba(242,243,239,.28) inset}
-.sidecal .wday.is-entry:hover .dot{background:#fff}
+
 .scview .caltrack{height:100%}
 .scview .calpanel{padding:0 24px}
 .sidecal .wdhead{margin-bottom:4px}
 .sidecal .wdhead span{color:var(--mist)}
 .sidecal .cell{height:44px}
 .sidecal .cell .dot{width:36px;height:36px;font-size:14px;transition:transform .12s var(--ease), box-shadow .2s var(--ease), background-color .2s var(--ease)}
-.sidecal .cell:hover .dot{box-shadow:0 0 0 1px rgba(242,243,239,.28) inset}
-.sidecal .cell.is-entry:hover .dot{background:#fff}
 .sidecal .is-today .dot{font-weight:600;color:var(--linen)}
 .sidecal .ygrid{gap:3px}
 .sidecal .yrow{height:21px}
 .sidecal .yrow:hover{background:rgba(242,243,239,.06)}
 .sidecal .ylab,.sidecal .yhead .ydots{color:var(--mist)}
 .sidecal .yd.e{background:var(--linen)} .sidecal .yd.m{background:var(--nline)} .sidecal .yd.t{box-shadow:0 0 0 1.5px var(--linen) inset} .sidecal .yd.f{background:#4a564e}
-.scfoot{height:48px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--nline);margin-top:4px;font-size:13px}
+.scfoot{height:40px;display:flex;align-items:center;gap:10px;font-size:13px}
 .scfoot .count{font-size:22px;color:var(--linen)}
 .scfoot .lbl{color:var(--mist)}
 #scStat{display:flex;align-items:baseline;gap:10px;transition:opacity .35s var(--ease)}
@@ -327,11 +334,21 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .view.is-under{transform:translateX(-3%);opacity:0}
   .hero{padding-top:28px}
   .herofoot{display:none}
-  #entry .floatbtn,.homeplus{display:none}
+  #entry .floatbtn{display:none}
+  .homeplus{right:32px;bottom:32px}
+  #list{padding-bottom:24px}
   .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
   .herorest{padding-top:0}
-  .topbar{justify-content:space-between;margin-left:-10px}
-  .weekwrap,.weekline,.todayline{display:none}
+  .topbar{justify-content:space-between;margin-left:-10px;position:relative}
+  .dsearch{display:flex;align-items:center;position:absolute;right:44px;top:0;height:44px;width:0;opacity:0;overflow:hidden;pointer-events:none;
+    border-bottom:1px solid var(--nline);transition:width .55s var(--sheet), opacity .3s var(--ease), border-color .3s var(--ease)}
+  #home.searching .dsearch{width:calc(100% - 54px);opacity:1;pointer-events:auto}
+  .dsearch:focus-within{border-bottom-color:var(--mist);outline:none}
+  .dsearch input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:var(--linen);font:400 24px/1 var(--serif);padding:0 4px 0 0}
+  .dsearch input::placeholder{color:var(--dim)}
+  .dsearch input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+  .stickysearch{display:none}
+  .weekwrap,.weekline,#todayLine{display:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:32px;bottom:32px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
@@ -365,8 +382,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   <section class="view is-top" id="home" aria-label="Übersicht">
     <header class="hero dark">
       <div class="topbar">
-        <button class="iconbtn" data-act="settings" aria-label="Einstellungen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
-        <button class="iconbtn" data-act="search" aria-label="Suchen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
+        <button class="iconbtn setbtn" data-act="settings" aria-label="Einstellungen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+        <label class="dsearch"><span class="sr">Suchbegriff</span><input id="dq" type="search" placeholder="Wonach suchst du?" autocomplete="off" spellcheck="false" tabindex="-1"></label>
+        <button class="iconbtn searchbtn" data-act="search" id="searchBtn" aria-label="Suchen"><svg class="i-mag" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><svg class="i-x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </header>
     <div class="ptr" id="ptr" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle class="ptr-track" cx="15" cy="15" r="11"/><circle class="ptr-arc" cx="15" cy="15" r="11" pathLength="100"/></svg></div>
@@ -374,13 +392,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
     <header class="hero dark herorest">
       <div class="weekline"></div>
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
-      <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       <div class="sidecal" id="sidecal">
         <div class="scnav">
           <div class="seg" role="tablist"><button role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
-          <div class="scarrows"><button class="sctoday" id="scToday" data-act="sidetoday">Heute</button><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+          <div class="scarrows"><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
         </div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
+        <div class="todayline sctl" id="scTL"><button data-act="sidetoday" id="scTodayBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
         <div class="scfoot"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage geschrieben</span></span></div>
       </div>
       <div class="herofoot">
@@ -570,7 +589,13 @@ function renderHome() {
   renderSide();
   // Liste nur neu aufbauen, wenn sich etwas geändert hat (spart Ruckler beim Zurückgehen)
   const L = $('list'); let listHTML;
-  if (!S.entries.length) {
+  const q = S.dsearch ? $('dq').value.trim().toLowerCase() : '';
+  if (q) { // Suche am Mac: Treffer erscheinen direkt in der Seitenleiste
+    const hits = S.entries.filter((e) => ((e.title || '') + '\n' + (e.text || '')).toLowerCase().includes(q)).slice(0, 300);
+    S.deskHits = hits; let html = '<div class="hitcount kicker">' + (hits.length ? hits.length + (hits.length === 1 ? ' Treffer' : ' Treffer') : 'Nichts gefunden') + '</div>', last = '';
+    for (const e of hits) { const mk = e.date.slice(0, 7); if (mk !== last) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; } html += rowHTML(e); }
+    listHTML = html;
+  } else if (!S.entries.length) {
     listHTML = '<p class="emptylist">Noch keine Einträge. Schreib heute den ersten, oder hol dir deine Einträge aus Day One über die Einstellungen.</p>';
   } else {
     let html = ''; let lastMonth = '';
@@ -726,22 +751,29 @@ function renderSide() {
   const sel = $({ week: 'scWeek', month: 'scMonth', year: 'scYear' }[mode]), segi = $('segi');
   if (sel.offsetWidth) { segi.style.width = sel.offsetWidth + 'px'; segi.style.transform = 'translateX(' + sel.offsetLeft + 'px)'; }
   const isNow = mode === 'week' ? !w : y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
-  $('scToday').classList.toggle('on', !isNow); $('scToday').tabIndex = isNow ? -1 : 0;
+  const tl = $('scTL'); tl.classList.toggle('on', !isNow); $('scTodayBtn').tabIndex = isNow ? -1 : 0;
+  if (!isNow) { const future = mode === 'week' ? w > 0 : (mode === 'month' ? y * 12 + m > t.getFullYear() * 12 + t.getMonth() : y > t.getFullYear()); tl.classList.toggle('dir-l', future); tl.classList.toggle('dir-r', !future); }
+  const tw = $('scTodayBtn').querySelector('.tw').offsetWidth; if (tw) tl.style.setProperty('--hwon', (tw / 2) + 'px');
   if (S.updateHomeTitle) S.updateHomeTitle();
 }
 function updateSideSel() {
   const k = S.cur && S.stack[S.stack.length - 1] === 'entry' ? S.cur.date : null;
   document.querySelectorAll('#sctrack .cell, #sctrack .wday').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k));
 }
+function sideTitleOf(st) { if (st.mode === 'week') { const r = weekRef(st.w); return MONTHS[r.getMonth()] + '|' + r.getFullYear(); } return (st.mode === 'month' ? MONTHS[st.m] : 'Das Jahr') + '|' + st.y; }
+function titleWillChange(next) { return !S.dsearch && sideTitleOf(next) !== S.sideTitle && !$('stickyTitle').classList.contains('stuck'); }
 function shiftSide(dir, ms) {
-  fadeWith([$('scStat')], 0); $('homeTitle').style.transition = 'none'; $('homeTitle').style.opacity = '0';
-  slideTrack($('sctrack'), dir, () => { const p = sidePeriod(dir); S.side.y = p.y; S.side.m = p.m; S.side.w = p.w || 0; renderSide(); softIn($('scStat'), $('homeTitle')); }, ms || 380);
+  if (trackBusy) return;
+  const p = sidePeriod(dir), next = Object.assign({}, S.side, { y: p.y, m: p.m, w: p.w || 0 }), tc = titleWillChange(next);
+  fadeWith([$('scStat')], 0); if (tc) { $('homeTitle').style.transition = 'opacity .16s var(--ease)'; $('homeTitle').style.opacity = '0'; }
+  slideTrack($('sctrack'), dir, () => { S.side.y = next.y; S.side.m = next.m; S.side.w = next.w; renderSide(); softIn($('scStat')); if (tc) softIn($('homeTitle')); }, ms || 380);
 }
 function sideToday() {
   const t = today(); const { mode, y, m, w } = S.side;
   const diff = mode === 'week' ? -w : mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
-  fadeWith([$('scStat')], 0); $('homeTitle').style.transition = 'none'; $('homeTitle').style.opacity = '0';
-  slideTrack($('sctrack'), diff > 0 ? 1 : -1, () => { S.side.y = t.getFullYear(); S.side.m = t.getMonth(); S.side.w = 0; renderSide(); softIn($('scStat'), $('homeTitle')); }, 380);
+  const tc = titleWillChange(Object.assign({}, S.side, { y: t.getFullYear(), m: t.getMonth(), w: 0 }));
+  fadeWith([$('scStat')], 0); if (tc) { $('homeTitle').style.transition = 'opacity .16s var(--ease)'; $('homeTitle').style.opacity = '0'; }
+  slideTrack($('sctrack'), diff > 0 ? 1 : -1, () => { S.side.y = t.getFullYear(); S.side.m = t.getMonth(); S.side.w = 0; renderSide(); softIn($('scStat')); if (tc) softIn($('homeTitle')); }, 380);
 }
 function setSideMode(mode, y, m) {
   if (mode === S.side.mode && y == null) return;
@@ -752,9 +784,10 @@ function setSideMode(mode, y, m) {
       const inView = from === 'month' ? (S.side.y === t.getFullYear() && S.side.m === t.getMonth()) : S.side.y === t.getFullYear();
       S.side.w = inView ? 0 : weekOf(new Date(S.side.y, from === 'month' ? S.side.m : 0, 1));
     }
-    S.side.mode = mode; if (y != null) { S.side.y = y; S.side.m = m; } renderSide();
+    S.side.mode = mode; if (y != null) { S.side.y = y; S.side.m = m; }
+    const before = S.sideTitle; renderSide(); if (S.sideTitle !== before) softIn($('homeTitle'));
   });
-  softIn($('homeTitle'), $('scStat'));
+  softIn($('scStat'));
 }
 /* Wechsel Monat ⇄ Jahr: alter Inhalt zoomt weg und blendet aus, neuer zoomt aus der Gegenrichtung herein */
 function morphSwap(track, zoomOut, render) {
@@ -897,6 +930,7 @@ function applyStack() {
   }
   document.querySelectorAll('.floatbtn.away').forEach((b) => b.classList.remove('away'));
   if (isDesktop()) updateSideSel();
+  $('homePlus').classList.toggle('off', isDesktop() && top !== 'entry');
   if (top === 'home' && S.homeDirty) renderHome();
 }
 function go(v) {
@@ -918,7 +952,7 @@ function back() {
 document.addEventListener('click', (ev) => {
   const b = ev.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act;
-  if (a === 'search') { go('search'); $('q').focus({ preventScroll: true }); }
+  if (a === 'search') { if (isDesktop()) deskSearch(!S.dsearch); else { go('search'); $('q').focus({ preventScroll: true }); } }
   else if (a === 'settings') { renderAbout(); go('settings'); }
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); S.cal.sel = null; renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; S.cal.sel = null; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
@@ -931,7 +965,7 @@ document.addEventListener('click', (ev) => {
   else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
     if (b.closest('#caltrack') && S.cal.sel !== b.dataset.key) selectCalDay(b.dataset.key); else openDay(b.dataset.key);
   }
-  else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : null; openEntryById(b.dataset.id); }
+  else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; openEntryById(b.dataset.id); }
   else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
   else if (a === 'entryback') {
     if (typing()) { document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
@@ -943,6 +977,14 @@ document.addEventListener('click', (ev) => {
   else if (a === 'syncnow') Sync.run(true);
   else if (a === 'backup') exportBackup();
 });
+function deskSearch(open) {
+  S.dsearch = open; $('home').classList.toggle('searching', open); $('dq').tabIndex = open ? 0 : -1;
+  $('searchBtn').setAttribute('aria-label', open ? 'Suche schließen' : 'Suchen');
+  if (open) { $('home').scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => $('dq').focus({ preventScroll: true }), 80); }
+  else { $('dq').value = ''; if (S.navList && S.navList === S.deskHits) S.navList = null; S.deskHits = null; $('dq').blur(); renderHome(); }
+}
+$('dq').addEventListener('input', () => { renderHome(); $('home').scrollTop = 0; });
+$('dq').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); deskSearch(false); } else if (e.key === 'Enter') { e.preventDefault(); $('dq').blur(); } });
 function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 $('eTitle').addEventListener('input', onEdit);
 $('eBody').addEventListener('input', onEdit);
@@ -977,6 +1019,7 @@ window.addEventListener('resize', () => { resetTrack($('weektrack')); resetTrack
 for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
   const view = $(v), btn = view.querySelector('.floatbtn'); let last = 0;
   view.addEventListener('scroll', () => {
+    if (v === 'home' && isDesktop()) return;
     const y = view.scrollTop, atEnd = y + view.clientHeight >= view.scrollHeight - 8;
     if (typing()) btn.classList.remove('away');
     else if (y > last + 6 && y > 40 && !atEnd) btn.classList.add('away');
@@ -1188,7 +1231,9 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
      und horizontales Wischen löst nie das Zurück/Vor des Browsers aus (das hat die Seite neu geladen). */
   let g = null, last = 0, settleT = null;
   function settle() {
-    if (!g || g.fired || g.area !== 'entry') return;
+    if (!g || g.fired) return;
+    if (g.area === 'side') { const tr = $('sctrack'); tr.style.transition = 'transform .4s var(--sheet)'; tr.style.transform = 'translate3d(' + trackX(tr) + 'px,0,0)'; const st = $('scStat'); st.style.transition = 'opacity .4s var(--ease)'; st.style.opacity = ''; g.acc = 0; return; }
+    if (g.area !== 'entry') return;
     const el = $('entryInner'); el.style.transition = 'transform .36s var(--sheet), opacity .36s var(--sheet)'; el.style.transform = ''; el.style.opacity = '';
     setTimeout(() => { if (!g || g.fired || !g.acc) el.style.transition = ''; }, 380); g.acc = 0;
   }
@@ -1205,7 +1250,12 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     if (g.fired || trackBusy) return;
     g.acc += e.deltaX; clearTimeout(settleT); settleT = setTimeout(settle, 180);
     const dir = g.acc > 0 ? 1 : -1;
-    if (g.area === 'side') { if (Math.abs(g.acc) > 60) { g.fired = true; shiftSide(dir); } }
+    if (g.area === 'side') { // Kalender folgt dem Finger, ab einem Viertel der Breite blättert er weiter
+      const tr = $('sctrack'), w = tr.parentElement.clientWidth, x = Math.max(-w, Math.min(w, -g.acc));
+      tr.style.transition = 'none'; tr.style.transform = 'translate3d(' + trackX(tr, x) + 'px,0,0)';
+      fadeWith([$('scStat')], Math.max(0, 1 - Math.abs(x) / (w * 0.4)));
+      if (Math.abs(x) > w * 0.25) { g.fired = true; shiftSide(dir, Math.round(Math.max(200, 380 * (1 - Math.abs(x) / w)))); }
+    }
     else if (g.area === 'cal') { if (Math.abs(g.acc) > 90) { g.fired = true; shiftCal(dir); } }
     else if (g.area === 'entry') {
       const has = !!adjacentOf(dir), el = $('entryInner'), a = Math.abs(g.acc);
@@ -1219,7 +1269,8 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     const top = S.stack[S.stack.length - 1];
     if ((e.metaKey || e.ctrlKey) && e.key === '[') { e.preventDefault(); back(); return; }
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') { e.preventDefault(); $('app').querySelector('[data-act="today"]').click(); return; }
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f') { e.preventDefault(); go('search'); $('q').focus({ preventScroll: true }); return; }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f') { e.preventDefault(); if (isDesktop()) { if (S.dsearch) $('dq').focus(); else deskSearch(true); } else { go('search'); $('q').focus({ preventScroll: true }); } return; }
+    if (e.key === 'Escape' && S.dsearch && !typing()) { deskSearch(false); return; }
     if (typing()) { if (e.key === 'Escape') { document.activeElement.blur(); saveCur(); } return; }
     if (e.key === 'Escape') back();
     else if (top === 'calendar' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) shiftCal(e.key === 'ArrowLeft' ? -1 : 1);
