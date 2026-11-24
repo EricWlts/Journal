@@ -342,6 +342,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #settings.is-top .page > :nth-child(2){animation-delay:.06s} #settings.is-top .page > :nth-child(3){animation-delay:.11s}
   #settings.is-top .page > :nth-child(4){animation-delay:.16s} #settings.is-top .page > :nth-child(5){animation-delay:.21s}
   #settings.is-top .page > :nth-child(6){animation-delay:.26s}
+  @keyframes sink{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,-12px,0)}}
+  #settings.leaving .page > *{animation:sink .26s cubic-bezier(0.4, 0, 1, 1) both}
+  #settings.leaving .page > :nth-child(5){animation-delay:.02s} #settings.leaving .page > :nth-child(4){animation-delay:.04s}
+  #settings.leaving .page > :nth-child(3){animation-delay:.06s} #settings.leaving .page > :nth-child(2){animation-delay:.08s}
+  #settings.leaving .page > :nth-child(1){animation-delay:.1s}
+  #entry.returning .entry > *{animation:rise .8s var(--sheet) both}
+  #entry.returning .entry > :nth-child(2){animation-delay:.06s} #entry.returning .entry > :nth-child(3){animation-delay:.12s}
+  #entry.returning .entry > :nth-child(4){animation-delay:.18s}
   .setbtn circle{transition:transform .55s var(--sheet)}
   #home.set-open .setbtn circle:first-of-type{transform:translateX(-8px)}
   #home.set-open .setbtn circle:last-of-type{transform:translateX(8px)}
@@ -972,6 +980,18 @@ function go(v) {
 }
 function back() {
   if (S.stack.length <= minStack()) return;
+  // Mac: Einstellungen verlassen – erst steigen die Abschnitte gestaffelt aus, dann kommt der Eintrag weich zurück
+  if (isDesktop() && S.stack[S.stack.length - 1] === 'settings' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (back.busy) return; back.busy = true;
+    $('settings').classList.add('leaving');
+    setTimeout(() => {
+      back.busy = false; setTimeout(() => $('settings').classList.remove('leaving'), 600);
+      S.stack.pop(); const e = $('entry'); e.classList.remove('returning'); void e.offsetWidth; e.classList.add('returning');
+      applyStack(); if (S.homeDirty) renderHome();
+      clearTimeout(back.rt); back.rt = setTimeout(() => e.classList.remove('returning'), 1000);
+    }, 300);
+    return;
+  }
   const leaving = S.stack.pop();
   if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(); }
   applyStack();
