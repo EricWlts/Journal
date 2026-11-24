@@ -404,10 +404,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         </div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
         <div class="todayline sctl" id="scTL"><button data-act="sidetoday" id="scTodayBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-        <div class="scfoot"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage geschrieben</span></span></div>
+        <div class="scfoot"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span></div>
       </div>
       <div class="herofoot">
-        <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
+        <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span></span>
         <button class="calbtn" data-act="calendar" aria-label="Kalender"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3.75" y="5.25" width="16.5" height="15" rx="2.5"/><path d="M3.75 10h16.5M8.5 3v4M15.5 3v4"/><circle cx="15.5" cy="15.2" r="1.6" fill="currentColor" stroke="none"/></svg></button>
       </div>
     </header>
@@ -427,7 +427,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         </div>
       </div>
       <h1 class="title" id="calTitle"></h1>
-      <div class="stats" id="calStats"><span class="count" id="calCount"></span><span class="lbl" id="calLbl">Tage geschrieben</span></div>
+      <div class="stats" id="calStats"><span class="count" id="calCount"></span><span class="lbl" id="calLbl">Tage</span></div>
     </header>
     <div class="page light calbody">
       <div class="calarea" id="calarea"><div class="calviewport"><div class="caltrack" id="caltrack"></div></div><div class="legend" id="calLegend"></div></div>
@@ -562,7 +562,7 @@ function reindex() {
   S.byDate = new Map();
   for (const e of S.entries) { if (!S.byDate.has(e.date)) S.byDate.set(e.date, []); S.byDate.get(e.date).push(e); }
 }
-const hasEntry = (k) => S.byDate.has(k);
+const hasEntry = (k) => (S.hitDays ? S.hitDays.has(k) : S.byDate.has(k)); // während der Suche (Mac) zählen nur Tage mit Treffern
 function countRange(from, to) { // inclusive dates; counts written days
   let n = 0; const d = new Date(from);
   while (d <= to) { if (hasEntry(keyOf(d))) n++; d.setDate(d.getDate() + 1); }
@@ -589,13 +589,15 @@ function excerptOf(e) {
 function titleHTML(t, y) { return '<span class="t">' + esc(t) + '</span><span class="y">' + esc(y) + '</span>'; }
 function renderHome() {
   const t = today();
+  const q = S.dsearch && isDesktop() ? $('dq').value.trim().toLowerCase() : '';
+  const allHits = q ? S.entries.filter((e) => ((e.title || '') + '\n' + (e.text || '')).toLowerCase().includes(q)) : null;
+  S.hitDays = allHits ? new Set(allHits.map((e) => e.date)) : null; // Kalender zeigt dann nur die Treffer-Tage
   renderWeek();
   renderSide();
   // Liste nur neu aufbauen, wenn sich etwas geändert hat (spart Ruckler beim Zurückgehen)
   const L = $('list'); let listHTML;
-  const q = S.dsearch ? $('dq').value.trim().toLowerCase() : '';
   if (q) { // Suche am Mac: Treffer erscheinen direkt in der Seitenleiste
-    const hits = S.entries.filter((e) => ((e.title || '') + '\n' + (e.text || '')).toLowerCase().includes(q)).slice(0, 300);
+    const hits = allHits.slice(0, 300);
     S.deskHits = hits; let html = '<div class="hitcount kicker">' + (hits.length ? hits.length + (hits.length === 1 ? ' Treffer' : ' Treffer') : 'Nichts gefunden') + '</div>', last = '';
     for (const e of hits) { const mk = e.date.slice(0, 7); if (mk !== last) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; last = mk; } html += rowHTML(e); }
     listHTML = html;
@@ -616,7 +618,7 @@ function renderHome() {
   }
   if (listHTML !== S.listHTML) { L.innerHTML = listHTML; S.listHTML = listHTML; }
   const tk = keyOf(t);
-  $('fabLabel').textContent = hasEntry(tk) ? 'Heute weiterschreiben' : 'Heute schreiben';
+  $('fabLabel').textContent = S.byDate.has(tk) ? 'Heute weiterschreiben' : 'Heute schreiben';
   $('homePlus').setAttribute('aria-label', $('fabLabel').textContent);
   markCurrentRow();
   S.homeDirty = false;
