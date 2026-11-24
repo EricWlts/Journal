@@ -69,7 +69,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home > .hero:first-of-type{padding-bottom:0}
 .herorest{padding-top:0;padding-bottom:8px}
 .stickytitle{position:sticky;top:var(--safe-t);z-index:6;background:var(--night);color:var(--linen);padding:0 24px}
-.stickytitle .title{margin:0;padding-top:8px;height:72px;position:relative;z-index:1}
+.stickytitle .title{margin:0;padding-top:8px;height:72px;position:relative;z-index:1;clip-path:inset(-40px -40px -14px -40px)} /* Rollen endet an der Kante der dunklen Fläche – Unterlängen bleiben sichtbar */
 .stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:var(--night);opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
   box-shadow:0 1px 0 var(--nline)}
 .stickytitle.stuck::after{opacity:1}
@@ -133,6 +133,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .herofoot .lbl{color:var(--mist)}
 .linkbtn{display:flex;align-items:center;gap:6px;height:44px;font-weight:500}
 .sidecal{display:none}
+.sctabs{display:none}
 .dsearch{display:none}
 .searchbtn{position:relative}
 .searchbtn svg{position:absolute;transition:opacity .2s var(--ease), transform .45s var(--sheet)}
@@ -143,7 +144,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home.searching .topbar .setbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
 .hitcount{padding:20px 0 4px}
 /* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
-.scnav{height:52px;display:flex;align-items:center;justify-content:space-between;position:relative}
+.scnav{height:48px;display:flex;align-items:center;justify-content:space-between;position:relative;margin-top:2px}
 .schome{position:absolute;right:82px;top:50%;display:flex;align-items:center;gap:6px;height:36px;padding:0 8px;color:var(--linen);
   font-family:var(--serif);font-style:italic;font-size:20px;line-height:1;opacity:0;pointer-events:none;transform:translate3d(6px,-50%,0);
   transition:opacity .3s var(--ease), transform .45s var(--sheet)}
@@ -157,7 +158,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scarrows{display:flex;align-items:center;margin-right:-10px}
 .scarrows button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--mist);transition:color .2s var(--ease), background-color .2s var(--ease)}
 .scarrows button:hover{color:var(--linen);background:rgba(242,243,239,.07)}
-.scview{position:relative;height:312px;margin:0 -24px;overflow:hidden;transition:height .5s var(--sheet)}
+.scview{position:relative;height:312px;margin:10px -24px 0;overflow:hidden;transition:height .5s var(--sheet)}
 .sidecal.is-week .scview{height:80px}
 .scfoot{transition:height .5s var(--sheet), opacity .3s var(--ease), margin .5s var(--sheet)}
 .sidecal .wday .wd{color:var(--mist)}
@@ -177,8 +178,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scfoot{height:40px;display:flex;align-items:center;gap:10px;font-size:13px}
 .scfoot .count{font-size:22px;color:var(--linen)}
 .scfoot .lbl{color:var(--mist)}
-#scStat{display:flex;align-items:baseline;gap:7px;margin-right:10px;font-size:14px;transition:opacity .35s var(--ease)}
-#scStat .count{font-size:26px;color:var(--linen)}
+#scStat{display:flex;align-items:baseline;gap:10px;font-size:13px;transition:opacity .35s var(--ease)}
+#scStat .count{font-size:24px;color:var(--linen)}
 #scStat .lbl{color:var(--mist)}
 #scStat.is-empty .count,#scStat.is-empty .lbl{opacity:0}
 .minibar{position:sticky;top:0;z-index:5;height:calc(var(--safe-t) + 52px);margin-bottom:calc(-1 * (var(--safe-t) + 52px));
@@ -411,6 +412,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
   .herorest{padding-top:0}
   .topbar{justify-content:flex-end;position:relative}
+  .sctabs{display:flex;margin-right:14px;transition:opacity .25s var(--ease)}
+  #home.searching .sctabs{opacity:0;pointer-events:none}
   .dsearch{display:flex;align-items:center;position:absolute;right:44px;top:0;height:44px;width:0;opacity:0;overflow:hidden;pointer-events:none;
     border-bottom:1px solid var(--nline);transition:width .55s var(--sheet), opacity .3s var(--ease), border-color .3s var(--ease)}
   #home.searching .dsearch{width:calc(100% - 44px);opacity:1;pointer-events:auto}
@@ -420,6 +423,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .dsearch input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
   .stickysearch{display:none}
   .stickytitle{display:flex;align-items:baseline}
+  .stickytitle .title{clip-path:inset(-40px -40px -8px -40px)}
   .stickytitle .title{flex:none}
   .stickytitle #scStat{transition:opacity .3s var(--ease)}
   #homeTitle .t,#homeTitle .y{display:inline-block;will-change:transform}
@@ -468,6 +472,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   <section class="view is-top" id="home" aria-label="Übersicht">
     <header class="hero dark">
       <div class="topbar">
+        <div class="tabs sctabs" role="tablist"><button class="tab" role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button class="tab" role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button class="tab" role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button></div>
         <button class="iconbtn setbtn" data-act="settings" aria-label="Einstellungen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
         <label class="dsearch"><span class="sr">Suchbegriff</span><input id="dq" type="search" placeholder="Wonach suchst du?" autocomplete="off" spellcheck="false" tabindex="-1"></label>
         <button class="iconbtn searchbtn" data-act="search" id="searchBtn" aria-label="Suchen"><svg class="i-mag" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><svg class="i-x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -480,11 +485,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
       <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       <div class="sidecal" id="sidecal"><div class="scinner">
-        <div class="scnav">
-          <div class="seg" role="tablist"><button role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button><span class="segi" id="segi"></span></div>
-          <button class="schome" id="scTodayBtn" data-act="sidetoday" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Heute</span><svg class="ar ar-r" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><div class="scarrows"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
-        </div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
+        <div class="scnav"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span>
+          
+          <button class="schome" id="scTodayBtn" data-act="sidetoday" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Heute</span><svg class="ar ar-r" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><div class="scarrows"><button data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+        </div>
       </div></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span></span>
@@ -846,8 +851,6 @@ function renderSide() {
   $('scCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '0';
   $('scStat').classList.toggle('is-empty', !elapsed);
   $('scWeek').setAttribute('aria-selected', mode === 'week'); $('scMonth').setAttribute('aria-selected', mode === 'month'); $('scYear').setAttribute('aria-selected', mode === 'year');
-  const sel = $({ week: 'scWeek', month: 'scMonth', year: 'scYear' }[mode]), segi = $('segi');
-  if (sel.offsetWidth) { segi.style.width = sel.offsetWidth + 'px'; segi.style.transform = 'translateX(' + sel.offsetLeft + 'px)'; }
   const isNow = mode === 'week' ? !w : y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
   const tl = $('scTodayBtn'); tl.classList.toggle('on', !isNow); tl.tabIndex = isNow ? -1 : 0;
   if (!isNow) { const future = mode === 'week' ? w > 0 : (mode === 'month' ? y * 12 + m > t.getFullYear() * 12 + t.getMonth() : y > t.getFullYear()); tl.classList.toggle('dir-l', future); tl.classList.toggle('dir-r', !future); }
@@ -876,8 +879,8 @@ function animTitle(label, dir, vertical) { // Monat gleitet seitlich, Jahr rollt
   }
   placeStat();
 }
-function placeStat() { // „x/y Tage“ neben das Jahr, wenn es dort Platz hat – sonst in die Tab-Zeile
-  if (!isDesktop()) return;
+function placeStat() { // „x/y Tage“ steht jetzt fest unter dem Kalender (wie am iPhone)
+  return;
   const st = $('scStat'), bar = $('stickyTitle'), h = $('homeTitle');
   const t = h.querySelector('.t'), y = h.querySelector('.y'); if (!t || !y) return;
   const ar = document.querySelector('.scarrows'), br = bar.getBoundingClientRect();
@@ -938,6 +941,7 @@ function sideToday() {
   });
 }
 function setSideMode(mode, y, m) {
+  if ($('home').classList.contains('cal-in') && S.calExpand) S.calExpand(); // Tab bei eingefahrenem Kalender: erst ausfahren
   if (mode === S.side.mode && y == null) return;
   if (mode !== 'week') S.listTitle = null;
   const from = S.side.mode, zoomOut = SIDE_ORDER[mode] > SIDE_ORDER[from], t = today();
@@ -1312,10 +1316,11 @@ function fitStuck(stuck) { // eingeklappt: Titel so weit verkleinern, dass er di
     const dirY = home.scrollTop >= lastY ? 1 : -1; lastY = home.scrollTop;
     const listTop = $('list').getBoundingClientRect().top;
     if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
-      const x = homeRect.left + 60, y = barRect.bottom + 14;
-      const el = document.elementFromPoint(x, y); const row = el && el.closest('.row, .sep');
-      const dk = row && (row.dataset.date || row.dataset.month);
+      const x = homeRect.left + 60, y = barRect.bottom + 30;
+      const el = document.elementFromPoint(x, y); const row = el && el.closest('.row, .sep, .mgroup');
+      const dk = row && (row.dataset.date || row.dataset.month || (row.querySelector('.row') || {}).dataset?.date);
       if (dk) { const d = parseKey(dk.length === 7 ? dk + '-01' : dk); label = MONTHS[d.getMonth()] + '|' + d.getFullYear(); }
+      else if (shown) label = shown; // Lücke zwischen Einträgen getroffen: Monat behalten statt neu einblenden
     }
     if (label && label !== shown) {
       const [mname, yr] = label.split('|'); const changed = !!shown; shown = label;
