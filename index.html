@@ -960,8 +960,8 @@ function markToday() { // „Heute“: um den heutigen Tag zeichnet sich ein Rin
   svg.animate([{ opacity: 1, transform: 'rotate(-90deg) scale(1)' }, { opacity: 0, transform: 'rotate(-90deg) scale(1.12)' }], { duration: 420, delay: 820, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }).onfinish = () => svg.remove();
 }
 function setSideMode(mode, y, m) {
-  if ($('home').classList.contains('cal-in') && S.calExpand) S.calExpand(); // Tab bei eingefahrenem Kalender: erst ausfahren
-  if (mode === S.side.mode && y == null) return;
+  const needOpen = S.calIsOpen && !S.calIsOpen(); // teilweise oder ganz eingefahren: nach dem Wechsel ganz ausfahren
+  if (mode === S.side.mode && y == null) { if (needOpen) { S.listTitle = null; S.calOpen(); } return; }
   if (mode !== 'week') S.listTitle = null;
   const from = S.side.mode, zoomOut = SIDE_ORDER[mode] > SIDE_ORDER[from], t = today();
   morphSwap($('sctrack'), zoomOut, () => {
@@ -975,6 +975,7 @@ function setSideMode(mode, y, m) {
     S.side.mode = mode; if (y != null) { S.side.y = y; S.side.m = m; }
     renderSide();
   });
+  if (needOpen) { S.listTitle = null; S.calOpen(); }
   softIn($('scStat'));
 }
 /* Wechsel Monat ⇄ Jahr: alter Inhalt zoomt weg und blendet aus, neuer zoomt aus der Gegenrichtung herein */
@@ -1443,6 +1444,16 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
   }, { passive: false });
   L.addEventListener('scroll', () => { if (isDesktop()) updateTitle(); }, { passive: true });
   S.calExpand = () => apply(full(), true);
+  S.calIsOpen = () => h == null || h >= full() - 0.5;
+  S.calOpen = () => { // auf die volle Höhe der (neuen) Ansicht ausfahren – auch wenn die Ansicht gerade ihre Höhe ändert
+    const sc = $('scview'), finalSc = cal.classList.contains('is-week') ? 80 : 312;
+    const target = inner.offsetHeight - sc.offsetHeight + finalSc, from = cal.getBoundingClientRect().height;
+    cal.classList.remove('snapping'); cal.style.height = from + 'px'; void cal.offsetWidth;
+    cal.classList.add('snapping'); cal.style.height = target + 'px'; h = target;
+    inner.style.transition = 'opacity .45s var(--sheet)'; inner.style.opacity = '1';
+    $('home').classList.remove('cal-in'); updateTitle();
+    clearTimeout(apply.t); apply.t = setTimeout(() => { cal.classList.remove('snapping'); cal.style.height = ''; h = full(); }, 520);
+  };
   $('homeTitle').addEventListener('click', () => {
     if (!isDesktop()) return;
     if ($('home').classList.contains('cal-in') || (h != null && h < full())) { // ausfahren, und zwar dort, wo die Liste gerade steht
