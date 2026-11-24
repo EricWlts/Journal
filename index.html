@@ -259,7 +259,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="minimonth" id="minimonth"></div>
       <div class="herofoot">
         <span class="stat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
-        <button class="linkbtn" data-act="thisweek" id="thisWeekBtn" hidden>Diese Woche</button>
+        <button class="linkbtn" data-act="thisweek" id="thisWeekBtn" hidden aria-label="Zurück zu heute"></button>
         <button class="linkbtn" data-act="calendar">Kalender <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
     </header>
@@ -474,6 +474,7 @@ function renderWeek() {
   $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '';
   $('weekLbl').textContent = elapsed ? 'Tage geschrieben' : 'Liegt noch vor dir';
   $('thisWeekBtn').hidden = off === 0;
+  $('thisWeekBtn').innerHTML = off > 0 ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Heute' : 'Heute<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 }
 function resetTrack(tr) { tr.style.transition = 'none'; tr.style.transform = ''; }
 let trackBusy = false;
@@ -663,7 +664,7 @@ function back() {
 document.addEventListener('click', (ev) => {
   const b = ev.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act;
-  if (a === 'search') { go('search'); setTimeout(() => $('q').focus(), 60); }
+  if (a === 'search') { go('search'); $('q').focus({ preventScroll: true }); }
   else if (a === 'settings') { renderAbout(); go('settings'); }
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { S.cal.mode = b.dataset.mode; renderCalendar(); }
@@ -676,7 +677,7 @@ document.addEventListener('click', (ev) => {
   else if (a === 'back') back();
   else if (a === 'backup') exportBackup();
 });
-function focusEnd(el) { el.focus(); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 $('eTitle').addEventListener('input', onEdit);
 $('eBody').addEventListener('input', onEdit);
 $('eTitle').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); focusEnd($('eBody')); } });
@@ -686,6 +687,11 @@ for (const id of ['eTitle', 'eBody']) $(id).addEventListener('paste', (e) => { /
 $('q').addEventListener('input', renderSearch);
 document.addEventListener('visibilitychange', () => { if (document.hidden) saveCur(); else { renderHome(); } });
 window.addEventListener('pagehide', saveCur);
+
+/* iOS schiebt beim Fokussieren manchmal den ganzen App-Rahmen – zurücksetzen */
+$('app').addEventListener('scroll', () => { const a = $('app'); if (a.scrollLeft || a.scrollTop) { a.scrollLeft = 0; a.scrollTop = 0; } });
+window.addEventListener('scroll', () => { if (window.scrollX) window.scrollTo(0, window.scrollY); });
+for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) $(v).addEventListener('scroll', (e) => { if (e.target.scrollLeft) e.target.scrollLeft = 0; });
 
 /* compact bar on scroll (home) */
 new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classList.toggle('show', !en.isIntersecting); },
@@ -832,7 +838,7 @@ new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classLi
     const top = S.stack[S.stack.length - 1];
     if ((e.metaKey || e.ctrlKey) && e.key === '[') { e.preventDefault(); back(); return; }
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') { e.preventDefault(); $('app').querySelector('[data-act="today"]').click(); return; }
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f') { e.preventDefault(); go('search'); setTimeout(() => $('q').focus(), 60); return; }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f') { e.preventDefault(); go('search'); $('q').focus({ preventScroll: true }); return; }
     if (typing()) { if (e.key === 'Escape') { document.activeElement.blur(); saveCur(); } return; }
     if (e.key === 'Escape') back();
     else if (top === 'calendar' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) shiftCal(e.key === 'ArrowLeft' ? -1 : 1);
