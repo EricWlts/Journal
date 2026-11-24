@@ -69,7 +69,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home > .hero:first-of-type{padding-bottom:0}
 .herorest{padding-top:0;padding-bottom:8px}
 .stickytitle{position:sticky;top:var(--safe-t);z-index:6;background:var(--night);color:var(--linen);padding:0 24px}
-.stickytitle .title{margin:0;padding-top:8px;height:72px}
+.stickytitle .title{margin:0;padding-top:8px;height:72px;position:relative;z-index:1}
 .stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:var(--night);opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
   box-shadow:0 1px 0 var(--nline)}
 .stickytitle.stuck::after{opacity:1}
@@ -154,7 +154,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scview{position:relative;height:312px;margin:0 -24px;overflow:hidden;transition:height .5s var(--sheet)}
 .sidecal.is-week .scview{height:80px}
 .scfoot{transition:height .5s var(--sheet), opacity .3s var(--ease), margin .5s var(--sheet)}
-.sidecal.is-week .scfoot{height:0;opacity:0;overflow:hidden}
 .sidecal .wday .wd{color:var(--mist)}
 
 .scview .caltrack{height:100%}
@@ -234,8 +233,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .caltrack .calpanel{transform-origin:50% 30%}
 .caltrack{height:100%}
 .calpanel{flex:0 0 33.3333%;padding:0 20px;display:flex;flex-direction:column}
-@keyframes inl{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
-@keyframes inr{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes inl{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes inr{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
 .wdhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin-bottom:6px}
 .wdhead span{text-align:center;font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--muted)}
 .mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:4px}
@@ -287,7 +286,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .ebody:empty::before{content:attr(data-ph);color:var(--dim)}
 .ephotos{display:grid;gap:8px;margin-top:28px}
 .ephotos img{width:100%;height:auto;display:block;border-radius:2px;background:var(--stone)}
-.entry.in-l{animation:inl .3s var(--ease)} .entry.in-r{animation:inr .3s var(--ease)}
+.entry.in-l{animation:inl .42s var(--sheet)} .entry.in-r{animation:inr .42s var(--sheet)}
 
 /* settings & search */
 .ptitle{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:64px;line-height:64px;letter-spacing:-.03em}
@@ -359,8 +358,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .fab{width:100%;height:44px}
   .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
   .ephotos{grid-template-columns:1fr 1fr}
-  #home.side-week .herorest{position:sticky;top:72px;z-index:5}
-  #home.side-week .stickytitle::after{display:none}
+  #home{display:flex;flex-direction:column;overflow:hidden}
+  #home > *{flex:none}
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0}
+  .stickytitle::after{display:none}
+  #homeTitle{cursor:pointer;transition:opacity .35s var(--ease)}
+  #homeTitle:hover .y{color:var(--mist)}
+  #homeTitle .y{transition:color .2s var(--ease)}
   .entry .title,.etitle{font-size:64px;line-height:1;padding-top:0;display:block}
   .ebody{font-size:20px;line-height:1.75}
   .view,.view.is-top{will-change:auto}
@@ -763,12 +767,13 @@ function updateSideSel() {
 function sideTitleOf(st) { if (st.mode === 'week') { const r = weekRef(st.w); return MONTHS[r.getMonth()] + '|' + r.getFullYear(); } return (st.mode === 'month' ? MONTHS[st.m] : 'Das Jahr') + '|' + st.y; }
 function titleWillChange(next) { return !S.dsearch && sideTitleOf(next) !== S.sideTitle && !$('stickyTitle').classList.contains('stuck'); }
 function shiftSide(dir, ms) {
-  if (trackBusy) return;
+  if (trackBusy) return; S.listTitle = null;
   const p = sidePeriod(dir), next = Object.assign({}, S.side, { y: p.y, m: p.m, w: p.w || 0 }), tc = titleWillChange(next);
   fadeWith([$('scStat')], 0); if (tc) { $('homeTitle').style.transition = 'opacity .16s var(--ease)'; $('homeTitle').style.opacity = '0'; }
   slideTrack($('sctrack'), dir, () => { S.side.y = next.y; S.side.m = next.m; S.side.w = next.w; renderSide(); softIn($('scStat')); if (tc) softIn($('homeTitle')); }, ms || 380);
 }
 function sideToday() {
+  S.listTitle = null;
   const t = today(); const { mode, y, m, w } = S.side;
   const diff = mode === 'week' ? -w : mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
   const tc = titleWillChange(Object.assign({}, S.side, { y: t.getFullYear(), m: t.getMonth(), w: 0 }));
@@ -777,10 +782,13 @@ function sideToday() {
 }
 function setSideMode(mode, y, m) {
   if (mode === S.side.mode && y == null) return;
+  if (mode !== 'week') S.listTitle = null;
   const from = S.side.mode, zoomOut = SIDE_ORDER[mode] > SIDE_ORDER[from], t = today();
   morphSwap($('sctrack'), zoomOut, () => {
     if (from === 'week' && y == null) { const r = weekRef(S.side.w); S.side.y = r.getFullYear(); S.side.m = r.getMonth(); }
-    if (mode === 'week') { // Woche: die aktuelle, wenn sie im gezeigten Zeitraum liegt, sonst die erste
+    const topRow = mode === 'week' && $('list').scrollTop > 12 ? topRowOfList() : null;
+    if (topRow) S.side.w = weekOf(parseKey(topRow.dataset.date));
+    else if (mode === 'week') { // Woche: die aktuelle, wenn sie im gezeigten Zeitraum liegt, sonst die erste
       const inView = from === 'month' ? (S.side.y === t.getFullYear() && S.side.m === t.getMonth()) : S.side.y === t.getFullYear();
       S.side.w = inView ? 0 : weekOf(new Date(S.side.y, from === 'month' ? S.side.m : 0, 1));
     }
@@ -827,8 +835,9 @@ async function renderEntry(dir) {
   if (dir) inner.classList.add(dir < 0 ? 'in-l' : 'in-r');
   $('entry').scrollTop = 0;
   if (isDesktop()) { const d0 = parseKey(e.date);
-    if (dir && S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m)) { S.side.y = d0.getFullYear(); S.side.m = d0.getMonth(); renderSide(); }
-    if (dir && S.side.mode === 'week' && weekOf(d0) !== S.side.w) { S.side.w = weekOf(d0); renderSide(); } updateSideSel(); markCurrentRow(); }
+    updateSideSel(); markCurrentRow(); scrollListTo(e.id);
+    if (S.side.mode === 'week' && weekOf(d0) !== S.side.w) sideJump({ w: weekOf(d0) });
+    else if (S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m) && dir) sideJump({ y: d0.getFullYear(), m: d0.getMonth() }); }
 }
 function draftFor(k) {
   const now = new Date(); const d = parseKey(k);
@@ -892,10 +901,10 @@ function switchEntry(dir) { // mit kurzer Ausblende, dann blendet der neue Eintr
   const el = $('entryInner');
   if (!adjacentOf(dir)) { el.style.transition = 'transform .32s var(--sheet), opacity .32s var(--sheet)'; el.style.transform = ''; el.style.opacity = ''; setTimeout(() => { el.style.transition = ''; }, 340); return false; }
   if (typing()) document.activeElement.blur();
-  el.style.transition = 'transform .16s cubic-bezier(0.4, 0, 1, 1), opacity .16s linear';
-  el.style.transform = 'translate3d(' + (dir > 0 ? -40 : 40) + 'px,0,0)'; el.style.opacity = '0';
+  el.style.transition = 'transform .14s cubic-bezier(0.4, 0, 1, 1), opacity .14s linear';
+  el.style.transform = 'translate3d(' + (dir > 0 ? -72 : 72) + 'px,0,0)'; el.style.opacity = '0';
   clearTimeout(switchEntry.t);
-  switchEntry.t = setTimeout(() => { el.style.transition = 'none'; el.style.transform = ''; el.style.opacity = ''; adjacent(dir); requestAnimationFrame(() => { el.style.transition = ''; }); }, 160);
+  switchEntry.t = setTimeout(() => { el.style.transition = 'none'; el.style.transform = ''; el.style.opacity = ''; adjacent(dir); requestAnimationFrame(() => { el.style.transition = ''; }); }, 140);
   return true;
 }
 
@@ -980,10 +989,10 @@ document.addEventListener('click', (ev) => {
 function deskSearch(open) {
   S.dsearch = open; $('home').classList.toggle('searching', open); $('dq').tabIndex = open ? 0 : -1;
   $('searchBtn').setAttribute('aria-label', open ? 'Suche schließen' : 'Suchen');
-  if (open) { $('home').scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => $('dq').focus({ preventScroll: true }), 80); }
+  if (open) { $('list').scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => $('dq').focus({ preventScroll: true }), 80); }
   else { $('dq').value = ''; if (S.navList && S.navList === S.deskHits) S.navList = null; S.deskHits = null; $('dq').blur(); renderHome(); }
 }
-$('dq').addEventListener('input', () => { renderHome(); $('home').scrollTop = 0; });
+$('dq').addEventListener('input', () => { renderHome(); $('list').scrollTop = 0; });
 $('dq').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); deskSearch(false); } else if (e.key === 'Enter') { e.preventDefault(); $('dq').blur(); } });
 function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 $('eTitle').addEventListener('input', onEdit);
@@ -1061,7 +1070,8 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     const barRect = bar.getBoundingClientRect(), homeRect = home.getBoundingClientRect();
     const stuck = home.scrollTop > 0 && barRect.top <= homeRect.top + (parseFloat(getComputedStyle(bar).top) || 0) + 0.5;
     bar.classList.toggle('stuck', stuck); bar.querySelector('.stickysearch').tabIndex = stuck ? 0 : -1;
-    let label = isDesktop() ? S.sideTitle : S.weekTitle;
+    let label = isDesktop() ? (S.listTitle || S.sideTitle) : S.weekTitle;
+    if (isDesktop()) { if (label && label !== shown) { const [mname, yr] = label.split('|'); const changed = !!shown; shown = label; $('homeTitle').innerHTML = titleHTML(mname, yr); if (changed) softIn($('homeTitle')); } return; }
     const listTop = $('list').getBoundingClientRect().top;
     if (listTop < barRect.bottom + 1) { // Liste läuft unter dem Titel durch
       const x = homeRect.left + 60, y = barRect.bottom + 14;
@@ -1077,7 +1087,56 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
   }
   home.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   S.updateHomeTitle = () => { shown = ''; update(); };
+  S.updateHomeTitleSoft = () => update();
 })();
+
+/* Mac: Liste und Kalender gehen zusammen */
+function topRowOfList() {
+  const L = $('list'), r = L.getBoundingClientRect();
+  const el = document.elementFromPoint(r.left + 60, r.top + 16); let row = el && el.closest('.row, .sep');
+  if (row && row.classList.contains('sep')) row = row.nextElementSibling;
+  return row && row.classList.contains('row') ? row : null;
+}
+function sideJump(next, manual) { // zu einem Zeitraum gleiten; der Zielinhalt liegt schon im Nachbarfeld bereit
+  const cur = S.side; const dir = cur.mode === 'week' ? Math.sign(next.w - cur.w) : cur.mode === 'month' ? Math.sign((next.y * 12 + next.m) - (cur.y * 12 + cur.m)) : Math.sign(next.y - cur.y);
+  if (!dir || trackBusy) return;
+  if (manual) S.listTitle = null;
+  const tr = $('sctrack'), nb = tr.children[dir > 0 ? 2 : 0];
+  if (nb) nb.outerHTML = cur.mode === 'week' ? weekPanelHTML(next.w) : '<div class="calpanel">' + (cur.mode === 'month' ? monthGridHTML(next.y, next.m, true) : yearHTML(next.y, 'sidepick')) + '</div>';
+  updateSideSel();
+  const tc = titleWillChange(Object.assign({}, cur, next)) && !S.listTitle;
+  fadeWith([$('scStat')], 0); if (tc) { $('homeTitle').style.transition = 'opacity .16s var(--ease)'; $('homeTitle').style.opacity = '0'; }
+  slideTrack(tr, dir, () => { Object.assign(S.side, next); renderSide(); softIn($('scStat')); if (tc) softIn($('homeTitle')); }, 400);
+}
+function followList() { // Kalender auf den obersten Eintrag der Liste stellen
+  if (!isDesktop() || performance.now() < (S.autoScrollUntil || 0)) return; const row = topRowOfList(); if (!row) return;
+  const d = parseKey(row.dataset.date);
+  if (S.side.mode === 'week') { const w = weekOf(d); if (w !== S.side.w) sideJump({ w }); }
+  else if (S.side.mode === 'month' && (d.getFullYear() !== S.side.y || d.getMonth() !== S.side.m)) sideJump({ y: d.getFullYear(), m: d.getMonth() });
+}
+function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
+  if (!isDesktop() || !id) return; const L = $('list');
+  const row = L.querySelector('.row[data-id="' + CSS.escape(id) + '"]'); if (!row) return;
+  let target = row.offsetTop - 4; const prev = row.previousElementSibling; if (prev && prev.classList.contains('sep')) target = prev.offsetTop;
+  target = Math.max(0, Math.min(target, L.scrollHeight - L.clientHeight));
+  if (Math.abs(L.scrollTop - target) < 2) return;
+  S.autoScrollUntil = performance.now() + 900; L.scrollTo({ top: target, behavior: 'smooth' });
+}
+(function listSync() {
+  const L = $('list'); let raf = 0, settleT = null;
+  L.addEventListener('scroll', () => {
+    if (!isDesktop()) return;
+    const auto = performance.now() < (S.autoScrollUntil || 0);
+    if (!auto && S.side.mode !== 'week' && L.scrollTop > 12 && !S.sideHold) { S.sideHold = true; setSideMode('week'); setTimeout(() => { S.sideHold = false; }, 600); }
+    if (!raf) raf = requestAnimationFrame(() => {
+      raf = 0; const row = L.scrollTop > 2 ? topRowOfList() : null;
+      if (row) { const d = parseKey(row.dataset.date); S.listTitle = MONTHS[d.getMonth()] + '|' + d.getFullYear(); } else S.listTitle = null;
+      S.updateHomeTitle && S.updateHomeTitleSoft();
+    });
+    clearTimeout(settleT); settleT = setTimeout(followList, 140);
+  }, { passive: true });
+})();
+$('homeTitle').addEventListener('click', () => { if (!isDesktop()) return; S.listTitle = null; setSideMode(S.side.mode === 'week' ? 'month' : 'week'); });
 
 /* ---------- gestures: touch ---------- */
 /* Physik: Geschwindigkeit aus den letzten ~100 ms, Wurfweite wird mitgerechnet,
@@ -1258,10 +1317,11 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     }
     else if (g.area === 'cal') { if (Math.abs(g.acc) > 90) { g.fired = true; shiftCal(dir); } }
     else if (g.area === 'entry') {
-      const has = !!adjacentOf(dir), el = $('entryInner'), a = Math.abs(g.acc);
-      const x = has ? -dir * Math.min(56, a * 0.3) : -dir * 18 * (1 - 1 / (a / 60 + 1));
-      el.style.transition = 'none'; el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)'; el.style.opacity = has ? String(1 - Math.min(a / 360, 0.3)) : '';
-      if (has && a > 100) { g.fired = true; switchEntry(dir); }
+      if (g.has == null || g.dir !== dir) { g.dir = dir; g.has = !!adjacentOf(dir); }
+      const has = g.has, el = $('entryInner'), a = Math.abs(g.acc);
+      const x = has ? -dir * Math.min(90, a * 0.5) : -dir * 18 * (1 - 1 / (a / 60 + 1));
+      if (!g.raf) g.raf = requestAnimationFrame(() => { g.raf = 0; if (g.fired) return; el.style.transition = 'none'; el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)'; el.style.opacity = has ? String(1 - Math.min(a / 300, 0.35)) : ''; });
+      if (has && a > 90) { g.fired = true; switchEntry(dir); }
     }
     else if (g.area === 'other' && g.acc < -120 && S.stack.length > minStack()) { g.fired = true; back(); }
   }, { passive: false });
