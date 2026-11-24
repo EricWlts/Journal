@@ -79,6 +79,21 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .herofoot .linkbtn{height:auto;padding:14px 0;align-items:baseline}
 .herofoot .linkbtn svg{align-self:center}
 .herofoot .links{display:flex;align-items:baseline;gap:20px}
+#thisWeekBtn{transition:opacity .35s var(--ease), transform .35s var(--ease)}
+#thisWeekBtn.off{opacity:0;transform:translateX(8px);pointer-events:none}
+#weekStat,#calStats .count,#calStats .lbl{transition:opacity .3s var(--ease)}
+#weekStat.is-empty,#calStats.is-empty .count,#calStats.is-empty .lbl{opacity:0}
+.floatbtn{position:fixed;right:20px;bottom:calc(var(--safe-b) + 22px + var(--kb, 0px));width:58px;height:58px;border-radius:50%;z-index:15;
+  background:var(--night);color:var(--linen);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 16px 32px -14px rgba(8,10,8,.6), 0 2px 6px rgba(8,10,8,.12), inset 0 0 0 1px rgba(242,243,239,.07);
+  transition:transform .18s var(--ease), bottom .3s var(--sheet)}
+.floatbtn:active{transform:scale(.92)}
+.floatbtn svg{position:absolute;transition:opacity .22s var(--ease), transform .3s var(--sheet)}
+.floatbtn .i-check{opacity:0;transform:scale(.5) rotate(-25deg)}
+#entry.is-typing .floatbtn .i-back{opacity:0;transform:scale(.5) rotate(25deg)}
+#entry.is-typing .floatbtn .i-check{opacity:1;transform:none}
+.calbody{padding-bottom:calc(var(--safe-b) + 110px);background:var(--paper);min-height:calc(100% - 260px)}
+#calendar{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
 .herofoot .stat{display:flex;align-items:baseline;gap:10px}
 .herofoot .count{font-size:26px;color:var(--linen)}
 .herofoot .lbl{color:var(--mist)}
@@ -218,6 +233,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .hero .title .t{font-size:56px;line-height:64px} .hero .title .y{font-size:38px}
   .topbar{justify-content:space-between;margin-left:-10px}
   .weekwrap,.weekline{display:none}
+  #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
+  .floatbtn{right:32px;bottom:32px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
   .minimonth{display:block;margin-top:16px;border-top:1px solid var(--nline);padding-top:14px}
   .minimonth .wdhead span{color:var(--mist)}
@@ -261,8 +278,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
       <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
       <div class="minimonth" id="minimonth"></div>
       <div class="herofoot">
-        <span class="stat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
-        <span class="links"><button class="linkbtn" data-act="thisweek" id="thisWeekBtn" hidden aria-label="Zurück zu heute"></button>
+        <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
+        <span class="links"><button data-act="thisweek" id="thisWeekBtn" class="linkbtn off" aria-label="Zurück zu heute" tabindex="-1"></button>
         <button class="linkbtn" data-act="calendar">Kalender <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></span>
       </div>
     </header>
@@ -274,19 +291,19 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   <section class="view is-off" id="calendar" aria-label="Kalender">
     <header class="hero dark calhero">
       <div class="pnav">
-        <button class="roundbtn" data-act="back" aria-label="Zurück"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></span></button>
         <div class="tabs" role="tablist">
           <button class="tab" role="tab" id="tabMonth" data-act="calmode" data-mode="month">Monat</button>
           <button class="tab" role="tab" id="tabYear" data-act="calmode" data-mode="year">Jahr</button>
         </div>
       </div>
       <h1 class="title" id="calTitle"></h1>
-      <div class="stats"><span class="count" id="calCount"></span><span class="lbl" id="calLbl">Tage geschrieben</span></div>
+      <div class="stats" id="calStats"><span class="count" id="calCount"></span><span class="lbl" id="calLbl">Tage geschrieben</span></div>
     </header>
     <div class="page light calbody">
       <div class="calarea" id="calarea"><div class="calviewport"><div class="caltrack" id="caltrack"></div></div><div class="legend" id="calLegend"></div></div>
       <div id="otd"></div>
     </div>
+    <button class="floatbtn" data-act="back" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 
   <!-- Schreiben -->
@@ -294,13 +311,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
     <div class="entry" id="entryInner">
       <div class="enav">
         <div class="edate"><span class="wd" id="eWd"></span><span class="dt" id="eDt"></span></div>
-        <button class="done" data-act="done" aria-label="Fertig"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button>
       </div>
       <div class="etitle" id="eTitle" contenteditable="plaintext-only" role="textbox" aria-label="Titel" data-ph="Titel" spellcheck="true"></div>
       <div class="eline"></div>
       <div class="ebody" id="eBody" contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="Text" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
       <div class="ephotos" id="ePhotos"></div>
     </div>
+    <button class="floatbtn" data-act="entryback" id="entryBtn" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg><svg class="i-check" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></button>
   </section>
 
   <!-- Suche -->
@@ -474,9 +491,9 @@ function renderWeek() {
   $('weektrack').innerHTML = weekPanelHTML(off - 1) + weekPanelHTML(off) + weekPanelHTML(off + 1);
   resetTrack($('weektrack'));
   const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
-  $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '';
-  $('weekLbl').textContent = elapsed ? 'Tage geschrieben' : 'Liegt noch vor dir';
-  $('thisWeekBtn').hidden = off === 0;
+  $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '0';
+  $('weekStat').classList.toggle('is-empty', !elapsed);
+  $('thisWeekBtn').classList.toggle('off', off === 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
   $('thisWeekBtn').innerHTML = off > 0 ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Heute' : 'Heute<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 }
 function resetTrack(tr) { tr.style.transition = 'none'; tr.style.transform = ''; }
@@ -534,8 +551,8 @@ function renderCalendar() {
   const last = mode === 'month' ? new Date(y, m, daysIn(y, m)) : new Date(y, 11, 31);
   $('calTitle').innerHTML = mode === 'month' ? titleHTML(MONTHS[m], y) : titleHTML('Das Jahr', y);
   const end = last < t ? last : t; const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
-  $('calCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '';
-  $('calLbl').textContent = elapsed ? 'Tage geschrieben' : 'Liegt noch vor dir';
+  $('calCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '0';
+  $('calStats').classList.toggle('is-empty', !elapsed);
   $('caltrack').innerHTML = [-1, 0, 1].map((o) => { const p = periodOf(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, false) : yearHTML(p.y)) + '</div>'; }).join('');
   resetTrack($('caltrack'));
   $('calLegend').innerHTML = '<span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="box-shadow:0 0 0 1px var(--ink) inset"></i>Heute</span>' +
@@ -676,6 +693,10 @@ document.addEventListener('click', (ev) => {
   else if (a === 'day') openDay(b.dataset.key);
   else if (a === 'open') openEntryById(b.dataset.id);
   else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
+  else if (a === 'entryback') {
+    if (typing()) { document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
+    else back();
+  }
   else if (a === 'done') { if (isDesktop()) { saveCur(); document.activeElement.blur(); renderHome(); toast('Gespeichert'); } else back(); }
   else if (a === 'back') back();
   else if (a === 'backup') exportBackup();
@@ -695,6 +716,17 @@ window.addEventListener('pagehide', saveCur);
 $('app').addEventListener('scroll', () => { const a = $('app'); if (a.scrollLeft || a.scrollTop) { a.scrollLeft = 0; a.scrollTop = 0; } });
 window.addEventListener('scroll', () => { if (window.scrollX) window.scrollTo(0, window.scrollY); });
 for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) $(v).addEventListener('scroll', (e) => { if (e.target.scrollLeft) e.target.scrollLeft = 0; });
+
+/* Schreib-Modus: Knopf zeigt Haken statt Pfeil; Knopf bleibt über der Tastatur */
+for (const ev of ['pointerdown', 'mousedown']) $('entryBtn').addEventListener(ev, (e) => e.preventDefault()); // Fokus nicht vorzeitig verlieren
+for (const id of ['eTitle', 'eBody']) {
+  $(id).addEventListener('focus', () => $('entry').classList.add('is-typing'));
+  $(id).addEventListener('blur', () => setTimeout(() => { if (!typing()) $('entry').classList.remove('is-typing'); }, 0));
+}
+if (window.visualViewport) {
+  const kb = () => { const v = window.visualViewport; const h = Math.max(0, window.innerHeight - v.height - v.offsetTop); document.documentElement.style.setProperty('--kb', (h > 80 ? h : 0) + 'px'); };
+  visualViewport.addEventListener('resize', kb); visualViewport.addEventListener('scroll', kb);
+}
 
 /* compact bar on scroll (home) */
 new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classList.toggle('show', !en.isIntersecting); },
