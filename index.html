@@ -37,7 +37,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .app{position:fixed;inset:0;overflow:hidden}
 .view{position:absolute;inset:0;background:var(--paper);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
   transition:transform .38s var(--ease), visibility 0s linear 0s; will-change:transform}
-.view.is-top{transform:none;visibility:visible;z-index:3;box-shadow:-1px 0 0 var(--line), -24px 0 48px -24px rgba(8,10,8,.35)}
+.view.is-top{transform:none;visibility:visible;z-index:3;box-shadow:-1px 0 0 rgba(8,10,8,.12), -10px 0 24px -14px rgba(8,10,8,.3)}
 .view.is-under{transform:translateX(-28%);visibility:visible;z-index:2}
 .view.is-off{transform:translateX(100%);visibility:hidden;z-index:1;transition:transform .38s var(--ease), visibility 0s linear .38s}
 #home{box-shadow:none}
@@ -56,7 +56,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
 .hero{background:var(--night);color:var(--linen);padding:calc(var(--safe-t) + 8px) 24px 20px}
 .topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
-.week{margin-top:16px;border-top:1px solid var(--nline);padding-top:18px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.weekline{height:1px;background:var(--nline);margin-top:16px}
+.weekwrap{margin:0 -24px;padding-top:18px;overflow:hidden;touch-action:pan-y}
+.weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%);will-change:transform}
+.weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .wday{display:flex;flex-direction:column;align-items:center;gap:8px}
 .wday .wd{font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--mist)}
 .dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
@@ -103,9 +106,21 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .back{display:flex;align-items:center;gap:4px;height:44px;margin-left:-6px;font-size:15px;color:var(--olive)}
 .stats{margin-top:16px;height:56px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
 .stats .lbl{font-size:13px;color:var(--muted)}
-.calarea{height:384px;padding-top:18px;display:flex;flex-direction:column;touch-action:pan-y;margin:0 -4px}
-.calinner{display:flex;flex-direction:column;gap:0;flex:1}
-.calinner.in-l{animation:inl .32s var(--ease)} .calinner.in-r{animation:inr .32s var(--ease)}
+.calhero{padding-bottom:0}
+.calhero .pnav{margin-left:-3px}
+.roundbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+.roundbtn span{width:38px;height:38px;border-radius:50%;background:var(--linen);color:var(--night);display:flex;align-items:center;justify-content:center;transition:transform .12s var(--ease)}
+.roundbtn:active span{transform:scale(.92)}
+.dark .tab{color:var(--mist)}
+.dark .tab[aria-selected="true"]{color:var(--linen)}
+.dark .stats{border-top-color:var(--nline);border-bottom:0}
+.dark .stats .count{color:var(--linen)}
+.dark .stats .lbl{color:var(--mist)}
+.calbody{padding-top:0;min-height:0}
+.calarea{height:384px;padding-top:18px;display:flex;flex-direction:column;touch-action:pan-y}
+.calviewport{flex:1;overflow:hidden;margin:0 -24px}
+.caltrack{height:100%}
+.calpanel{flex:0 0 33.3333%;padding:0 20px;display:flex;flex-direction:column}
 @keyframes inl{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
 @keyframes inr{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
 .wdhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin-bottom:6px}
@@ -118,7 +133,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .light .is-future .dot{color:var(--muted)}
 .is-sel .dot{box-shadow:0 0 0 2px var(--paper), 0 0 0 3px var(--ink)}
 .dark .is-sel .dot{box-shadow:0 0 0 2px var(--night), 0 0 0 3px var(--linen)}
-.legend{margin-top:auto;display:flex;gap:20px;padding:0 4px;font-size:12px;color:var(--muted)}
+.legend{margin-top:auto;padding-top:8px;display:flex;gap:20px;font-size:12px;color:var(--muted)}
 .legend span{display:flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
 .ygrid{display:flex;flex-direction:column;gap:4px}
@@ -181,7 +196,8 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .hero{padding-top:40px}
   .hero .title .t{font-size:56px;line-height:64px} .hero .title .y{font-size:38px}
   .topbar{justify-content:space-between;margin-left:-10px}
-  .week{display:none}
+  .weekwrap,.weekline{display:none}
+  .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
   .minimonth{display:block;margin-top:16px;border-top:1px solid var(--nline);padding-top:14px}
   .minimonth .wdhead span{color:var(--mist)}
   .minimonth .cell{height:38px}
@@ -200,7 +216,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 }
 @media (prefers-reduced-motion: reduce){
   .view,.view.is-off{transition:none}
-  .calinner.in-l,.calinner.in-r,.entry.in-l,.entry.in-r{animation:none}
+  .entry.in-l,.entry.in-r{animation:none}
 }
 </style>
 </head>
@@ -220,10 +236,12 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <button class="iconbtn" data-act="search" aria-label="Suchen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
       </div>
       <h1 class="title" id="homeTitle"></h1>
-      <div class="week" id="week"></div>
+      <div class="weekline"></div>
+      <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
       <div class="minimonth" id="minimonth"></div>
       <div class="herofoot">
-        <span class="stat"><span class="count" id="weekCount"></span><span class="lbl">Tage geschrieben</span></span>
+        <span class="stat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage geschrieben</span></span>
+        <button class="linkbtn" data-act="thisweek" id="thisWeekBtn" hidden>Diese Woche</button>
         <button class="linkbtn" data-act="calendar">Kalender <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
     </header>
@@ -233,16 +251,19 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 
   <!-- Kalender -->
   <section class="view is-off" id="calendar" aria-label="Kalender">
-    <div class="page light">
+    <header class="hero dark calhero">
       <div class="pnav">
+        <button class="roundbtn" data-act="back" aria-label="Zurück"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></span></button>
         <div class="tabs" role="tablist">
           <button class="tab" role="tab" id="tabMonth" data-act="calmode" data-mode="month">Monat</button>
           <button class="tab" role="tab" id="tabYear" data-act="calmode" data-mode="year">Jahr</button>
         </div>
       </div>
       <h1 class="title" id="calTitle"></h1>
-      <div class="stats"><span class="count" id="calCount"></span><span class="lbl">Tage geschrieben</span></div>
-      <div class="calarea" id="calarea"><div class="calinner" id="calinner"></div></div>
+      <div class="stats"><span class="count" id="calCount"></span><span class="lbl" id="calLbl">Tage geschrieben</span></div>
+    </header>
+    <div class="page light calbody">
+      <div class="calarea" id="calarea"><div class="calviewport"><div class="caltrack" id="caltrack"></div></div><div class="legend" id="calLegend"></div></div>
       <div id="otd"></div>
     </div>
   </section>
@@ -354,7 +375,8 @@ const S = {
   stack: ['home'],
   cal: { mode: 'month', y: 0, m: 0 },
   cur: null,              // entry being edited (object, may be unsaved draft)
-  homeDirty: true
+  homeDirty: true,
+  weekOff: 0
 };
 function reindex() {
   S.entries.sort((a, b) => (a.created < b.created ? 1 : a.created > b.created ? -1 : 0));
@@ -388,19 +410,7 @@ function excerptOf(e) {
 function titleHTML(t, y) { return '<span class="t">' + esc(t) + '</span><span class="y">' + esc(y) + '</span>'; }
 function renderHome() {
   const t = today();
-  $('homeTitle').innerHTML = titleHTML(MONTHS[t.getMonth()], t.getFullYear());
-  $('miniTitle').innerHTML = esc(MONTHS[t.getMonth()]) + ' <i>' + t.getFullYear() + '</i>';
-  // week
-  const mon = new Date(t); mon.setDate(t.getDate() - mondayIdx(t));
-  let wk = '';
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(mon); d.setDate(mon.getDate() + i);
-    const st = dayState(d);
-    wk += '<button class="wday ' + st + '" data-act="day" data-key="' + keyOf(d) + '"' + (st === 'is-future' ? ' disabled' : '') +
-      ' aria-label="' + WDLONG[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()] + '"><span class="wd">' + WD[i] + '</span><span class="dot">' + d.getDate() + '</span></button>';
-  }
-  $('week').innerHTML = wk;
-  $('weekCount').innerHTML = countRange(mon, t) + '<span class="of">/' + (mondayIdx(t) + 1) + '</span>';
+  renderWeek();
   // desktop mini month
   $('minimonth').innerHTML = monthGridHTML(t.getFullYear(), t.getMonth(), true);
   // list
@@ -425,6 +435,35 @@ function renderHome() {
   markCurrentRow();
   S.homeDirty = false;
 }
+function weekStart(off) { const t = today(); const d = new Date(t); d.setDate(t.getDate() - mondayIdx(t) + off * 7); return d; }
+function weekPanelHTML(off) {
+  const mon = weekStart(off); let h = '<div class="weekpanel">';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(mon.getDate() + i); const st = dayState(d);
+    h += '<button class="wday ' + st + '" data-act="day" data-key="' + keyOf(d) + '" aria-label="' + WDLONG[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()] +
+      '"><span class="wd">' + WD[i] + '</span><span class="dot">' + d.getDate() + '</span></button>';
+  }
+  return h + '</div>';
+}
+function renderWeek() {
+  const off = S.weekOff, t = today(), mon = weekStart(off), sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const ref = off === 0 ? t : new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 3); // Donnerstag bestimmt den Monat
+  $('homeTitle').innerHTML = titleHTML(MONTHS[ref.getMonth()], ref.getFullYear());
+  $('miniTitle').innerHTML = esc(MONTHS[ref.getMonth()]) + ' <i>' + ref.getFullYear() + '</i>';
+  $('weektrack').innerHTML = weekPanelHTML(off - 1) + weekPanelHTML(off) + weekPanelHTML(off + 1);
+  resetTrack($('weektrack'));
+  const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
+  $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '';
+  $('weekLbl').textContent = elapsed ? 'Tage geschrieben' : 'Liegt noch vor dir';
+  $('thisWeekBtn').hidden = off === 0;
+}
+function resetTrack(tr) { tr.style.transition = 'none'; tr.style.transform = ''; }
+function slideTrack(tr, dir, done) { // dir +1 = weiter (nach links schieben)
+  tr.style.transition = 'transform .32s cubic-bezier(0.2, 0.7, 0.2, 1)';
+  tr.style.transform = 'translateX(' + (dir > 0 ? '-66.6667%' : '0%') + ')';
+  setTimeout(done, 330);
+}
+function shiftWeek(dir) { slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }); }
 function rowHTML(e) {
   const d = parseKey(e.date);
   return '<button class="row" data-act="open" data-id="' + esc(e.id) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
@@ -442,46 +481,40 @@ function monthGridHTML(y, m, compact) {
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, m, d); const st = dayState(dt); const k = keyOf(dt);
     const sel = compact && isDesktop() && k === selKey && S.stack[S.stack.length - 1] === 'entry' ? ' is-sel' : '';
-    h += '<button class="cell ' + st + sel + '" data-act="day" data-key="' + k + '"' + (st === 'is-future' ? ' disabled' : '') +
+    h += '<button class="cell ' + st + sel + '" data-act="day" data-key="' + k + '"' +
       ' aria-label="' + d + '. ' + MONTHS[m] + (st === 'is-entry' ? ', geschrieben' : '') + '"><span class="dot">' + d + '</span></button>';
   }
   return h + '</div>';
 }
 
 /* ---------- rendering: calendar ---------- */
-function renderCalendar(dir) {
+function periodOf(o) { let { y, m } = S.cal; if (S.cal.mode === 'month') { m += o; while (m < 0) { m += 12; y--; } while (m > 11) { m -= 12; y++; } } else y += o; return { y, m }; }
+function yearHTML(y) {
+  let h = '<div class="ygrid"><div class="yhead"><span class="ylab"></span><span class="ydots"><span style="grid-column:1">1</span><span style="grid-column:10">10</span><span style="grid-column:20">20</span><span style="grid-column:31">31</span></span></div>';
+  for (let mm = 0; mm < 12; mm++) {
+    h += '<button class="yrow" data-act="pickmonth" data-m="' + mm + '" data-y="' + y + '" aria-label="' + MONTHS[mm] + ' ' + y + '"><span class="ylab">' + MSHORT[mm] + '</span><span class="ydots">';
+    const n = daysIn(y, mm);
+    for (let d = 1; d <= 31; d++) {
+      if (d > n) { h += '<span></span>'; continue; }
+      h += '<span class="yd ' + ({ 'is-entry': 'e', 'is-missed': 'm', 'is-today': 't', 'is-future': 'f' })[dayState(new Date(y, mm, d))] + '"></span>';
+    }
+    h += '</span></button>';
+  }
+  return h + '</div>';
+}
+function renderCalendar() {
   const { mode, y, m } = S.cal; const t = today();
   $('tabMonth').setAttribute('aria-selected', mode === 'month'); $('tabYear').setAttribute('aria-selected', mode === 'year');
-  const inner = $('calinner');
-  if (mode === 'month') {
-    $('calTitle').innerHTML = titleHTML(MONTHS[m], y);
-    const first = new Date(y, m, 1), last = new Date(y, m, daysIn(y, m));
-    const end = last < t ? last : t;
-    const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
-    $('calCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '–';
-    inner.innerHTML = monthGridHTML(y, m, false) +
-      '<div class="legend"><span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="box-shadow:0 0 0 1px var(--ink) inset"></i>Heute</span></div>';
-  } else {
-    $('calTitle').innerHTML = titleHTML('Das Jahr', y);
-    const first = new Date(y, 0, 1), last = new Date(y, 11, 31);
-    const end = last < t ? last : t;
-    const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
-    $('calCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '–';
-    let h = '<div class="ygrid"><div class="yhead"><span class="ylab"></span><span class="ydots"><span style="grid-column:1">1</span><span style="grid-column:10">10</span><span style="grid-column:20">20</span><span style="grid-column:31">31</span></span></div>';
-    for (let mm = 0; mm < 12; mm++) {
-      h += '<button class="yrow" data-act="pickmonth" data-m="' + mm + '" aria-label="' + MONTHS[mm] + ' ' + y + '"><span class="ylab">' + MSHORT[mm] + '</span><span class="ydots">';
-      const n = daysIn(y, mm);
-      for (let d = 1; d <= 31; d++) {
-        if (d > n) { h += '<span></span>'; continue; }
-        const st = dayState(new Date(y, mm, d));
-        h += '<span class="yd ' + ({ 'is-entry': 'e', 'is-missed': 'm', 'is-today': 't', 'is-future': 'f' })[st] + '"></span>';
-      }
-      h += '</span></button>';
-    }
-    inner.innerHTML = h + '</div><div class="legend"><span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="box-shadow:0 0 0 1px var(--ink) inset"></i>Heute</span><span><i style="background:var(--empty)"></i>Leer</span></div>';
-  }
-  inner.classList.remove('in-l', 'in-r'); void inner.offsetWidth;
-  if (dir) inner.classList.add(dir < 0 ? 'in-l' : 'in-r');
+  const first = mode === 'month' ? new Date(y, m, 1) : new Date(y, 0, 1);
+  const last = mode === 'month' ? new Date(y, m, daysIn(y, m)) : new Date(y, 11, 31);
+  $('calTitle').innerHTML = mode === 'month' ? titleHTML(MONTHS[m], y) : titleHTML('Das Jahr', y);
+  const end = last < t ? last : t; const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
+  $('calCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '';
+  $('calLbl').textContent = elapsed ? 'Tage geschrieben' : 'Liegt noch vor dir';
+  $('caltrack').innerHTML = [-1, 0, 1].map((o) => { const p = periodOf(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, false) : yearHTML(p.y)) + '</div>'; }).join('');
+  resetTrack($('caltrack'));
+  $('calLegend').innerHTML = '<span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="box-shadow:0 0 0 1px var(--ink) inset"></i>Heute</span>' +
+    (mode === 'year' ? '<span><i style="background:var(--empty)"></i>Leer</span>' : '');
   renderOnThisDay();
 }
 function renderOnThisDay() {
@@ -492,11 +525,7 @@ function renderOnThisDay() {
   const e = past[0];
   box.innerHTML = '<button class="otd" data-act="open" data-id="' + esc(e.id) + '"><span class="kicker">An diesem Tag · ' + e.date.slice(0, 4) + '</span><span class="ti">' + esc(titleOf(e)) + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></button>';
 }
-function shiftCal(dir) {
-  if (S.cal.mode === 'month') { S.cal.m += dir; if (S.cal.m < 0) { S.cal.m = 11; S.cal.y--; } if (S.cal.m > 11) { S.cal.m = 0; S.cal.y++; } }
-  else S.cal.y += dir;
-  renderCalendar(dir);
-}
+function shiftCal(dir) { slideTrack($('caltrack'), dir, () => { const p = periodOf(dir); S.cal.y = p.y; S.cal.m = p.m; renderCalendar(); }); }
 
 /* ---------- rendering: entry ---------- */
 const photoURLs = new Map();
@@ -561,7 +590,8 @@ function adjacent(dir) { // dir -1 = older, +1 = newer
   if (i >= 0) n = asc[i + dir];
   else if (dir < 0) n = S.entries.find((x) => x.created < e.created) || null;
   else n = asc.find((x) => x.created > e.created) || null;
-  if (n) { saveCur(); openEntry(n, dir < 0 ? -1 : 1); }
+  if (n) { saveCur(); openEntry(n, dir < 0 ? -1 : 1); return true; }
+  return false;
 }
 
 /* ---------- search ---------- */
@@ -610,7 +640,8 @@ document.addEventListener('click', (ev) => {
   else if (a === 'settings') { renderAbout(); go('settings'); }
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { S.cal.mode = b.dataset.mode; renderCalendar(); }
-  else if (a === 'pickmonth') { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; renderCalendar(1); }
+  else if (a === 'pickmonth') { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }
+  else if (a === 'thisweek') { S.weekOff = 0; renderWeek(); }
   else if (a === 'day') openDay(b.dataset.key);
   else if (a === 'open') openEntryById(b.dataset.id);
   else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
@@ -635,47 +666,83 @@ new IntersectionObserver((ents) => { for (const en of ents) $('minibar').classLi
 
 /* ---------- gestures: touch ---------- */
 (function touch() {
-  let sx = 0, sy = 0, st = 0, mode = null, topEl = null, underEl = null, W = 0, dx = 0;
+  let sx = 0, sy = 0, st = 0, cand = null, mode = null, dx = 0, dy = 0, W = 0, raf = 0, topEl = null, underEl = null, track = null;
   const app = $('app');
+  function frame() {
+    raf = 0;
+    if (mode === 'edge') {
+      const x = Math.max(0, dx);
+      topEl.style.transform = 'translate3d(' + x + 'px,0,0)';
+      underEl.style.transform = 'translate3d(' + (-28 + 28 * x / W) + '%,0,0)';
+    } else if (mode === 'track') {
+      track.style.transform = 'translate3d(calc(-33.3333% + ' + dx + 'px),0,0)';
+    } else if (mode === 'pull') {
+      topEl.style.transform = 'translate3d(0,' + Math.max(0, dy) + 'px,0)';
+    } else if (mode === 'entry') {
+      const el = $('entryInner'); el.style.transform = 'translate3d(' + dx * 0.5 + 'px,0,0)'; el.style.opacity = String(1 - Math.min(Math.abs(dx) / W, 0.6));
+    }
+  }
   app.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1) return;
-    const p = e.touches[0]; sx = p.clientX; sy = p.clientY; st = Date.now(); mode = null; dx = 0; W = innerWidth;
+    if (e.touches.length !== 1) { cand = mode = null; return; }
+    const p = e.touches[0]; sx = p.clientX; sy = p.clientY; st = performance.now(); dx = 0; W = innerWidth; mode = null; cand = null;
     const top = S.stack[S.stack.length - 1];
-    if (!isDesktop() && sx < 28 && S.stack.length > minStack()) mode = 'edge';
-    else if (top === 'calendar' && e.target.closest('#calarea')) mode = 'cal?';
-    else if (top === 'entry' && !typing()) mode = 'entry?';
-    if (mode === 'edge') { topEl = $(top); underEl = $(S.stack[S.stack.length - 2]); }
+    if (!isDesktop() && sx < 32 && S.stack.length > minStack()) cand = 'edge';
+    else if (top === 'calendar' && e.target.closest('#calarea')) { cand = 'track'; track = $('caltrack'); }
+    else if (top === 'home' && e.target.closest('#weekwrap')) { cand = 'track'; track = $('weektrack'); }
+    else if (top === 'entry' && !typing()) cand = 'entry';
   }, { passive: true });
   app.addEventListener('touchmove', (e) => {
-    if (!mode) return;
-    const p = e.touches[0]; dx = p.clientX - sx; const dy = p.clientY - sy;
-    if (mode === 'cal?' || mode === 'entry?') {
-      if (Math.abs(dx) > 12 || Math.abs(dy) > 12) mode = Math.abs(dx) > Math.abs(dy) * 1.4 ? mode.slice(0, -1) : null;
-      return;
+    if (!cand && !mode) return;
+    const p = e.touches[0]; dx = p.clientX - sx; dy = p.clientY - sy;
+    if (!mode) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        mode = cand; cand = null;
+        if (mode === 'edge') { topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]); topEl.classList.add('dragging'); underEl.classList.add('dragging'); }
+        if (mode === 'track') track.style.transition = 'none';
+        if (mode === 'entry') $('entryInner').style.transition = 'none';
+      } else if (cand === 'entry' && dy > 0 && $('entry').scrollTop <= 0 && S.stack.length > minStack() && !isDesktop()) {
+        mode = 'pull'; cand = null;
+        topEl = $('entry'); underEl = $(S.stack[S.stack.length - 2]);
+        topEl.classList.add('dragging'); underEl.classList.add('dragging'); underEl.style.transform = 'translate3d(0,0,0)';
+      } else { cand = null; return; }
     }
-    if (mode === 'cal') { $('calinner').style.transform = 'translateX(' + dx * 0.35 + 'px)'; $('calinner').style.opacity = String(1 - Math.min(Math.abs(dx) / W, .5)); return; }
-    if (mode === 'edge') {
-      if (Math.abs(dy) > 40 && Math.abs(dx) < 20) { mode = null; return; }
-      const x = Math.max(0, dx);
-      topEl.classList.add('dragging'); underEl.classList.add('dragging');
-      topEl.style.transform = 'translateX(' + x + 'px)';
-      if (underEl.id !== 'home' || !isDesktop()) underEl.style.transform = 'translateX(' + (-28 + 28 * x / W) + '%)';
-    }
-  }, { passive: true });
-  app.addEventListener('touchend', () => {
-    const v = Math.abs(dx) / Math.max(1, Date.now() - st);
-    if (mode === 'cal') {
-      const ci = $('calinner'); ci.style.transform = ''; ci.style.opacity = '';
-      if (Math.abs(dx) > 50 || v > 0.4) shiftCal(dx < 0 ? 1 : -1);
-    } else if (mode === 'entry') {
-      if (Math.abs(dx) > 70 || v > 0.5) adjacent(dx < 0 ? 1 : -1);
-    } else if (mode === 'edge') {
-      topEl.classList.remove('dragging'); underEl.classList.remove('dragging');
+    e.preventDefault();
+    if (!raf) raf = requestAnimationFrame(frame);
+  }, { passive: false });
+  function end() {
+    if (!mode) { cand = null; return; }
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    const v = Math.abs(dx) / Math.max(1, performance.now() - st); const fast = v > 0.35 && Math.abs(dx) > 24;
+    const m = mode; mode = null;
+    if (m === 'edge') {
+      const commit = dx > W * 0.3 || (fast && dx > 0);
+      topEl.classList.remove('dragging'); underEl.classList.remove('dragging'); void topEl.offsetWidth;
       topEl.style.transform = ''; underEl.style.transform = '';
-      if (dx > W * 0.33 || (v > 0.45 && dx > 30)) back();
+      if (commit) back();
+    } else if (m === 'pull') {
+      const vy = dy / Math.max(1, performance.now() - st);
+      topEl.classList.remove('dragging'); void topEl.offsetWidth;
+      if (dy > 140 || (vy > 0.45 && dy > 40)) {
+        topEl.style.transition = 'transform .3s cubic-bezier(0.4, 0, 1, 1)';
+        topEl.style.transform = 'translate3d(0,100%,0)';
+        const t = topEl, u = underEl;
+        setTimeout(() => { t.style.transition = 'none'; back(); u.classList.remove('dragging'); requestAnimationFrame(() => { t.style.transition = ''; }); }, 300);
+      } else {
+        underEl.classList.remove('dragging'); topEl.style.transform = ''; underEl.style.transform = '';
+      }
+    } else if (m === 'track') {
+      if (Math.abs(dx) > W * 0.2 || fast) { const dir = dx < 0 ? 1 : -1; if (track.id === 'caltrack') shiftCal(dir); else shiftWeek(dir); }
+      else { track.style.transition = 'transform .28s cubic-bezier(0.2, 0.7, 0.2, 1)'; track.style.transform = ''; }
+    } else if (m === 'entry') {
+      const el = $('entryInner'); el.style.transition = 'transform .24s cubic-bezier(0.2, 0.7, 0.2, 1), opacity .24s';
+      el.style.transform = ''; el.style.opacity = '';
+      if (Math.abs(dx) > 70 || fast) { setTimeout(() => { el.style.transition = ''; adjacent(dx < 0 ? 1 : -1); }, 10); }
+      else setTimeout(() => { el.style.transition = ''; }, 260);
     }
-    mode = null;
-  }, { passive: true });
+  }
+  app.addEventListener('touchend', end, { passive: true });
+  app.addEventListener('touchcancel', end, { passive: true });
 })();
 
 /* ---------- gestures: trackpad + keyboard (Mac) ---------- */
@@ -862,7 +929,16 @@ async function renderAbout() {
     applyStack(); renderHome();
   });
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', () => { // neue Version verfügbar
+      if (!hadController) return;
+      if (typing()) { toast('Neue Version – wird beim nächsten Öffnen geladen'); return; }
+      saveCur(); location.reload();
+    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) navigator.serviceWorker.getRegistration().then((r) => r && r.update()).catch(() => {}); });
+  }
   let lastDay = keyOf(today()); setInterval(() => { const k = keyOf(today()); if (k !== lastDay) { lastDay = k; renderHome(); } }, 60000);
 })();
 </script>
