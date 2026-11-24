@@ -924,17 +924,31 @@ function sideMove(dir, next, ms, after) {
     ghost.animate([{ opacity: 1, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + (off - dir * 10) + 'px,0,0)' }], { duration: 150, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
     np.animate([{ opacity: 0, transform: 'translate3d(' + (dir * 12) + 'px,0,0)' }, { opacity: 1, transform: 'none' }], { duration: 440, delay: 130, easing: E, fill: 'backwards' });
   }
-  setTimeout(() => { ghost.remove(); trackBusy = false; if (after) after(); }, 600);
+  if (after) setTimeout(after, 260);
+  setTimeout(() => { ghost.remove(); trackBusy = false; }, 600);
 }
 function sideToday() {
   S.listTitle = null;
   const t = today(); const { mode, y, m, w } = S.side;
   const diff = mode === 'week' ? -w : mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
   // Heute: der heutige Zeitraum liegt schon im Nachbarfeld, gleitet herein, dann pulsiert der heutige Tag kurz
-  sideJump({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, true, () => {
-    const k = keyOf(t), dot = document.querySelector('#sctrack > :nth-child(2) [data-key="' + k + '"] .dot');
-    if (dot && dot.animate) dot.animate([{ boxShadow: '0 0 0 1px #f2f3ef inset, 0 0 0 0 rgba(242,243,239,.55)' }, { boxShadow: '0 0 0 1px #f2f3ef inset, 0 0 0 12px rgba(242,243,239,0)' }], { duration: 1100, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });
-  });
+  sideJump({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, true, () => markToday());
+}
+function markToday() { // „Heute“: um den heutigen Tag zeichnet sich ein Ring in einem Strich, dann löst er sich auf
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const vp = $('scview'), panel = $('sctrack').children[1]; if (!panel) return;
+  const dot = panel.querySelector('[data-key="' + keyOf(today()) + '"] .dot') || panel.querySelector('.yd.t');
+  if (!dot) return;
+  const r = dot.getBoundingClientRect(), v = vp.getBoundingClientRect(), size = r.width + 14;
+  const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg'), c = document.createElementNS(ns, 'circle');
+  svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size); svg.setAttribute('aria-hidden', 'true');
+  Object.assign(svg.style, { position: 'absolute', left: (r.left - v.left - 7) + 'px', top: (r.top - v.top - 7) + 'px', pointerEvents: 'none', overflow: 'visible', transform: 'rotate(-90deg)' });
+  c.setAttribute('cx', size / 2); c.setAttribute('cy', size / 2); c.setAttribute('r', size / 2 - 1); c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#f2f3ef');
+  c.setAttribute('stroke-width', '1.25'); c.setAttribute('stroke-linecap', 'round'); c.setAttribute('pathLength', '1'); c.setAttribute('stroke-dasharray', '1');
+  svg.appendChild(c); vp.appendChild(svg);
+  c.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 760, easing: 'cubic-bezier(0.4, 0, 0.3, 1)', fill: 'both' });
+  dot.animate([{ transform: 'scale(.82)', opacity: .5 }, { transform: 'scale(1)', opacity: 1 }], { duration: 620, delay: 240, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'backwards' });
+  svg.animate([{ opacity: 1, transform: 'rotate(-90deg) scale(1)' }, { opacity: 0, transform: 'rotate(-90deg) scale(1.12)' }], { duration: 420, delay: 820, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }).onfinish = () => svg.remove();
 }
 function setSideMode(mode, y, m) {
   if ($('home').classList.contains('cal-in') && S.calExpand) S.calExpand(); // Tab bei eingefahrenem Kalender: erst ausfahren
@@ -1427,7 +1441,7 @@ function scrollListTo(id) { // gewählter Eintrag wandert in der Liste nach oben
       if (row) { const d = parseKey(row.dataset.date); if (S.side.mode === 'week') S.side.w = weekOf(d); else { S.side.y = d.getFullYear(); S.side.m = d.getMonth(); } }
       S.listTitle = null; renderSide(); updateSideSel(); apply(full(), true); return;
     }
-    S.listTitle = null; setSideMode(S.side.mode === 'week' ? 'month' : 'week');
+    apply(0, true); // eingefahren: nur Monat + Jahr; Woche/Monat/Jahr bleibt, wie es ist
   });
 })();
 
