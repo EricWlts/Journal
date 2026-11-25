@@ -519,7 +519,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .hero{padding-top:12px}
   .herofoot{display:none}
   #entry .floatbtn{display:none}
-  .homeplus{right:32px;bottom:32px}
+  .homeplus{right:42px;bottom:42px} /* gleich weit von beiden Blattkanten */
   /* Seite: beim Schreiben gleitet das Blatt in voller Breite in die Mitte, alles andere tritt ins Dunkel zurück.
      Nur transform/opacity – der Text bricht nie um, deshalb kann die Bewegung lang und ruhig sein. */
   #entry.view{right:auto;width:calc(100vw - var(--side) - 18px);
@@ -560,7 +560,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   #home.cal-in .stickytitle #scStat{opacity:0}
   .weekwrap,.weekline,#todayLine{display:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
-  .floatbtn{right:32px;bottom:32px}
+  .floatbtn{right:42px;bottom:42px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
   .sidecal{display:block;overflow:hidden;margin:8px -24px 0;padding:0 24px} /* reicht bis an den Rand: nichts wird vorzeitig abgeschnitten */
   .sidecal.snapping{transition:height .45s var(--sheet)}
@@ -586,7 +586,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px} /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px;margin-bottom:18px;border-radius:10px} /* Liste endet wie das Blatt 18px über dem Fensterrand */ /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
@@ -1542,9 +1542,19 @@ function applyLight() {
   const h = new Date().getHours(), html = document.documentElement, night = S.light === 'nacht';
   html.classList.toggle('night', night);
   html.dataset.light = S.light === 'auto' ? (h >= 5 && h < 10 ? 'morgen' : h >= 17 && h < 21 ? 'abend' : (h >= 21 || h < 5) ? 'spaet' : 'tag') : 'tag';
-  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = night ? '#0b0d0a' : '#12150f';
+  setTheme();
   document.querySelectorAll('[data-act=setlight]').forEach((x) => x.setAttribute('aria-checked', x.dataset.light === S.light));
 }
+/* Farbe der Titelleiste (Mac: Safari-Web-App) bzw. Statusleiste (iPhone): am Mac im Papierton, damit Leiste und App eine Fläche sind;
+   beim Schreiben in der Mitte dunkel wie der Hintergrund; am iPhone im Ton des dunklen Kopfs */
+function setTheme() {
+  const tc = document.querySelector('meta[name="theme-color"]'); if (!tc) return;
+  const night = document.documentElement.classList.contains('night');
+  let c = night ? '#0b0d0a' : '#12150f';
+  if (isDesktop()) c = $('app').classList.contains('a4') ? (night ? '#060705' : '#161a14') : getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || '#eeece6';
+  if (tc.content !== c) tc.content = c;
+}
+window.addEventListener('resize', () => setTheme());
 applyLight(); setInterval(applyLight, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) applyLight(); });
 function markFx() { document.querySelectorAll('.fxseg button').forEach((x) => x.setAttribute('aria-checked', x.dataset.fx === S.fx)); }
@@ -1945,6 +1955,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
     on = v; clearTimeout(set.t);
     if (v) { app.classList.remove('a4-out'); app.classList.add('a4'); }
     else { app.classList.add('a4-out'); app.classList.remove('a4'); set.t = setTimeout(() => app.classList.remove('a4-out'), 1700); }
+    setTheme();
   }
   const input = () => {
     if (!isDesktop()) return; const now = performance.now();
