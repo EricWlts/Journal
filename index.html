@@ -24,7 +24,7 @@
   --safe-t:env(safe-area-inset-top, 0px); --safe-b:env(safe-area-inset-bottom, 0px);
   --ease:cubic-bezier(0.2, 0.7, 0.2, 1);
   --sheet:cubic-bezier(0.32, 0.72, 0, 1); /* iOS-artige Kurve, wie bei Vaul */
-  --side:480px; --sheetbg:#f6f5f1; --card:rgba(38,48,43,.05); --cardh:rgba(38,48,43,.085); --cardp:rgba(38,48,43,.12);
+  --side:492px; --sheetbg:#f6f5f1; --card:rgba(38,48,43,.05); --cardh:rgba(38,48,43,.085); --cardp:rgba(38,48,43,.12);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{touch-action:manipulation;overscroll-behavior:none}
@@ -496,7 +496,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .view::after{display:none}
   .app{background:var(--paper)}
   /* rechts: der Schreibbereich als schwebendes Blatt mit runden Ecken auf dem Papierton */
-  .view:not(#home){top:12px;right:12px;bottom:12px;left:var(--side);border-radius:14px;background:var(--sheetbg); /* 12px Luft auf beiden Seiten der Seitenleiste */
+  .view:not(#home){top:18px;right:18px;bottom:18px;left:var(--side);border-radius:14px;background:var(--sheetbg); /* 18px Luft rundum und auf beiden Seiten der Seitenleiste */
     box-shadow:0 0 0 1px rgba(38,48,43,.15), 0 30px 60px -44px rgba(8,10,8,.4)}
   @keyframes rise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
   #settings.is-top .page > *{animation:rise .8s var(--sheet) both}
@@ -523,7 +523,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .homeplus{right:32px;bottom:32px}
   /* Seite: beim Schreiben wird das Blatt zur hochkanten Seite (A4) in der Mitte, alles andere tritt ins Dunkel zurück */
   .app{transition:background-color 1.1s var(--ease)}
-  #entry.view{right:auto;width:calc(100vw - var(--side) - 12px);
+  #entry.view{right:auto;width:calc(100vw - var(--side) - 18px);
     transition:transform .7s var(--sheet), opacity .42s var(--ease) .08s, visibility 0s linear 0s, left .95s var(--sheet), width .95s var(--sheet), top .95s var(--sheet), bottom .95s var(--sheet), border-radius .95s var(--sheet), box-shadow 1.1s var(--ease)}
   #home{transition:transform .8s var(--sheet), opacity .6s var(--ease)}
   .app.a4{background:#1b1f1a}
@@ -567,11 +567,11 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
-  #list{padding:0 12px 24px}
+  #list{padding:0 18px 24px}
   /* Seitenleiste: der dunkle Kalender als schwebende Karte mit runden Ecken – wie das Blatt rechts */
-  #home > .hero:first-of-type{margin:12px 12px 0;border-radius:14px 14px 0 0;padding:4px 16px 0}
-  #home > .stickytitle{margin:0 12px;padding:0 16px}
-  #home > .herorest{margin:0 12px;border-radius:0 0 14px 14px;padding:0 16px 8px}
+  #home > .hero:first-of-type{margin:18px 18px 0;border-radius:14px 14px 0 0;padding:4px 16px 0}
+  #home > .stickytitle{margin:0 18px;padding:0 16px}
+  #home > .herorest{margin:0 18px;border-radius:0 0 14px 14px;padding:0 16px 8px}
   #home .sidecal{margin:8px -16px 0;padding:0 16px}
   #home .scview{margin:10px -16px 0}
   #home .scview .calpanel,#sidecal .weekpanel{padding:0 16px}
@@ -585,7 +585,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:12px} /* Scrollbereich beginnt 12px unter dem Block – nichts rutscht unter das Datum */
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px} /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
