@@ -324,15 +324,27 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 /* mehrere Einträge am selben Tag: Datum nur bei der ersten Karte, danach nur die Uhrzeit; Karten eines Tages rücken zusammen, zwischen Tagen etwas mehr Luft */
 :is(#list,#results) .row.cont{margin-top:-3px}
 :is(#list,#results) .row.newday{margin-top:6px}
+/* Tag mit mehreren Einträgen: zugeklappt liegt die erste Karte wie auf einem kleinen Stapel; gewählt klappen die übrigen weich darunter auf */
+#list .row.has-more{margin-bottom:10px;box-shadow:0 5px 0 -3px var(--card), 0 10px 0 -6px var(--card);
+  transition:background-color .2s var(--ease), box-shadow .45s var(--sheet), margin .55s var(--sheet)}
+#list .row.has-more.grp-open{margin-bottom:3px;box-shadow:0 0 0 -3px var(--card), 0 0 0 -6px var(--card)}
+#list .row .more{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.02em;transition:opacity .3s var(--ease)}
+#list .row.grp-open .more{opacity:0}
+#list .dmore{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--sheet)}
+#list .dmore.open{grid-template-rows:1fr}
+#list .dmore-in{min-height:0;overflow:hidden}
+#list .dmore .row{margin:0 0 3px;opacity:0;transform:translate3d(0,-8px,0);transition:background-color .2s var(--ease), opacity .25s var(--ease), transform .45s var(--sheet)}
+#list .dmore .row:last-child{margin-bottom:6px}
+#list .dmore.open .row{opacity:1;transform:none;transition:background-color .2s var(--ease), opacity .4s var(--ease) calc(90ms + var(--i, 0) * 45ms), transform .55s var(--sheet) calc(60ms + var(--i, 0) * 45ms)}
+#list .instant,#list .instant .row{transition:none !important}
 :is(#list,#results) .row.cont .n,:is(#list,#results) .row.cont .wd{display:none}
 :is(#list,#results) .row.cont .tm{margin-top:5px}
 :is(#list,#results) .row .d{width:40px}
 :is(#list,#results) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
 :is(#list,#results) .row.is-current .tm{color:var(--mist)}
 /* hell: der gewählte Eintrag ist leiser – er liegt wie das offene Blatt hell auf, mit feinem Tinten-Rand (Nacht bleibt dunkel) */
-html:not(.night) :is(#list,#results) .row.is-current{background:var(--sheetbg);box-shadow:inset 0 0 0 1px rgba(38,48,43,.55), 0 8px 18px -14px rgba(38,48,43,.35)}
-html:not(.night) :is(#list,#results) .row.is-current :is(.n,.ti){color:var(--ink)}
-html:not(.night) :is(#list,#results) .row.is-current :is(.wd,.ex,.mt,.tm){color:var(--ink2)}
+html:not(.night) :is(#list,#results) .row.is-current{background:#3a463f} /* gefüllt wie vorher, eine Spur heller als die Tinte */
+:is(#list,#results) .row.is-current .more{color:var(--mist)}
 @media (hover:hover) and (pointer:fine){
     :is(#list,#results) .row:not(.is-current):hover{background:var(--cardh)}
     :is(#list,#results) .row:not(.is-current):hover::before,:is(#list,#results) .row:not(.is-current):hover + .row::before{opacity:0}
@@ -532,14 +544,12 @@ html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 6
   html.night{--paper:#121510;--card:rgba(242,243,239,.055);--cardh:rgba(242,243,239,.085)}
 }
 /* Nacht verfeinert (Entwurf J1, 25.11.2026): ein feiner Rand trägt die Form statt Schatten; feste, leicht grüne Kartentöne; Text etwas ruhiger */
-html.night{color-scheme:dark;--hair:rgba(242,243,239,.07);--card:#1d221c;--cardh:#222821;--cardp:#272d26}
+html.night{color-scheme:dark;--hair:rgba(242,243,239,.07)}
 html.night .ebody{color:#d3d9d1}
-html.night :is(#list,#results) .row:not(.is-current){box-shadow:inset 0 0 0 1px rgba(242,243,239,.035)}
 html.night .ephotos img{filter:brightness(.88)}
 html.night .confirm .cpanel{box-shadow:0 0 0 1px var(--hair), 0 30px 60px -30px rgba(0,0,0,.8)}
 html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0,0,.7)}
 @media (min-width: 960px){
-  html.night{--card:#181c17;--cardh:#1d221c;--cardp:#222821}
   /* Kalenderkarte: derselbe feine Rand wie das Blatt (drei Teile – oben, Mitte, unten) */
   html.night #home > .hero:first-of-type{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair), inset 0 1px 0 var(--hair)}
   html.night #home > .stickytitle{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair)}
@@ -682,7 +692,8 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
     padding:104px var(--pr) 45vh max(var(--m), calc(var(--pr) - var(--dc)));max-width:none}
   .entry .enav{display:contents}
   .entry .eact{position:absolute;top:22px;right:22px;transition:opacity .5s var(--ease)}
-  @media (hover:hover){ #entry:not(:hover) .entry .eact:not(:focus-within){opacity:0} } /* beim Schreiben nur Text – der Mülleimer kommt, wenn die Maus übers Blatt fährt */ /* fest in der oberen rechten Blattecke, unabhängig vom Text */ /* Mülleimer endet genau am rechten Rand des Satzspiegels */
+  @media (hover:hover){ #entry:not(:hover) .entry .eact:not(:focus-within){opacity:0} }
+  .app.a4 .entry .eact{opacity:0;pointer-events:none} /* beim Schreiben in der Mitte: nur Papier und Text */ /* beim Schreiben nur Text – der Mülleimer kommt, wenn die Maus übers Blatt fährt */ /* fest in der oberen rechten Blattecke, unabhängig vom Text */ /* Mülleimer endet genau am rechten Rand des Satzspiegels */
   .entry .edate{grid-column:1;grid-row:1 / span 2;align-self:start;position:static;flex-direction:column;align-items:flex-start;gap:0;
     padding:4px 24px 6px 0;border-right:1px solid var(--line);text-align:left}
   .entry .edate .dn{display:block;order:-1;font-family:var(--serif);font-size:68px;line-height:.86;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:lining-nums}
@@ -704,17 +715,6 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   .page{max-width:576px}
   .page.wide{max-width:768px}
 }
-/* Mac: blasse Fußzeile unten links im Blatt („118 Wörter · bearbeitet heute, 09:52“), bündig mit der Datumsspalte; bleibt beim Scrollen am unteren Rand */
-.efoot{display:none}
-@media (min-width: 960px){
-  #entry{--m:72px;--T:660px;--dc:156px}
-  .efoot{display:block;position:sticky;top:calc(100% - 46px);height:20px;margin-bottom:-20px;z-index:2;pointer-events:none;
-    padding-left:max(var(--m), calc(max(var(--m), calc((100% - var(--T)) / 2)) - var(--dc)));
-    font-size:12px;line-height:20px;letter-spacing:.02em;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.75;transition:opacity .4s var(--ease)}
-  .efoot:empty{opacity:0}
-}
-@media (min-width: 1500px){ #entry{--m:88px;--T:800px;--dc:180px} }
-@media (min-width: 1800px){ #entry{--T:880px;--m:80px} }
 /* großer Bildschirm (z. B. externer Monitor): Satzspiegel wächst mit, Proportionen bleiben wie auf dem MacBook */
 @media (min-width: 1500px){
   .entry{--m:88px;--T:800px;--dc:180px;grid-template-columns:128px minmax(0,1fr);column-gap:52px;padding-top:120px}
@@ -798,7 +798,6 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
 
   <!-- Schreiben -->
   <section class="view is-off" id="entry" aria-label="Eintrag">
-    <div class="efoot" id="eFoot" aria-hidden="true"></div>
     <div class="entry" id="entryInner">
       <div class="enav">
         <div class="edate"><span class="wd" id="eWd"></span><span class="dn" id="eDn" aria-hidden="true"></span><span class="dt" id="eDt"></span><span class="dtm" id="eDtm" aria-hidden="true"></span><span class="savedot" id="saveDot" aria-hidden="true"></span></div>
@@ -1001,18 +1000,23 @@ function renderHome() {
   } else {
     let html = '', lastMonth = '', pv = null;
     const curMonth = t.getFullYear() + '-' + pad(t.getMonth() + 1);
-    for (const e of S.entries) {
-      const mk = e.date.slice(0, 7);
+    for (let i = 0; i < S.entries.length; i++) {
+      const e = S.entries[i], mk = e.date.slice(0, 7);
       if (mk !== lastMonth) {
         html += (lastMonth ? '</div>' : '') + '<div class="mgroup">';
         if (mk !== curMonth || lastMonth) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; }
         lastMonth = mk; pv = null;
       }
-      html += rowHTML(e, pv); pv = e;
+      // mehrere Einträge am selben Tag: nur der neueste steht da (wie ein kleiner Stapel), die übrigen klappen darunter auf, sobald der Tag gewählt ist
+      let j = i + 1; while (j < S.entries.length && S.entries[j].date === e.date) j++;
+      const more = S.entries.slice(i + 1, j);
+      html += rowHTML(e, pv, more.length);
+      if (more.length) html += '<div class="dmore" data-day="' + esc(e.date) + '"><div class="dmore-in">' + more.map((x, k) => rowHTML(x, k ? more[k - 1] : e, 0, k)).join('') + '</div></div>';
+      pv = S.entries[j - 1]; i = j - 1;
     }
     listHTML = html + (lastMonth ? '</div>' : '');
   }
-  if (listHTML !== S.listHTML) { L.innerHTML = listHTML; S.listHTML = listHTML; }
+  if (listHTML !== S.listHTML) { L.innerHTML = listHTML; S.listHTML = listHTML; openGroups(true); }
   const tk = keyOf(t);
   $('fabLabel').textContent = S.byDate.has(tk) ? 'Heute weiterschreiben' : 'Heute schreiben';
   $('homePlus').setAttribute('aria-label', $('fabLabel').textContent);
@@ -1058,15 +1062,25 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
 }
 function shiftWeek(dir, ms) { slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }, ms); }
 const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>';
-function rowHTML(e, prev) { // prev: Eintrag davor in derselben Gruppe – gleicher Tag: nur Uhrzeit, Karten rücken zusammen
+function rowHTML(e, prev, more, i) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit; more: weitere Einträge des Tages (zugeklappt darunter)
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
-  const day = prev ? (prev.date === e.date ? ' cont' : ' newday') : '';
-  const meta = np ? '<span class="mt"><span class="ph">' + CAM + np + '</span></span>' : ''; // Fotos (nur Mac sichtbar)
-  return '<button class="row' + day + '" data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
+  const day = (prev ? (prev.date === e.date ? ' cont' : ' newday') : '') + (more ? ' has-more' : '');
+  const meta = np || more ? '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + (more ? '<span class="more">+' + more + '</span>' : '') + '</span>' : '';
+  return '<button class="row' + day + '"' + (i != null ? ' style="--i:' + i + '"' : '') + ' data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
     '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
+}
+function openGroups(now) { // der Tag des geöffneten Eintrags klappt auf, alle anderen zu
+  const k = S.cur && S.cur.id ? S.cur.date : null;
+  document.querySelectorAll('#list .dmore').forEach((g) => {
+    const on = g.dataset.day === k, first = g.previousElementSibling;
+    if (g.classList.contains('open') === on) return;
+    if (now) { g.classList.add('instant'); first && first.classList.add('instant'); requestAnimationFrame(() => requestAnimationFrame(() => { g.classList.remove('instant'); first && first.classList.remove('instant'); })); }
+    g.classList.toggle('open', on); if (first) first.classList.toggle('grp-open', on);
+  });
 }
 function markCurrentRow() {
   document.querySelectorAll('.row.is-current').forEach((r) => r.classList.remove('is-current'));
+  openGroups();
   if (!isDesktop()) return;
   if (S.cur && S.cur.id) { const r = document.querySelector('#list .row[data-id="' + CSS.escape(S.cur.id) + '"]'); if (r) r.classList.add('is-current'); }
 }
@@ -1395,20 +1409,11 @@ async function renderEntry(dir) {
   }
   const inner = $('entryInner'); inner.classList.remove('in-l', 'in-r'); void inner.offsetWidth;
   if (dir) inner.classList.add(dir < 0 ? 'in-l' : 'in-r');
-  $('entry').scrollTop = 0; updateFoot();
+  $('entry').scrollTop = 0;
   if (isDesktop()) { const d0 = parseKey(e.date);
     updateSideSel(); markCurrentRow(); scrollListTo(e.id, !dir);
     if (S.side.mode === 'week' && weekOf(d0) !== S.side.w) sideJump({ w: weekOf(d0) });
     else if (S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m) && dir) sideJump({ y: d0.getFullYear(), m: d0.getMonth() }); }
-}
-function updateFoot() { // Wörter und letzte Bearbeitung – ruhig, ohne Druck
-  const f = $('eFoot'), e = S.cur; if (!f || !isDesktop() || !e) return;
-  const n = ((e.text || '').trim().match(/\S+/g) || []).length;
-  if (!n) { f.textContent = ''; return; }
-  let s = n + (n === 1 ? ' Wort' : ' Wörter');
-  if (e.id && e.modified) { const d = new Date(e.modified), t = new Date();
-    s += ' · bearbeitet ' + (keyOf(d) === keyOf(t) ? 'heute, ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) : 'am ' + d.getDate() + '. ' + MONTHS[d.getMonth()] + (d.getFullYear() !== t.getFullYear() ? ' ' + d.getFullYear() : '')); }
-  f.textContent = s;
 }
 function draftFor(k) {
   const now = new Date(); const d = parseKey(k);
@@ -1430,7 +1435,6 @@ function onEdit() {
   if (!$('eBody').textContent) $('eBody').innerHTML = '';
   if (!$('eTitle').textContent) $('eTitle').innerHTML = '';
   if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); $('entry').classList.add('has-id'); }
-  updateFoot();
   if (e.id) saveMark('pending');
   clearTimeout(saveTimer); saveTimer = setTimeout(saveCur, 350);
 }
@@ -1445,7 +1449,7 @@ async function saveCur() {
     Sync.markDeleted(e.id); e.id = null;
   } else {
     e._dirty = true; await DB.put('entries', e);
-    if (S.cur === e) { saveMark('saved'); updateFoot(); }
+    if (S.cur === e) saveMark('saved');
   }
   Sync.soon();
   S.homeDirty = true;
@@ -2128,6 +2132,40 @@ $('home').querySelector('.newbtn').addEventListener('click', (e) => {
   }
   vv.addEventListener('resize', () => setTimeout(keep, 60));
   $('eBody').addEventListener('input', () => requestAnimationFrame(keep));
+})();
+
+/* Schreibmaschine (Mac): erreicht die Schreibzeile 5/8 der Blatthöhe, rückt das Papier von allein sanft nach oben – die Zeile bleibt dort stehen */
+(function typewriter() {
+  const v = $('entry'); let anim = null, target = 0;
+  function caretBottom() {
+    const sel = getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return null;
+    const rg = sel.getRangeAt(0); if (!$('eBody').contains(rg.startContainer) && rg.startContainer !== $('eBody')) return null;
+    let r = rg.getClientRects()[0], c = rg.startContainer, o = rg.startOffset;
+    if (c.nodeType === 1 && o > 0) { const n = c.childNodes[o - 1]; if (n && n.nodeType === 3) { c = n; o = n.length; } } // Cursor zwischen Knoten: am Textende davor messen
+    if (c.nodeType === 3 && o === 0 && c.previousSibling && c.previousSibling.nodeType === 3) { c = c.previousSibling; o = c.length; } // nach Enter am Ende legt Chrome einen neuen Textknoten an
+    if (c.nodeType === 3 && o > 0 && (!r || (!r.top && !r.bottom) || c.data[o - 1] === '\n')) { // direkt nach Enter: manche Browser melden noch die alte Zeile – dann eine Zeile dazurechnen (ohne den Text anzufassen, Rückgängig bleibt heil)
+      const m = document.createRange(); m.setStart(c, o - 1); m.setEnd(c, o); let rs = m.getClientRects(), q = rs[rs.length - 1];
+      if (!q && c.data[o - 1] === '\n' && o > 1) { m.setStart(c, o - 2); m.setEnd(c, o - 1); rs = m.getClientRects(); q = rs[rs.length - 1]; } // „\n“ selbst hat keine Fläche: am Zeichen davor messen
+      if (q) { if (c.data[o - 1] !== '\n') return q.bottom; if (!(r && r.bottom > q.bottom + 1)) return q.bottom + (parseFloat(getComputedStyle($('eBody')).lineHeight) || 32); }
+    }
+    return r && r.bottom ? r.bottom : null;
+  }
+  function glide() {
+    if (anim) return; let lastT = performance.now();
+    const step = (t) => { const dt = Math.min(48, t - lastT); lastT = t; const d = target - v.scrollTop;
+      if (Math.abs(d) < 0.6) { v.scrollTop = target; anim = null; return; }
+      v.scrollTop += d * (1 - Math.pow(0.0035, dt / 1000 * 1.6)); anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  }
+  function keep() {
+    if (!isDesktop() || S.stack[S.stack.length - 1] !== 'entry') return;
+    const b = caretBottom(); if (b == null) return;
+    const vr = v.getBoundingClientRect(), line = vr.top + vr.height * 0.625;
+    if (b > line) { const want = Math.min(v.scrollHeight - v.clientHeight, v.scrollTop + (b - line)); target = anim ? Math.max(target, want) : want; glide(); } // gemessen an der aktuellen Lage – nichts doppelt zählen
+  }
+  $('eBody').addEventListener('input', () => requestAnimationFrame(keep));
+  $('eBody').addEventListener('keyup', (e) => { if (/^Arrow(Up|Down)$|^Enter$/.test(e.key)) requestAnimationFrame(keep); });
+  v.addEventListener('wheel', () => { if (anim) { cancelAnimationFrame(anim); anim = null; } }, { passive: true });
 })();
 
 /* ---------- gestures: trackpad + keyboard (Mac) ---------- */
