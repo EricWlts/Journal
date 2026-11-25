@@ -383,6 +383,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   margin:0 -24px;padding:0 14px 0 24px;background:var(--sheetbg);top:calc(var(--safe-t) + var(--vvtop, 0px))}
 .edate{display:flex;flex-direction:column;gap:2px;min-width:0}
 .edate .wd{font-size:15px;font-weight:600;color:var(--ink)}
+.edate .dn,.edate .dtm{display:none}
 .edate .dt{font-size:13px;font-weight:500;color:var(--olive);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .eact{position:relative;width:44px;height:44px;flex-shrink:0}
 .eact > button{position:absolute;inset:0}
@@ -592,22 +593,26 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   #homeTitle .y{transition:color .2s var(--ease)}
   /* rechts an der Seitenleiste ausgerichtet: Datum = Höhe der Tabs, Titel = Grundlinie des Monats, Text = Höhe des Kalenders */
   .page{padding-top:0}
-  .entry{padding-top:30px;padding-right:48px;max-width:872px} /* Kopfzeile mit Luft zum oberen Blattrand, Text reicht weiter nach rechts */
-  /* Datum als Kicker direkt über der Überschrift (wie bei WANDER), Mülleimer in derselben Zeile rechts */
-  .entry .enav{height:44px;align-items:center;padding:0}
-  .entry .edate{flex-direction:row;align-items:baseline;gap:0;font-size:16px;letter-spacing:.12em;text-transform:uppercase}
-  .entry .edate .wd{font-size:16px;font-weight:600;color:var(--olive)}
-  .entry .edate .wd::after{content:'·';margin:0 .7em;font-weight:500;color:var(--dim)}
-  .entry .edate .dt{font-size:16px;font-weight:500;color:var(--dim)}
+  /* Blatt wie Entwurf G2: Datum groß und mittig oben (Wochentag · große Tageszahl · Monat Jahr · Uhrzeit),
+     darunter mit Luft der Titel mittig, der Text in einer ruhigen, mittigen Spalte (linksbündig). Mülleimer oben rechts. */
+  .entry{padding:44px 48px 45vh;max-width:none}
+  .entry .enav{position:relative;height:auto;display:flex;flex-direction:column;align-items:center;padding:8px 0 0}
+  .entry .eact{position:absolute;top:-8px;right:-12px}
+  .entry .edate{flex-direction:column;align-items:center;gap:0;text-align:center}
+  .entry .edate .wd{font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--olive)}
+  .entry .edate .dn{display:block;margin-top:4px;font-family:var(--serif);font-size:136px;line-height:.95;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:lining-nums}
+  .entry .edate .dt{display:none}
+  .entry .edate .dtm{display:block;margin-top:10px;font-size:14px;font-weight:500;letter-spacing:.08em;color:var(--muted)}
+  .entry .savedot{position:absolute;left:calc(100% + 10px);bottom:6px;margin:0}
   .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
   #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
-  /* Überschrift + Text: erste Titelzeile beginnt knapp über dem Ende des dunklen Blocks in der Woche (291px) */
-  .entry .title,.etitle{font-size:56px;line-height:64px;letter-spacing:-.03em;margin-top:78px;padding-top:0;min-height:64px;display:block} /* wie ein Brief: Datum als Kopfzeile, dann viel Luft bis zum Titel */
-  .ebody{margin-top:22px}
+  .entry .title,.etitle{font-style:italic;font-size:46px;line-height:54px;letter-spacing:-.02em;margin:52px auto 0;max-width:640px;text-align:center;padding-top:0;min-height:54px;display:block}
+  .ebody{margin:30px auto 0;max-width:580px}
+  .entry .ephotos{max-width:580px;margin-left:auto;margin-right:auto}
   .page .title{margin:0;padding-top:8px;height:72px}
   .page .title .t{font-size:56px;line-height:64px} .page .title .y{font-size:38px}
   .page .title + .sect{margin-top:8px} /* erste Linie auf derselben Höhe wie links */
-  .ebody{font-size:18px;line-height:1.75}
+  .ebody{font-size:18px;line-height:1.8}
   .view,.view.is-top{will-change:auto}
   .enav{position:static;margin:0;padding:0}
   .page{max-width:576px}
@@ -681,7 +686,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   <section class="view is-off" id="entry" aria-label="Eintrag">
     <div class="entry" id="entryInner">
       <div class="enav">
-        <div class="edate"><span class="wd" id="eWd"></span><span class="dt" id="eDt"></span><span class="savedot" id="saveDot" aria-hidden="true"></span></div>
+        <div class="edate"><span class="wd" id="eWd"></span><span class="dn" id="eDn" aria-hidden="true"></span><span class="dt" id="eDt"></span><span class="dtm" id="eDtm" aria-hidden="true"></span><span class="savedot" id="saveDot" aria-hidden="true"></span></div>
         <div class="eact"><button class="trash" data-act="trashcur" id="trashBtn" aria-label="Eintrag löschen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 6.5h15M9.5 6.5V4.75h5V6.5M6.5 6.5l.85 12.2a1.5 1.5 0 0 0 1.5 1.4h6.3a1.5 1.5 0 0 0 1.5-1.4l.85-12.2M10 10.5v6M14 10.5v6"/></svg></button>
         <button class="done" data-act="done" id="doneBtn" aria-label="Fertig"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button></div>
       </div>
@@ -1245,6 +1250,7 @@ async function renderEntry(dir) {
   const e = S.cur; const d = new Date(e.created);
   $('eWd').textContent = WDLONG[d.getDay()];
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); // Mac: großes Datum
   $('entry').classList.toggle('has-id', !!e.id); saveMark(null);
   $('eTitle').textContent = e.title || '';
   $('eBody').textContent = e.text || '';
