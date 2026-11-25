@@ -595,7 +595,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .page{padding-top:0}
   /* Blatt wie Entwurf D (Randspalte): links eine schmale Datumsspalte wie eine Randnotiz, getrennt durch eine Haarlinie,
      rechts Titel und Text. Proportionen: Spalte 112px + 44px Luft, Textspalte ~55 Zeichen (19px) – ruhig fürs Auge. */
-  .entry{position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:44px;align-content:start;padding:104px 64px 45vh 56px;max-width:none}
+  .entry{--tw:620px;position:relative;display:grid;grid-template-columns:112px minmax(0,var(--tw));column-gap:44px;justify-content:center;align-content:start;padding:104px 64px 45vh 56px;max-width:none} /* Satzspiegel mittig im Blatt – auf breiten Bildschirmen kein leeres Feld rechts */
   .entry .enav{display:contents}
   .entry .eact{position:absolute;top:26px;right:30px}
   .entry .edate{grid-column:1;grid-row:1 / span 2;align-self:start;position:static;flex-direction:column;align-items:flex-start;gap:0;
@@ -607,9 +607,9 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .entry .savedot{position:absolute;left:auto;right:76px;top:45px;bottom:auto;margin:0}
   .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
   #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
-  .entry .title,.etitle{grid-column:2;font-style:normal;font-size:50px;line-height:58px;letter-spacing:-.03em;margin:-6px 0 0;max-width:620px;text-align:left;padding-top:0;min-height:58px;display:block}
-  .ebody{grid-column:2;margin:26px 0 0;max-width:620px}
-  .entry .ephotos{grid-column:2;max-width:620px}
+  .entry .title,.etitle{grid-column:2;font-style:normal;font-size:50px;line-height:58px;letter-spacing:-.03em;margin:-6px 0 0;max-width:none;text-align:left;padding-top:0;min-height:58px;display:block}
+  .ebody{grid-column:2;margin:26px 0 0;max-width:none}
+  .entry .ephotos{grid-column:2;max-width:none}
   .page .title{margin:0;padding-top:8px;height:72px}
   .page .title .t{font-size:56px;line-height:64px} .page .title .y{font-size:38px}
   .page .title + .sect{margin-top:8px} /* erste Linie auf derselben Höhe wie links */
@@ -618,6 +618,15 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .enav{position:static;margin:0;padding:0}
   .page{max-width:576px}
   .page.wide{max-width:768px}
+}
+/* großer Bildschirm (z. B. externer Monitor): Satzspiegel wächst mit, Proportionen bleiben wie auf dem MacBook */
+@media (min-width: 1500px){
+  .entry{--tw:700px;grid-template-columns:128px minmax(0,var(--tw));column-gap:52px;padding-top:120px}
+  .entry .edate .dn{font-size:78px}
+  .entry .edate .wd{font-size:13px}
+  .entry .edate .dtm{font-size:14px}
+  .entry .title,.etitle{font-size:58px;line-height:66px}
+  .ebody{font-size:21px}
 }
 @media (prefers-reduced-motion: reduce){
   #settings.is-top .page > *{animation:none}
