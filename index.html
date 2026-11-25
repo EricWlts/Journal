@@ -595,7 +595,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .page{padding-top:0}
   /* Blatt wie Entwurf D (Randspalte): links eine schmale Datumsspalte wie eine Randnotiz, getrennt durch eine Haarlinie,
      rechts Titel und Text. Proportionen: Spalte 112px + 44px Luft, Textspalte ~55 Zeichen (19px) – ruhig fürs Auge. */
-  .entry{--m:72px;position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:44px;align-content:start;padding:104px var(--m) 45vh var(--m);max-width:none} /* wie eine Buchseite: links und rechts immer derselbe Rand, der Text füllt den Raum dazwischen */
+  .entry{--m:max(72px, calc((100% - 112px - 44px - 660px) / 2));position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:44px;align-content:start;padding:104px var(--m) 45vh var(--m);max-width:none} /* wie eine Buchseite: links und rechts immer derselbe Rand; auf breiten Blättern wachsen beide Ränder gleich mit, damit eine Zeile nie länger als ~70 Zeichen wird */
   .entry .enav{display:contents}
   .entry .eact{position:absolute;top:26px;right:calc(var(--m) - 12px)} /* Mülleimer endet genau am rechten Rand des Satzspiegels */
   .entry .edate{grid-column:1;grid-row:1 / span 2;align-self:start;position:static;flex-direction:column;align-items:flex-start;gap:0;
@@ -621,7 +621,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
 }
 /* großer Bildschirm (z. B. externer Monitor): Satzspiegel wächst mit, Proportionen bleiben wie auf dem MacBook */
 @media (min-width: 1500px){
-  .entry{--m:88px;grid-template-columns:128px minmax(0,1fr);column-gap:52px;padding-top:120px}
+  .entry{--m:max(88px, calc((100% - 128px - 52px - 720px) / 2));grid-template-columns:128px minmax(0,1fr);column-gap:52px;padding-top:120px}
   .entry .edate .dn{font-size:78px}
   .entry .edate .wd{font-size:13px}
   .entry .edate .dtm{font-size:14px}
