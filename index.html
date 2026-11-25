@@ -14,7 +14,7 @@
 <link rel="icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#eeece6; --stone:#e3e2dc; --ink:#26302b; --ink2:#4a554e; --muted:#5d6a62; --olive:#506055; --line:#cfd0c8;
@@ -157,12 +157,21 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .hitcount{padding:20px 0 4px}
 /* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
 .scnav{height:48px;display:flex;align-items:center;justify-content:space-between;position:relative;margin-top:2px}
-.schome{position:absolute;right:82px;top:50%;display:flex;align-items:center;gap:6px;height:36px;padding:0 8px;color:var(--linen);
-  font-family:var(--serif);font-style:italic;font-size:20px;line-height:1;opacity:0;pointer-events:none;transform:translate3d(6px,-50%,0);
-  transition:opacity .3s var(--ease), transform .45s var(--sheet)}
+.schome{position:absolute;right:74px;top:50%;display:flex;align-items:center;gap:7px;height:32px;padding:0 13px 0 11px;border-radius:8px;color:var(--linen);
+  background:rgba(242,243,239,.06);box-shadow:inset 0 0 0 1px rgba(242,243,239,.13);
+  font-family:var(--serif);font-style:italic;font-size:19px;line-height:1;opacity:0;pointer-events:none;transform:translate3d(6px,-50%,0) scale(.96);
+  transition:opacity .3s var(--ease), transform .45s var(--sheet), background-color .2s var(--ease), box-shadow .2s var(--ease)}
+.schome.dir-r{padding:0 11px 0 13px}
+.schome span{padding-right:.04em}
+.schome .ar{color:var(--mist);flex:none;transition:transform .35s var(--sheet), color .2s var(--ease)}
 .schome.on{opacity:1;pointer-events:auto;transform:translate3d(0,-50%,0)}
 .schome.dir-r .ar-l,.schome.dir-l .ar-r{display:none}
-.schome:active{opacity:.6}
+@media (hover:hover) and (pointer:fine){
+  .schome:hover{background:rgba(242,243,239,.11);box-shadow:inset 0 0 0 1px rgba(242,243,239,.22)}
+  .schome:hover .ar{color:var(--linen)}
+  .schome.dir-l:hover .ar-l{transform:translateX(-2px)} .schome.dir-r:hover .ar-r{transform:translateX(2px)}
+}
+.schome:active{transform:translate3d(0,-50%,0) scale(.96);background:rgba(242,243,239,.15)}
 .seg{position:relative;display:flex;gap:22px;font-size:14px}
 .seg button{height:44px;color:var(--mist);transition:color .25s var(--ease)}
 .seg button[aria-selected="true"]{color:var(--linen);font-weight:600}
@@ -374,6 +383,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .eline{height:1px;background:var(--line);margin-top:16px}
 .ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--olive)}
 .ebody:empty::before{content:attr(data-ph);color:var(--dim)}
+/* Schreibmaschine: getippte Schrift, wie auf Papier angeschlagen */
+.tw .entry{padding-bottom:75vh} /* genug Papier, damit die Schreibzeile auf ihrer Höhe bleiben kann */
+.tw .ebody{font-family:'Courier Prime',ui-monospace,'SF Mono',Menlo,monospace;font-size:16.5px;line-height:1.85;letter-spacing:0;color:#2b3430;caret-color:var(--ink)}
 .ephotos{display:grid;gap:8px;margin-top:28px}
 .ephotos img{width:100%;height:auto;display:block;border-radius:8px;background:var(--stone)}
 .entry.in-l{animation:inl .42s var(--sheet)} .entry.in-r{animation:inr .42s var(--sheet)}
@@ -432,7 +444,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .app{background:var(--paper)}
   /* rechts: der Schreibbereich als schwebendes Blatt mit runden Ecken auf dem Papierton */
   .view:not(#home){top:12px;right:12px;bottom:12px;left:calc(var(--side) + 12px);border-radius:14px;background:var(--sheetbg);
-    box-shadow:0 0 0 1px rgba(38,48,43,.07), 0 30px 60px -44px rgba(8,10,8,.4)}
+    box-shadow:0 0 0 1px rgba(38,48,43,.15), 0 30px 60px -44px rgba(8,10,8,.4)}
   @keyframes rise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
   #settings.is-top .page > *{animation:rise .8s var(--sheet) both}
   #settings.is-top .page > :nth-child(2){animation-delay:.06s} #settings.is-top .page > :nth-child(3){animation-delay:.11s}
@@ -513,7 +525,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   #homeTitle .y{transition:color .2s var(--ease)}
   /* rechts an der Seitenleiste ausgerichtet: Datum = Höhe der Tabs, Titel = Grundlinie des Monats, Text = Höhe des Kalenders */
   .page{padding-top:0}
-  .entry{padding-top:138px} /* Blatt beginnt 12px tiefer – Kanten bleiben mit links ausgerichtet */
+  .entry{padding-top:4px;padding-right:48px;max-width:872px} /* Datum auf Höhe der Tabs (16px), Text reicht weiter nach rechts */
   /* Datum als Kicker direkt über der Überschrift (wie bei WANDER), Mülleimer in derselben Zeile rechts */
   .entry .enav{height:44px;align-items:center;padding:0}
   .entry .edate{flex-direction:row;align-items:baseline;gap:0;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
@@ -523,12 +535,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
   #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
   /* Überschrift + Text: erste Titelzeile beginnt knapp über dem Ende des dunklen Blocks in der Woche (291px) */
-  .entry .title,.etitle{font-size:56px;line-height:64px;letter-spacing:-.03em;margin-top:15px;padding-top:0;min-height:64px;display:block}
+  .entry .title,.etitle{font-size:56px;line-height:64px;letter-spacing:-.03em;margin-top:8px;padding-top:0;min-height:64px;display:block} /* Titel auf Höhe von „November“ (68px) */
   .ebody{margin-top:22px}
   .page .title{margin:0;padding-top:8px;height:72px}
   .page .title .t{font-size:56px;line-height:64px} .page .title .y{font-size:38px}
   .page .title + .sect{margin-top:8px} /* erste Linie auf derselben Höhe wie links */
-  .ebody{font-size:20px;line-height:1.75}
+  .ebody{font-size:18px;line-height:1.75}
+  .tw .ebody{font-size:17px;line-height:1.9}
   .view,.view.is-top{will-change:auto}
   .enav{position:static;margin:0;padding:0}
   .page{max-width:576px}
@@ -650,6 +663,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <label class="field"><span>Zugangsschlüssel</span><input id="syncToken" type="password" placeholder="github_pat_…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
         <div class="btns"><button class="btn" data-act="syncsave">Verbinden</button><button class="btn ghost" data-act="syncnow">Jetzt abgleichen</button></div>
         <div class="note" id="noteSync" aria-live="polite"></div>
+      </div>
+      <div class="sect">
+        <h2>Schrift beim Schreiben</h2>
+        <p>Schreibmaschine setzt deinen Text in getippte Lettern, und die Zeile, in der du schreibst, bleibt ruhig auf einer Höhe – wie eingespanntes Papier.</p>
+        <div class="fxseg" role="radiogroup" aria-label="Schrift"><button role="radio" data-act="settw" data-tw="0">Klassisch</button><button role="radio" data-act="settw" data-tw="1">Schreibmaschine</button></div>
       </div>
       <div class="sect fxsect">
         <h2>Übergänge</h2>
@@ -1253,6 +1271,7 @@ document.addEventListener('click', (ev) => {
     const k = b.dataset.key;
     if (b.closest('#caltrack') && S.cal.sel !== k) selectCalDay(k); else deskFade(() => openDay(k), (S.byDate.get(k) || [{}])[0].id || 'draft' + k);
   }
+  else if (a === 'settw') { S.tw = b.dataset.tw === '1'; try { localStorage.setItem('journal.tw', S.tw ? '1' : '0'); } catch (e) {} markTw(); }
   else if (a === 'setfx') { S.fx = b.dataset.fx; try { localStorage.setItem('journal.fx', S.fx); } catch (e) {} markFx(); }
   else if (a === 'trashcur') { if (S.cur && S.cur.id) askDelete(S.cur.id); }
   else if (a === 'ctxopen') { const id = S.ctxId; hideCtx(); if (id) { S.navList = null; openEntryById(id); } }
@@ -1317,6 +1336,9 @@ async function deleteEntry(id) {
   renderHome(); if (S.stack.includes('search')) renderSearch(); if (S.stack.includes('calendar')) renderCalendar();
   toast('Eintrag gelöscht');
 }
+function markTw() { document.documentElement.classList.toggle('tw', !!S.tw); document.querySelectorAll('[data-act=settw]').forEach((x) => x.setAttribute('aria-checked', (x.dataset.tw === '1') === !!S.tw)); }
+try { S.tw = localStorage.getItem('journal.tw') === '1'; } catch (e) { S.tw = false; }
+markTw();
 function markFx() { document.querySelectorAll('.fxseg button').forEach((x) => x.setAttribute('aria-checked', x.dataset.fx === S.fx)); }
 try { S.fx = localStorage.getItem('journal.fx') || 'fade'; } catch (e) { S.fx = 'fade'; }
 markFx();
@@ -1712,6 +1734,19 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
     const sel = getSelection(); if (!sel.rangeCount) return;
     const r = sel.getRangeAt(0).getBoundingClientRect(); if (!r || (!r.top && !r.bottom)) return;
     const limit = vv.height - 36;
+    if (S.tw) {
+      /* Schreibmaschine: die Schreibzeile bleibt auf fester Höhe, das Blatt wandert nach oben.
+         Mac: immer auf ~44 % der Höhe. iPhone: nie tiefer als ~42 % des sichtbaren Bereichs über der Tastatur. */
+      const desk = matchMedia('(min-width: 960px)').matches, mid = r.top + r.height / 2;
+      const target = desk ? innerHeight * 0.44 : vv.offsetTop + vv.height * 0.42;
+      const d = mid - target;
+      if ((desk && Math.abs(d) > 2) || (!desk && d > 2)) {
+        /* absolutes Ziel aus der aktuellen Lage – ein laufender Zeilenvorschub verliert so nichts */
+        const el = $('entry');
+        el.scrollTo({ top: el.scrollTop + d, behavior: 'smooth' });
+      }
+      return;
+    }
     if (r.bottom > limit) $('entry').scrollBy({ top: r.bottom - limit, behavior: 'smooth' });
   }
   vv.addEventListener('resize', () => setTimeout(keep, 60));
