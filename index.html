@@ -631,14 +631,14 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
     position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:44px;align-content:start;
     padding:104px var(--pr) 45vh max(var(--m), calc(var(--pr) - var(--dc)));max-width:none}
   .entry .enav{display:contents}
-  .entry .eact{position:absolute;top:26px;right:calc(var(--pr) - 12px)} /* Mülleimer endet genau am rechten Rand des Satzspiegels */
+  .entry .eact{position:absolute;top:22px;right:22px} /* fest in der oberen rechten Blattecke, unabhängig vom Text */ /* Mülleimer endet genau am rechten Rand des Satzspiegels */
   .entry .edate{grid-column:1;grid-row:1 / span 2;align-self:start;position:static;flex-direction:column;align-items:flex-start;gap:0;
     padding:4px 24px 6px 0;border-right:1px solid var(--line);text-align:left}
   .entry .edate .dn{display:block;order:-1;font-family:var(--serif);font-size:68px;line-height:.86;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:lining-nums}
   .entry .edate .wd{margin-top:14px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--olive)}
   .entry .edate .dt{display:none}
   .entry .edate .dtm{display:block;margin-top:6px;font-size:13px;font-weight:500;line-height:1.55;letter-spacing:.03em;color:var(--muted);white-space:pre-line}
-  .entry .savedot{position:absolute;left:auto;right:calc(var(--pr) + 34px);top:45px;bottom:auto;margin:0}
+  .entry .savedot{position:absolute;left:auto;right:68px;top:41px;bottom:auto;margin:0}
   .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
   #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
   .entry .title,.etitle{grid-column:2;font-style:normal;font-size:50px;line-height:58px;letter-spacing:-.03em;margin:-6px 0 0;max-width:none;text-align:left;padding-top:0;min-height:58px;display:block}
@@ -655,12 +655,18 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
 }
 /* großer Bildschirm (z. B. externer Monitor): Satzspiegel wächst mit, Proportionen bleiben wie auf dem MacBook */
 @media (min-width: 1500px){
-  .entry{--m:88px;--T:720px;--dc:180px;grid-template-columns:128px minmax(0,1fr);column-gap:52px;padding-top:120px}
+  .entry{--m:88px;--T:800px;--dc:180px;grid-template-columns:128px minmax(0,1fr);column-gap:52px;padding-top:120px}
   .entry .edate .dn{font-size:78px}
   .entry .edate .wd{font-size:13px}
   .entry .edate .dtm{font-size:14px}
   .entry .title,.etitle{font-size:58px;line-height:66px}
   .ebody{font-size:21px}
+}
+/* sehr breite Bildschirme: Textspalte noch etwas breiter und Schrift eine Spur größer – weniger leeres Papier, Zeilen bleiben gut lesbar (~78 Zeichen) */
+@media (min-width: 1800px){
+  .entry{--T:880px;--m:80px}
+  .ebody{font-size:22px}
+  .entry .title,.etitle{font-size:62px;line-height:70px}
 }
 @media (prefers-reduced-motion: reduce){
   #settings.is-top .page > *{animation:none}
