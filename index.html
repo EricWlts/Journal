@@ -98,7 +98,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .twbtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
 .todayline.dir-r .ar-l,.todayline.dir-l .ar-r{opacity:0}
 .twbtn:active .tw,.twbtn:active .ar{opacity:.6}
-.weekwrap{margin:0 -24px -6px;padding:16px 0 6px;overflow:hidden;touch-action:pan-y} /* 6px unten Luft, damit der Ring um heute nicht abgeschnitten wird */
+.weekwrap{margin:0 -24px -12px;padding:16px 0 12px;overflow:hidden;touch-action:pan-y} /* 6px unten Luft, damit der Ring um heute nicht abgeschnitten wird */
 .weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
 .weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .wday{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -239,19 +239,21 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 /* Mac: Auswahl eines Tages – Ring wächst sanft nach außen statt aufzublitzen, Tag federt beim Klicken weich */
 #sidecal .dot{position:relative;box-shadow:inset 0 0 0 0 rgba(242,243,239,0), inset 0 0 0 0 rgba(18,21,15,0), 0 0 0 0 var(--night), 0 0 0 0 rgba(242,243,239,0);
   transition:box-shadow .6s var(--sheet), transform .5s var(--sheet), background-color .3s var(--ease), color .3s var(--ease)}
-/* Heute = immer der Ring (mit Abstand außen, auch wenn geschrieben); geöffneter Eintrag = kleiner Punkt unter dem Tag (Entwurf B, Eric 25.11.2026) */
-#sidecal .is-now .dot{box-shadow:inset 0 0 0 0 rgba(242,243,239,0), inset 0 0 0 0 rgba(18,21,15,0), 0 0 0 3px var(--night), 0 0 0 4px var(--linen);font-weight:600}
+/* Ausgewählter Tag (geöffneter Eintrag) = Ring außen; heute = kleiner heller Punkt unter dem Tag (Eric 25.11.2026, umgedreht gegenüber Entwurf B) */
+#sidecal .is-now .dot{font-weight:600}
+#sidecal .is-sel .dot{box-shadow:inset 0 0 0 0 rgba(242,243,239,0), inset 0 0 0 0 rgba(18,21,15,0), 0 0 0 3px var(--night), 0 0 0 4px var(--linen);font-weight:600}
 #sidecal .dot::after{content:'';position:absolute;left:50%;top:calc(100% + 7px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--linen);
   opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
-#sidecal .is-sel .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
-/* iPhone wie Mac (Entwurf B): heute immer der Ring außen, geöffneter Tag = kleiner Punkt darunter */
+#sidecal .is-now .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
+/* iPhone wie Mac: ausgewählter Tag = Ring außen (ohne Auswahl: heute), heute = kleiner Punkt darunter */
 .dot{position:relative}
-.dark .is-now .dot{box-shadow:0 0 0 3px var(--night), 0 0 0 4px var(--linen)}
-.light .is-now .dot{box-shadow:0 0 0 3px var(--paper), 0 0 0 4px var(--ink);font-weight:600}
+.dark .is-sel .dot{box-shadow:0 0 0 3px var(--night), 0 0 0 4px var(--linen)}
+.light .is-sel .dot{box-shadow:0 0 0 3px var(--paper), 0 0 0 4px var(--ink)}
+.light .is-now .dot{font-weight:600}
 .dot::after{content:'';position:absolute;left:50%;top:calc(100% + 6px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--ink);
   opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
 .dark .dot::after{background:var(--linen)}
-.is-sel .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
+.is-now .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
 .sidecal .yd.e.n{box-shadow:0 0 0 1.5px var(--night), 0 0 0 2.5px var(--linen)}
 .yd.e.n{box-shadow:0 0 0 1.5px var(--paper), 0 0 0 2.5px var(--ink)}
 .todaypulse{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px var(--linen);pointer-events:none}
@@ -389,7 +391,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .light .is-entry .dot{background:var(--ink);color:var(--linen);font-weight:600}
 
 .light .is-future .dot{color:var(--muted)}
-.is-sel .dot{box-shadow:none}
 .legend{margin-top:auto;padding-top:8px;display:flex;gap:20px;font-size:12px;color:var(--muted)}
 .legend span{display:flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -995,7 +996,7 @@ function weekPanelHTML(off) {
   const mon = weekStart(off); let h = '<div class="weekpanel">';
   for (let i = 0; i < 7; i++) {
     const d = new Date(mon); d.setDate(mon.getDate() + i); const st = dayState(d);
-    h += '<button class="wday ' + st + (keyOf(d) === keyOf(today()) ? ' is-now' : '') + '" data-act="day" data-key="' + keyOf(d) + '" aria-label="' + WDLONG[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()] +
+    h += '<button class="wday ' + st + (keyOf(d) === keyOf(today()) ? ' is-now' + (isDesktop() ? '' : ' is-sel') : '') + '" data-act="day" data-key="' + keyOf(d) + '" aria-label="' + WDLONG[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()] +
       '"><span class="wd">' + WD[i] + '</span><span class="dot">' + d.getDate() + '</span></button>';
   }
   return h + '</div>';
@@ -1046,7 +1047,7 @@ function monthGridHTML(y, m, compact) {
   for (let i = 0; i < lead; i++) h += '<span class="cell"></span>';
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, m, d); const st = dayState(dt); const k = keyOf(dt);
-    const sel = compact && isDesktop() && k === selKey && S.stack[S.stack.length - 1] === 'entry' ? ' is-sel' : '';
+    const sel = compact && isDesktop() ? (k === selKey && S.stack[S.stack.length - 1] === 'entry' ? ' is-sel' : '') : (!isDesktop() && !S.cal.sel && k === keyOf(today()) ? ' is-sel' : '');
     h += '<button class="cell ' + st + sel + (k === keyOf(today()) ? ' is-now' : '') + '" data-act="day" data-key="' + k + '"' +
       ' aria-label="' + d + '. ' + MONTHS[m] + (st === 'is-entry' ? ', geschrieben' : '') + '"><span class="dot">' + d + '</span></button>';
   }
@@ -1082,7 +1083,7 @@ function renderCalendar() {
   $('caltrack').innerHTML = [-1, 0, 1].map((o) => { const p = periodOf(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, false) : yearHTML(p.y)) + '</div>'; }).join('');
   resetTrack($('caltrack'));
   if (S.cal.sel) document.querySelectorAll('#caltrack .cell').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === S.cal.sel));
-  $('calLegend').innerHTML = '<span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="box-shadow:0 0 0 1px var(--ink) inset"></i>Heute</span>' +
+  $('calLegend').innerHTML = '<span><i style="background:var(--ink)"></i>Geschrieben</span><span><i style="width:4px;height:4px;margin:0 3px;background:var(--ink)"></i>Heute</span>' +
     (mode === 'year' ? '<span><i style="background:var(--empty)"></i>Leer</span>' : '');
   renderOnThisDay();
 }
@@ -1254,7 +1255,11 @@ function sideToday() {
   // „Heute“ verabschiedet sich sofort beim Klick (gleitet in Richtung heute, verschwimmt, die Kapsel schließt sich) – nicht erst nach dem Blättern
   S.toToday = true; clearTimeout(sideToday.t); sideToday.t = setTimeout(() => { S.toToday = false; }, 4000);
   $('scTodayBtn').classList.remove('on'); $('scTodayBtn').tabIndex = -1;
-  flipTo({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, () => { S.toToday = false; markToday(); });
+  flipTo({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, () => {
+    S.toToday = false; markToday();
+    const k = keyOf(t), list = S.byDate.get(k); // heute geschrieben: den neuesten Eintrag von heute öffnen – der Ring landet auf heute
+    if (list && list.length && !(S.cur && S.cur.date === k && S.stack[S.stack.length - 1] === 'entry')) deskFade(() => openDay(k), list[0].id);
+  });
 }
 /* Daumenkino: zu „Heute“ werden die Zeiträume dazwischen kurz angeblättert – erst langsam, dann schnell,
    die letzte Seite landet mit dem normalen Übergang. Höchstens 14 Zwischenbilder. */
@@ -1282,16 +1287,17 @@ function flipTo(next, after) {
     i++; setTimeout(frame, gap);
   })();
 }
-function markToday() { // „Heute“: der heutige Tag setzt ganz sanft auf – ohne Ring
+function markToday() { // „Heute“: erst wenn die Welle den heutigen Tag abgesetzt hat, läuft ein feiner Ring einmal sanft nach außen (vorher sprang der Tag)
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const panel = $('sctrack').children[1]; if (!panel) return;
   const dot = panel.querySelector('[data-key="' + keyOf(today()) + '"] .dot') || panel.querySelector('.yd.t, .yd.n');
   if (!dot) return;
-  /* der heutige Tag setzt auf, dann läuft ein feiner Ring einmal sanft nach außen – wie ein Tropfen auf Papier */
-  dot.animate([{ transform: 'scale(1.22)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 700, delay: 80, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'backwards' });
-  const ring = document.createElement('span'); ring.className = 'todaypulse'; if (dot.classList.contains('yd')) { ring.style.position = 'absolute'; dot.style.position = 'relative'; }
-  dot.appendChild(ring);
-  ring.animate([{ transform: 'scale(1)', opacity: 0.7 }, { transform: 'scale(2.1)', opacity: 0 }], { duration: 1100, delay: 380, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' }).onfinish = () => ring.remove();
+  Promise.all(dot.getAnimations().map((a) => a.finished.catch(() => {}))).then(() => {
+    if (!dot.isConnected) return;
+    const ring = document.createElement('span'); ring.className = 'todaypulse'; if (dot.classList.contains('yd')) { ring.style.position = 'absolute'; dot.style.position = 'relative'; }
+    dot.appendChild(ring);
+    ring.animate([{ transform: 'scale(1)', opacity: 0.6 }, { transform: 'scale(2)', opacity: 0 }], { duration: 1100, delay: 120, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' }).onfinish = () => ring.remove();
+  });
 }
 function setSideMode(mode, y, m) {
   const needOpen = S.calIsOpen && !S.calIsOpen(); // teilweise oder ganz eingefahren: nach dem Wechsel ganz ausfahren
