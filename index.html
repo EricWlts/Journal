@@ -588,7 +588,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
     </header>
     <div class="list" id="list"></div>
     <div class="fabwrap"><button class="fab" data-act="today"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span id="fabLabel">Heute schreiben</span></button></div>
-    <button class="floatbtn homeplus" data-act="today" id="homePlus" aria-label="Heute schreiben"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>
+    <button class="floatbtn homeplus" data-act="today" id="homePlus" aria-label="Neuer Eintrag" title="Neuer Eintrag (⌘N)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>
   </section>
 
   <!-- Kalender -->
@@ -967,6 +967,11 @@ function animTitle(label, dir, vertical) { // Monat gleitet seitlich, Jahr rollt
     if (still) { el.textContent = txt; continue; }
     const vert = vertical || S.fx === 'roll', dist = S.fx === 'fade' ? 8 : 18;
     const d = dir || 1, useX = axis === 'x' && dir && !vert;
+    if (S.flipping) {
+      el.textContent = txt;
+      el.animate([{ opacity: 0.35, transform: useX ? 'translate3d(' + (d * 6) + 'px,0,0)' : 'translate3d(0,' + (d * 0.12) + 'em,0)' }, { opacity: 1, transform: 'none' }], { duration: 160, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });
+      continue;
+    }
     const out = useX ? 'translate3d(' + (-d * dist) + 'px,0,0)' : 'translate3d(0,' + (-d * 0.35) + 'em,0)';
     const inn = useX ? 'translate3d(' + (d * dist) + 'px,0,0)' : 'translate3d(0,' + (d * 0.35) + 'em,0)';
     el.animate([{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: out, filter: 'blur(2px)' }], { duration: 150, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }).onfinish = () => {
@@ -1020,7 +1025,23 @@ function sideMove(dir, next, ms, after) {
   const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true'); ghost.appendChild(clone); vp.appendChild(ghost);
   Object.assign(S.side, next); renderSide(); softIn($('scStat'));
   const np = tr.children[1], E = 'cubic-bezier(0.32, 0.72, 0, 1)';
-  if (fx === 'roll') {
+  if (!off && target.mode !== 'year') { // Woche/Monat: Kopfzeile bleibt stehen, nur die Tage wechseln – als Welle in Laufrichtung
+    clone.querySelectorAll('.wd, .wdhead').forEach((x) => { x.style.visibility = 'hidden'; });
+    const cells = (p) => [...p.querySelectorAll('.wday, .mgrid > *')].map((c, i) => ({ dot: c.querySelector('.dot'), col: i % 7, row: Math.floor(i / 7) })).filter((c) => c.dot);
+    const rows = Math.max(1, ...cells(np).map((c) => c.row + 1)), roll = fx === 'roll';
+    const order = (c) => roll ? (dir > 0 ? c.row : rows - 1 - c.row) + c.col * 0.15 : (dir > 0 ? c.col : 6 - c.col) + c.row * 0.35;
+    ghost.style.opacity = String(o0);
+    for (const c of cells(clone)) {
+      const tx = roll ? 'translate3d(0,' + (-dir * 10) + 'px,0)' : 'translate3d(' + (-dir * 12) + 'px,0,0)';
+      c.dot.animate([{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: tx, filter: 'blur(2px)' }],
+        { duration: 210, delay: order(c) * 16, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' });
+    }
+    for (const c of cells(np)) {
+      const tx = roll ? 'translate3d(0,' + (dir * 14) + 'px,0)' : 'translate3d(' + (dir * 18) + 'px,0,0)';
+      c.dot.animate([{ opacity: 0, transform: tx + ' scale(.92)', filter: 'blur(3px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
+        { duration: 620, delay: 90 + order(c) * 30, easing: E, fill: 'backwards' });
+    }
+  } else if (fx === 'roll') {
     ghost.animate([{ opacity: o0, transform: 'translate3d(' + off + 'px,0,0)' }, { opacity: 0, transform: 'translate3d(' + off + 'px,' + (-dir * 34) + 'px,0)' }], { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' });
     np.animate([{ opacity: 0, transform: 'translate3d(0,' + (dir * 38) + 'px,0)' }, { opacity: 1, transform: 'none' }], { duration: 540, delay: 150, easing: E, fill: 'backwards' });
   } else {
@@ -1035,7 +1056,33 @@ function sideToday() {
   const t = today(); const { mode, y, m, w } = S.side;
   const diff = mode === 'week' ? -w : mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
   // Heute: der heutige Zeitraum liegt schon im Nachbarfeld, gleitet herein, dann pulsiert der heutige Tag kurz
-  sideJump({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, true, () => markToday());
+  flipTo({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, () => markToday());
+}
+/* Daumenkino: zu „Heute“ werden die Zeiträume dazwischen kurz angeblättert – erst langsam, dann schnell,
+   zum Ende wieder langsamer; die letzte Seite landet mit dem normalen Übergang. Höchstens 14 Zwischenbilder. */
+function stepPeriod(st, k) {
+  if (st.mode === 'week') return { w: st.w + k };
+  if (st.mode === 'month') { const t = st.y * 12 + st.m + k; return { y: Math.floor(t / 12), m: ((t % 12) + 12) % 12 }; }
+  return { y: st.y + k };
+}
+function flipTo(next, after) {
+  const cur = S.side, n = cur.mode === 'week' ? next.w - cur.w : cur.mode === 'month' ? (next.y * 12 + next.m) - (cur.y * 12 + cur.m) : next.y - cur.y;
+  const dir = Math.sign(n), steps = Math.abs(n);
+  if (!dir || trackBusy) return;
+  if (steps < 3 || matchMedia('(prefers-reduced-motion: reduce)').matches) { sideJump(next, true, after); return; }
+  S.listTitle = null; trackBusy = true; S.flipping = true;
+  const st0 = Object.assign({}, cur), inner = steps - 1, count = Math.min(inner, 14), ks = [];
+  for (let i = 1; i <= count; i++) { const k = Math.round(i * inner / count); if (!ks.includes(k)) ks.push(k); }
+  const tr = $('sctrack'); let i = 0;
+  (function frame() {
+    if (i >= ks.length) { S.flipping = false; trackBusy = false; sideMove(dir, next, 460, after); return; }
+    const prog = (i + 1) / (ks.length + 1), speed = Math.sin(Math.PI * prog), gap = Math.round(130 - 85 * speed);
+    S.titleDir = dir; Object.assign(S.side, stepPeriod(st0, dir * ks[i])); renderSide(); updateSideSel();
+    const p = tr.children[1], targets = S.side.mode === 'year' ? [p] : [...p.querySelectorAll('.dot')];
+    const kf = [{ opacity: 0.25, transform: 'translate3d(' + (dir * 9) + 'px,0,0)', filter: 'blur(' + (0.4 + 1.6 * speed).toFixed(2) + 'px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }];
+    targets.forEach((el) => el.animate(kf, { duration: Math.round(gap * 1.6), easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }));
+    i++; setTimeout(frame, gap);
+  })();
 }
 function markToday() { // „Heute“: der heutige Tag setzt ganz sanft auf – ohne Ring
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1107,7 +1154,7 @@ async function renderEntry(dir) {
 }
 function draftFor(k) {
   const now = new Date(); const d = parseKey(k);
-  if (k !== keyOf(now)) d.setHours(20, 0, 0, 0); else d.setHours(now.getHours(), now.getMinutes(), 0, 0);
+  if (k !== keyOf(now)) d.setHours(20, 0, 0, 0); else d.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()); // sekundengenau: mehrere Einträge am Tag bleiben richtig sortiert
   return { id: null, date: k, created: d.toISOString(), title: '', text: '', photos: [], source: 'app' };
 }
 let saveTimer = null;
@@ -1145,6 +1192,13 @@ function openDay(k) {
   const list = S.byDate.get(k);
   go('entry');
   openEntry(list && list.length ? list[0] : draftFor(k));
+}
+function newEntry() { // Plus / ⌘N: immer ein neues, leeres Blatt für heute – mehrere Einträge am Tag sind erlaubt
+  const k = keyOf(today()), top = S.stack[S.stack.length - 1];
+  if (top === 'entry' && S.cur && !S.cur.id && S.cur.date === k) { focusEnd($('eTitle')); return; } // steht schon ein leeres Blatt offen
+  saveCur(); S.navList = null;
+  const open = () => { go('entry'); openEntry(draftFor(k)); focusEnd($('eTitle')); };
+  if (isDesktop() && top === 'entry') deskFade(open, 'new' + Date.now()); else open();
 }
 function navNeighbour(dir) { // innerhalb der Suchtreffer (neueste zuerst)
   const L = S.navList, i = L ? L.indexOf(S.cur) : -1;
@@ -1282,7 +1336,7 @@ document.addEventListener('click', (ev) => {
     const r = S.openRow.getBoundingClientRect(); if (S.openRow === b && ev.clientX > r.right - ROW_OPEN) askDelete(b.dataset.id); else closeRow();
   }
   else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id; deskFade(() => openEntryById(id), id); }
-  else if (a === 'today') { openDay(keyOf(today())); focusEnd(S.cur && S.cur.title ? $('eBody') : $('eTitle')); }
+  else if (a === 'today') newEntry();
   else if (a === 'entryback') {
     if (typing()) { document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
     else back();
@@ -1799,7 +1853,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
   window.addEventListener('keydown', (e) => {
     const top = S.stack[S.stack.length - 1];
     if ((e.metaKey || e.ctrlKey) && e.key === '[') { e.preventDefault(); back(); return; }
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') { e.preventDefault(); $('app').querySelector('[data-act="today"]').click(); return; }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') { e.preventDefault(); newEntry(); return; }
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f') { e.preventDefault(); if (isDesktop()) { if (S.dsearch) $('dq').focus(); else deskSearch(true); } else { go('search'); $('q').focus({ preventScroll: true }); } return; }
     if (e.key === 'Escape' && S.dsearch && !typing()) { deskSearch(false); return; }
     if (typing()) { if (e.key === 'Escape') { document.activeElement.blur(); saveCur(); } return; }
