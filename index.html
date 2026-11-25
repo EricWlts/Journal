@@ -354,24 +354,6 @@ html.night .scrub i{color:#6f7a71}
 /* mehrere Einträge am selben Tag: Datum nur bei der ersten Karte, danach nur die Uhrzeit; Karten eines Tages rücken zusammen, zwischen Tagen etwas mehr Luft */
 :is(#list,#results) .row.cont{margin-top:-3px}
 :is(#list,#results) .row.newday{margin-top:6px}
-/* Tag mit mehreren Einträgen: zugeklappt liegt die erste Karte wie auf einem kleinen Stapel; gewählt klappen die übrigen weich darunter auf */
-#list .row.has-more{margin-bottom:10px;box-shadow:0 5px 0 -3px var(--card), 0 10px 0 -6px var(--card);
-  transition:background-color .2s var(--ease), box-shadow .45s var(--sheet), margin .55s var(--sheet)}
-#list .row.has-more.grp-open{margin-bottom:3px;box-shadow:0 0 0 -3px var(--card), 0 0 0 -6px var(--card)}
-#list .row .more{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.02em;transition:opacity .3s var(--ease)}
-#list .row .more{display:grid;justify-items:end}
-#list .row .more > *{grid-area:1/1;font-style:normal;font-weight:500;white-space:nowrap;transition:opacity .3s var(--ease)}
-#list .row .more em{opacity:0}
-#list .row.grp-open .more b{opacity:0}
-@media (hover:hover){ #list .row.grp-open.is-current:hover .more em{opacity:1;transition-delay:.35s} }
-@media (max-width:959px){ #list .row.grp-open .more em{opacity:1} #list .row .more{margin:-12px -12px -12px 0;padding:12px 12px 12px 16px} } /* iPhone: „einklappen“ steht da und ist groß genug zum Antippen */ /* offen: beim Darüberfahren leise der Hinweis, dass ein Klick zuklappt */
-#list .dmore{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--sheet)}
-#list .dmore.open{grid-template-rows:1fr}
-#list .dmore-in{min-height:0;overflow:hidden}
-#list .dmore .row{margin:0 0 3px;opacity:0;transform:translate3d(0,-8px,0);transition:background-color .2s var(--ease), opacity .25s var(--ease), transform .45s var(--sheet)}
-#list .dmore .row:last-child{margin-bottom:6px}
-#list .dmore.open .row{opacity:1;transform:none;transition:background-color .2s var(--ease), opacity .4s var(--ease) calc(90ms + var(--i, 0) * 45ms), transform .55s var(--sheet) calc(60ms + var(--i, 0) * 45ms)}
-#list .instant,#list .instant .row{transition:none !important}
 :is(#list,#results) .row.cont .n,:is(#list,#results) .row.cont .wd{display:none}
 :is(#list,#results) .row.cont .tm{margin-top:5px}
 :is(#list,#results) .row .d{width:40px}
@@ -379,7 +361,6 @@ html.night .scrub i{color:#6f7a71}
 :is(#list,#results) .row.is-current .tm{color:var(--mist)}
 /* hell: der gewählte Eintrag ist leiser – er liegt wie das offene Blatt hell auf, mit feinem Tinten-Rand (Nacht bleibt dunkel) */
 html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gefüllt wie vorher, eine Spur heller als die Tinte */
-:is(#list,#results) .row.is-current .more{color:var(--mist)}
 @media (hover:hover) and (pointer:fine){
     :is(#list,#results) .row:not(.is-current):hover{background:var(--cardh)}
     :is(#list,#results) .row:not(.is-current):hover::before,:is(#list,#results) .row:not(.is-current):hover + .row::before{opacity:0}
@@ -1075,16 +1056,11 @@ function renderHome() {
         if (mk !== curMonth || lastMonth) { const d = parseKey(e.date); html += '<div class="sep kicker" data-month="' + mk + '">' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</div>'; }
         lastMonth = mk; pv = null;
       }
-      // mehrere Einträge am selben Tag: nur der neueste steht da (wie ein kleiner Stapel), die übrigen klappen darunter auf, sobald der Tag gewählt ist
-      let j = i + 1; while (j < S.entries.length && S.entries[j].date === e.date) j++;
-      const more = S.entries.slice(i + 1, j);
-      html += rowHTML(e, pv, more.length);
-      if (more.length) html += '<div class="dmore" data-day="' + esc(e.date) + '"><div class="dmore-in">' + more.map((x, k) => rowHTML(x, k ? more[k - 1] : e, 0, k)).join('') + '</div></div>';
-      pv = S.entries[j - 1]; i = j - 1;
+      html += rowHTML(e, pv); pv = e; // gleicher Tag: weitere Karten zeigen nur die Uhrzeit und rücken näher heran
     }
     listHTML = html + (lastMonth ? '</div>' : '');
   }
-  if (listHTML !== S.listHTML) { L.innerHTML = listHTML; S.listHTML = listHTML; openGroups(true); }
+  if (listHTML !== S.listHTML) { L.innerHTML = listHTML; S.listHTML = listHTML; }
   const tk = keyOf(t);
   $('fabLabel').textContent = S.byDate.has(tk) ? 'Heute weiterschreiben' : 'Heute schreiben';
   $('homePlus').setAttribute('aria-label', $('fabLabel').textContent);
@@ -1130,27 +1106,15 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
 }
 function shiftWeek(dir, ms) { slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }, ms); }
 const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>';
-function rowHTML(e, prev, more, i) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit; more: weitere Einträge des Tages (zugeklappt darunter)
+function rowHTML(e, prev) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
-  const day = (prev ? (prev.date === e.date ? ' cont' : ' newday') : '') + (more ? ' has-more' : '');
-  const meta = np || more ? '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + (more ? '<span class="more"><b>+' + more + '</b><em>einklappen</em></span>' : '') + '</span>' : '';
-  return '<button class="row' + day + '"' + (i != null ? ' style="--i:' + i + '"' : '') + ' data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
+  const day = prev ? (prev.date === e.date ? ' cont' : ' newday') : '';
+  const meta = np ? '<span class="mt"><span class="ph">' + CAM + np + '</span></span>' : ''; // Fotos (nur Mac sichtbar)
+  return '<button class="row' + day + '" data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
     '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
-}
-function openGroups(now) { // der Tag des geöffneten Eintrags klappt auf, alle anderen zu
-  let k = !isDesktop() ? (S.mOpen || null) : S.cur && S.cur.id ? S.cur.date : null;
-  if (S.foldDay && S.foldDay !== k) S.foldDay = null; // ein anderer Tag gewählt: Zuklappen vergessen
-  if (k && S.foldDay === k) k = null;
-  document.querySelectorAll('#list .dmore').forEach((g) => {
-    const on = g.dataset.day === k, first = g.previousElementSibling;
-    if (g.classList.contains('open') === on) return;
-    if (now) { g.classList.add('instant'); first && first.classList.add('instant'); requestAnimationFrame(() => requestAnimationFrame(() => { g.classList.remove('instant'); first && first.classList.remove('instant'); })); }
-    g.classList.toggle('open', on); if (first) first.classList.toggle('grp-open', on);
-  });
 }
 function markCurrentRow() {
   document.querySelectorAll('.row.is-current').forEach((r) => r.classList.remove('is-current'));
-  openGroups();
   if (!isDesktop()) return;
   if (S.cur && S.cur.id) { const r = document.querySelector('#list .row[data-id="' + CSS.escape(S.cur.id) + '"]'); if (r) r.classList.add('is-current'); }
 }
@@ -1684,12 +1648,6 @@ document.addEventListener('click', (ev) => {
   else if (a === 'canceldel') { closeConfirm(); closeRow(); }
   else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
     const r = S.openRow.getBoundingClientRect(); if (S.openRow === b && ev.clientX > r.right - ROW_OPEN) askDelete(b.dataset.id); else closeRow();
-  }
-  else if (a === 'open' && !isDesktop() && b.classList.contains('has-more') && b.closest('#list') && (!b.classList.contains('grp-open') || ev.target.closest('.more'))) { // iPhone: erster Tipp klappt den Tag auf, „einklappen“ wieder zu
-    S.mOpen = b.classList.contains('grp-open') ? null : b.dataset.date; openGroups();
-  }
-  else if (a === 'open' && isDesktop() && b.classList.contains('has-more') && b.closest('#list') && S.cur && S.cur.id === b.dataset.id) { // offener Stapel: noch ein Klick klappt ihn zu bzw. wieder auf
-    S.foldDay = S.foldDay === b.dataset.date ? null : b.dataset.date; openGroups();
   }
   else if (a === 'open') {
     S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id;
