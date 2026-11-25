@@ -206,11 +206,15 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scp-a[data-dir="-1"]{box-shadow:inset -1px 0 rgba(242,243,239,.09)} /* feine Trennlinie – auch, wenn die Kapsel geschlossen ist */
 /* *Heute* „atmet“: im aktuellen Zeitraum ist die Kapsel nur ‹ ›; außerhalb öffnet sie sich in der Mitte und das Wort gleitet hinein.
    Die Kapsel steht rechtsbündig – daneben verschiebt sich nichts. */
-.scp-h{max-width:0;padding:0;overflow:hidden;white-space:nowrap;font-family:var(--serif);font-style:italic;font-size:17px;line-height:1;color:var(--linen) !important;
+.scpill .scp-h{max-width:0;padding:0;overflow:hidden;white-space:nowrap;font-family:var(--serif);font-style:italic;font-size:17px;line-height:1;color:var(--linen) !important;
   cursor:pointer;opacity:0;pointer-events:none;box-shadow:inset -1px 0 rgba(242,243,239,0);
-  transition:max-width .5s var(--sheet), padding .5s var(--sheet), opacity .2s var(--ease), box-shadow .3s var(--ease), background-color .2s var(--ease)}
-.scp-h.on{max-width:90px;padding:0 12px 0 11px;opacity:1;pointer-events:auto;box-shadow:inset -1px 0 rgba(242,243,239,.09);
-  transition:max-width .6s var(--sheet), padding .6s var(--sheet), opacity .45s var(--ease) .18s, box-shadow .3s var(--ease), background-color .2s var(--ease)}
+  transition:max-width .55s var(--sheet) .16s, padding .55s var(--sheet) .16s, opacity .3s var(--ease) .3s, box-shadow .3s var(--ease) .2s, background-color .2s var(--ease)}
+.scpill .scp-h.on{max-width:90px;padding:0 12px 0 11px;opacity:1;pointer-events:auto;box-shadow:inset -1px 0 rgba(242,243,239,.09);
+  transition:max-width .6s var(--sheet), padding .6s var(--sheet), opacity .2s var(--ease), box-shadow .3s var(--ease), background-color .2s var(--ease)}
+.scp-h span{display:block;opacity:0;filter:blur(3px);transform:translate3d(8px,0,0);
+  transition:opacity .28s var(--ease), filter .3s var(--ease), transform .45s var(--sheet)}
+.scp-h.dir-l span{transform:translate3d(-8px,0,0)} /* geht in die Richtung, in der heute liegt */
+.scp-h.on span{opacity:1;filter:blur(0);transform:none;transition:opacity .45s var(--ease) .2s, filter .45s var(--ease) .2s, transform .6s var(--sheet) .12s}
 .scpill:has(.scp-h.on.dir-l) .scp-a[data-dir="-1"],.scpill:has(.scp-h.on.dir-r) .scp-a[data-dir="1"]{color:var(--linen)}
 @media (hover:hover) and (pointer:fine){
   .scpill .scp-a:hover,.scp-h.on:hover{background:rgba(242,243,239,.07);color:var(--linen)}
@@ -705,7 +709,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
         <div class="scnav"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span></span>
           
-          <div class="scpill" role="group" aria-label="Zeitraum"><button class="scp-a" data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="scp-h" id="scTodayBtn" data-act="sidetoday" aria-label="Zurück zu heute" tabindex="-1">Heute</button><button class="scp-a" data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
+          <div class="scpill" role="group" aria-label="Zeitraum"><button class="scp-a" data-act="sideshift" data-dir="-1" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="scp-h" id="scTodayBtn" data-act="sidetoday" aria-label="Zurück zu heute" tabindex="-1"><span>Heute</span></button><button class="scp-a" data-act="sideshift" data-dir="1" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
         </div>
       </div></div>
       <div class="herofoot">
@@ -1096,7 +1100,7 @@ function renderSide() {
   $('scStat').classList.toggle('is-empty', !elapsed);
   $('scWeek').setAttribute('aria-selected', mode === 'week'); $('scMonth').setAttribute('aria-selected', mode === 'month'); $('scYear').setAttribute('aria-selected', mode === 'year');
   const isNow = mode === 'week' ? !w : y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
-  const tl = $('scTodayBtn'); tl.classList.toggle('on', !isNow); tl.tabIndex = isNow ? -1 : 0;
+  const tl = $('scTodayBtn'), showT = !isNow && !S.toToday; tl.classList.toggle('on', showT); tl.tabIndex = showT ? 0 : -1;
   if (!isNow) { const future = mode === 'week' ? w > 0 : (mode === 'month' ? y * 12 + m > t.getFullYear() * 12 + t.getMonth() : y > t.getFullYear()); tl.classList.toggle('dir-l', future); tl.classList.toggle('dir-r', !future); }
   if (S.updateHomeTitleSoft) S.updateHomeTitleSoft(); else if (S.updateHomeTitle) S.updateHomeTitle();
   placeStat();
@@ -1222,7 +1226,10 @@ function sideToday() {
   const t = today(); const { mode, y, m, w } = S.side;
   const diff = mode === 'week' ? -w : mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
   // Heute: der heutige Zeitraum liegt schon im Nachbarfeld, gleitet herein, dann pulsiert der heutige Tag kurz
-  flipTo({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, () => markToday());
+  // „Heute“ verabschiedet sich sofort beim Klick (gleitet in Richtung heute, verschwimmt, die Kapsel schließt sich) – nicht erst nach dem Blättern
+  S.toToday = true; clearTimeout(sideToday.t); sideToday.t = setTimeout(() => { S.toToday = false; }, 4000);
+  $('scTodayBtn').classList.remove('on'); $('scTodayBtn').tabIndex = -1;
+  flipTo({ y: t.getFullYear(), m: t.getMonth(), w: 0 }, () => { S.toToday = false; markToday(); });
 }
 /* Daumenkino: zu „Heute“ werden die Zeiträume dazwischen kurz angeblättert – erst langsam, dann schnell,
    die letzte Seite landet mit dem normalen Übergang. Höchstens 14 Zwischenbilder. */
