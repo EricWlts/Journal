@@ -780,6 +780,47 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   .view,.view.is-off,.view::after{transition:none}
   .entry.in-l,.entry.in-r{animation:none}
 }
+/* ===== iPhone-Feinschliff (25.11.2026, Teil 2): Systeme vom Mac übernommen ===== */
+@media (max-width:959px){
+  /* eigene Scroll-Leiste statt des hellen iOS-Balkens: beginnt an der Kante der Liste, nicht ganz oben */
+  #home{scrollbar-width:none} #home::-webkit-scrollbar{display:none}
+  .rail{width:26px}
+  .rail.on{pointer-events:none} .rail.on .rail-t{pointer-events:auto} /* nur der Daumen ist greifbar – daneben scrollt man normal */
+  .rail-t::before{content:'';position:absolute;top:-12px;bottom:-12px;left:-14px;right:-5px}
+  .rail-t{right:5px;width:3px;background:rgba(38,48,43,.38)}
+  .rail::before{right:5.5px}
+  .rail.legend .rail-t,.rail.drag .rail-t{width:6px;right:3.5px;background:rgba(38,48,43,.6)}
+  html.night .rail-t{background:rgba(242,243,239,.34)} html.night .rail.legend .rail-t,html.night .rail.drag .rail-t{background:rgba(242,243,239,.55)}
+  .rail-y{right:24px}
+  .ry{font-size:17px;padding:4px 9px 5px}
+  /* Heute-Kapsel wie am Mac: unter der Woche neben dem Kalender-Symbol, im Kalender rechts in der Zählzeile */
+  .twbtn{display:none}
+  .todayline.on{--hw:0px}
+  .herofoot .hfr{display:flex;align-items:center;gap:8px}
+  .calhero{position:relative}
+  .calpill{position:absolute;right:24px;margin-top:-44px}
+  .scpill .scp-a{width:38px}
+  /* Pfeil nach oben im weichen Auslauf */
+  .totop{position:fixed;left:50%;bottom:calc(var(--safe-b) + 14px);z-index:14;width:44px;height:44px;margin-left:-22px;display:flex;align-items:center;justify-content:center;
+    color:var(--olive);opacity:0;transform:translate3d(0,10px,0) scale(.9);pointer-events:none;
+    transition:opacity .35s var(--ease), transform .5s var(--sheet), color .2s var(--ease)}
+  .totop::before{content:'';position:absolute;inset:7px;border-radius:50%;background:color-mix(in srgb, var(--paper) 72%, transparent);
+    box-shadow:0 0 0 1px rgba(38,48,43,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .totop svg{position:relative}
+  .totop.on{opacity:1;transform:none;pointer-events:auto}
+  .totop:active svg{transform:translateY(-2px)} .totop:active{color:var(--ink)}
+  .totop svg{transition:transform .3s var(--sheet)}
+  html.night .totop::before{box-shadow:0 0 0 1px rgba(242,243,239,.1)}
+  html.night .totop{color:var(--mist)}
+  /* Speicherpunkt neben dem Wochentag statt darüber */
+  .edate{grid-template-columns:auto auto 1fr}
+  .edate .wd{grid-column:2}
+  .edate .dtm{grid-column:2 / span 2}
+  .edate .savedot{grid-column:3;grid-row:1;margin-left:9px}
+}
+.light .todaypulse,.page .todaypulse{box-shadow:0 0 0 1px var(--ink)}
+.dark .todaypulse{box-shadow:0 0 0 1px var(--linen)}
+@media (min-width:960px){ .calpill,.totop{display:none} }
 </style>
 </head>
 <body>
@@ -812,7 +853,8 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
       </div></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span><span class="away" id="weekAway"></span></span>
-        <button class="calbtn" data-act="calendar" aria-label="Kalender"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3.75" y="5.25" width="16.5" height="15" rx="2.5"/><path d="M3.75 10h16.5M8.5 3v4M15.5 3v4"/><circle cx="15.5" cy="15.2" r="1.6" fill="currentColor" stroke="none"/></svg></button>
+        <div class="hfr"><div class="scpill wkpill" role="group" aria-label="Zeitraum"><button class="scp-a" data-act="weekshift" data-dir="-1" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="scp-h" id="wkTodayBtn" data-act="thisweek" aria-label="Zurück zu heute" tabindex="-1"><span>Heute</span></button><button class="scp-a" data-act="weekshift" data-dir="1" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
+        <button class="calbtn" data-act="calendar" aria-label="Kalender"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3.75" y="5.25" width="16.5" height="15" rx="2.5"/><path d="M3.75 10h16.5M8.5 3v4M15.5 3v4"/><circle cx="15.5" cy="15.2" r="1.6" fill="currentColor" stroke="none"/></svg></button></div>
       </div>
     </header>
     <div class="list" id="list"></div>
@@ -834,6 +876,7 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
       </div>
       <h1 class="title" id="calTitle"></h1>
       <div class="stats" id="calStats"><span class="count" id="calCount"></span><span class="lbl" id="calLbl">Tage</span><span class="away" id="calAway"></span></div>
+      <div class="scpill calpill" role="group" aria-label="Zeitraum"><button class="scp-a" data-act="calshift" data-dir="-1" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="scp-h" id="calTodayBtn" data-act="caltoday" aria-label="Zurück zu heute" tabindex="-1"><span>Heute</span></button><button class="scp-a" data-act="calshift" data-dir="1" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
     </header>
     <div class="page light calbody">
       <div class="calarea" id="calarea"><div class="calviewport"><div class="caltrack" id="caltrack"></div></div><div class="legend" id="calLegend"></div></div>
@@ -1088,9 +1131,50 @@ function renderWeek() {
   const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
   setCount($('weekCount'), elapsed ? countRange(mon, end) : 0, elapsed);
   $('weekStat').classList.toggle('is-empty', !elapsed); setAway($('weekAway'), awayText('week', off));
-  const tl = $('todayLine'); tl.classList.toggle('on', off !== 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
-  if (off !== 0) { tl.classList.toggle('dir-l', off > 0); tl.classList.toggle('dir-r', off < 0); }
-  const tw = $('thisWeekBtn').querySelector('.tw').offsetWidth; if (tw) tl.style.setProperty('--hwon', (tw / 2) + 'px');
+  setPill($('wkTodayBtn'), off !== 0 && !S.toTodayWk, off > 0);
+}
+function setPill(b, on, future) { // Heute-Kapsel (iPhone wie Mac): öffnet sich nur außerhalb des aktuellen Zeitraums, der Pfeil Richtung heute leuchtet
+  b.classList.toggle('on', on); b.tabIndex = on ? 0 : -1;
+  if (on) { b.classList.toggle('dir-l', future); b.classList.toggle('dir-r', !future); }
+}
+/* iPhone: „Heute“ blättert wie am Mac als Daumenkino durch die Zeiträume dazwischen, die letzte Seite landet normal,
+   dann läuft ein feiner Ring um den heutigen Tag. steps = Abstand, frame(k) zeigt den Zeitraum k Schritte weiter, land() gleitet zur letzten Seite. */
+function flipTrack(tr, steps, dir, frame, land) {
+  if (trackBusy) return;
+  const inner = steps - 1;
+  if (inner < 1 || matchMedia('(prefers-reduced-motion: reduce)').matches) { if (inner > 0) frame(inner); land(); return; }
+  trackBusy = true; const count = Math.min(inner, 14), ks = []; let i = 0;
+  for (let j = 1; j <= count; j++) { const k = Math.round(j * inner / count); if (!ks.includes(k)) ks.push(k); }
+  (function next() {
+    if (i >= ks.length) { trackBusy = false; land(); return; }
+    const gap = [110, 80, 62][i] || 50, speed = Math.min(1, (110 - gap) / 60);
+    frame(ks[i]);
+    const p = tr.children[1], targets = p.querySelector('.yd') ? [p] : [...p.querySelectorAll('.dot')];
+    const kf = [{ opacity: 0.25, transform: 'translate3d(' + (dir * 9) + 'px,0,0)', filter: 'blur(' + (0.4 + 1.6 * speed).toFixed(2) + 'px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }];
+    targets.forEach((el) => el.animate(kf, { duration: Math.round(gap * 1.6), easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }));
+    i++; setTimeout(next, gap);
+  })();
+}
+function pulseToday(tr) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const panel = tr.children[1]; if (!panel) return;
+  const dot = panel.querySelector('[data-key="' + keyOf(today()) + '"] .dot') || panel.querySelector('.yd.t, .yd.n'); if (!dot) return;
+  const ring = document.createElement('span'); ring.className = 'todaypulse'; if (dot.classList.contains('yd')) { ring.style.position = 'absolute'; dot.style.position = 'relative'; }
+  dot.appendChild(ring);
+  ring.animate([{ transform: 'scale(1)', opacity: 0.6 }, { transform: 'scale(2)', opacity: 0 }], { duration: 1100, delay: 160, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' }).onfinish = () => ring.remove();
+}
+function weekToToday() {
+  const off = S.weekOff; if (!off || trackBusy) return; const dir = off > 0 ? -1 : 1;
+  S.toTodayWk = true; setPill($('wkTodayBtn'), false);
+  flipTrack($('weektrack'), Math.abs(off), dir, (k) => { S.weekOff = off + dir * k; renderWeek(); },
+    () => slideTrack($('weektrack'), dir, () => { S.weekOff = 0; S.toTodayWk = false; renderWeek(); pulseToday($('weektrack')); }, 400));
+}
+function calToday() {
+  const t = today(), { mode, y, m } = S.cal; if (trackBusy) return;
+  const diff = mode === 'month' ? (t.getFullYear() - y) * 12 + t.getMonth() - m : t.getFullYear() - y; if (!diff) return;
+  const dir = Math.sign(diff), y0 = y, m0 = m; S.cal.sel = null; S.toTodayCal = true; setPill($('calTodayBtn'), false);
+  flipTrack($('caltrack'), Math.abs(diff), dir, (k) => { if (mode === 'month') { const v = y0 * 12 + m0 + dir * k; S.cal.y = Math.floor(v / 12); S.cal.m = v % 12; } else S.cal.y = y0 + dir * k; renderCalendar(); },
+    () => slideTrack($('caltrack'), dir, () => { S.cal.y = t.getFullYear(); S.cal.m = mode === 'month' ? t.getMonth() : S.cal.m; S.toTodayCal = false; renderCalendar(); pulseToday($('caltrack')); }, 400));
 }
 function softIn(...els) { for (const el of els) { if (el.classList.contains('is-empty')) { el.style.transition = ''; el.style.opacity = ''; continue; } el.style.transition = ''; el.style.opacity = ''; el.classList.remove('soft-in'); void el.offsetWidth; el.classList.add('soft-in'); } }
 function fadeWith(els, f) { for (const el of els) { el.style.transition = 'none'; el.style.opacity = String(el.classList.contains('is-empty') ? 0 : f); } }
@@ -1158,7 +1242,8 @@ function renderCalendar() {
   const end = last < t ? last : t; const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
   setCount($('calCount'), elapsed ? countRange(first, end) : 0, elapsed);
   $('calStats').classList.toggle('is-empty', !elapsed);
-  setAway($('calAway'), awayText(mode, mode === 'month' ? (y * 12 + m) - (t.getFullYear() * 12 + t.getMonth()) : y - t.getFullYear()));
+  const calOff = mode === 'month' ? (y * 12 + m) - (t.getFullYear() * 12 + t.getMonth()) : y - t.getFullYear();
+  setAway($('calAway'), awayText(mode, calOff)); setPill($('calTodayBtn'), calOff !== 0 && !S.toTodayCal, calOff > 0);
   $('caltrack').innerHTML = [-1, 0, 1].map((o) => { const p = periodOf(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, false) : yearHTML(p.y)) + '</div>'; }).join('');
   resetTrack($('caltrack'));
   if (S.cal.sel) document.querySelectorAll('#caltrack .cell').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === S.cal.sel));
@@ -1432,7 +1517,7 @@ async function renderEntry(dir) {
   $('eWd').textContent = WDLONG[d.getDay()];
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + (isDesktop() ? '\n' : ' ') + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); // Mac: Randspalte, bewusst zwei Zeilen
-  $('entry').classList.toggle('has-id', !!e.id); saveMark(null);
+  syncTrash(); saveMark(null);
   $('eTitle').textContent = e.title || '';
   $('eBody').textContent = e.text || '';
   const ph = $('ePhotos'); ph.innerHTML = '';
@@ -1468,10 +1553,14 @@ function onEdit() {
   e.text = $('eBody').innerText.replace(/ /g, ' ');
   if (!$('eBody').textContent) $('eBody').innerHTML = '';
   if (!$('eTitle').textContent) $('eTitle').innerHTML = '';
-  if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); $('entry').classList.add('has-id'); }
+  if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); }
+  syncTrash();
   if (e.id) saveMark('pending');
   clearTimeout(saveTimer); saveTimer = setTimeout(saveCur, 350);
 }
+// Mülleimer nur, wenn es wirklich etwas zu löschen gibt (gespeichert und nicht leer)
+const hasContent = (e) => !!(e && ((e.title || '').trim() || (e.text || '').trim() || (e.photos || []).length));
+function syncTrash() { const e = S.cur; $('entry').classList.toggle('has-id', !!(e && e.id && hasContent(e))); }
 const sigOf = (e) => (e.title || '') + '\u0001' + (e.text || '') + '\u0001' + (e.photos || []).join(',');
 async function saveCur() {
   clearTimeout(saveTimer);
@@ -1480,7 +1569,7 @@ async function saveCur() {
   e._savedSig = sig; e.modified = new Date().toISOString();
   if (!e.title.trim() && !e.text.trim() && !(e.photos || []).length) {
     S.entries = S.entries.filter((x) => x !== e); reindex(); await DB.del('entries', e.id);
-    Sync.markDeleted(e.id); e.id = null;
+    Sync.markDeleted(e.id); e.id = null; if (S.cur === e) syncTrash();
   } else {
     e._dirty = true; await DB.put('entries', e);
     if (S.cur === e) saveMark('saved');
@@ -1588,6 +1677,8 @@ function applyStack() {
   const under = S.stack[S.stack.length - 2]; // iPhone: unter dem Eintrag liegt die vorige Ansicht als zurückgetretenes Blatt
   for (const v of VIEWS) $(v).classList.toggle('under-sheet', !isDesktop() && top === 'entry' && v === under);
   document.querySelectorAll('.floatbtn.away').forEach((b) => b.classList.remove('away'));
+  if (S.hideRail && !isDesktop()) S.hideRail();
+  if (S.syncTop) S.syncTop();
   if (isDesktop()) updateSideSel();
   $('homePlus').classList.toggle('off', isDesktop() && top !== 'entry');
   if (top === 'home' && S.homeDirty) renderHome();
@@ -1633,7 +1724,10 @@ document.addEventListener('click', (ev) => {
   else if (a === 'sidepick') setSideMode('month', +b.dataset.y, +b.dataset.m);
   else if (a === 'sideshift') shiftSide(+b.dataset.dir);
   else if (a === 'sidetoday') sideToday();
-  else if (a === 'thisweek') { const dir = S.weekOff > 0 ? -1 : 1; fadeWith([$('weekStat')], 0); S.weekOff -= dir; slideTrack($('weektrack'), dir, () => { S.weekOff = 0; renderWeek(); softIn($('weekStat')); }); }
+  else if (a === 'thisweek') weekToToday();
+  else if (a === 'weekshift') shiftWeek(+b.dataset.dir);
+  else if (a === 'calshift') shiftCal(+b.dataset.dir);
+  else if (a === 'caltoday') calToday();
   else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
     const k = b.dataset.key;
     if (b.closest('#sctrack')) document.querySelectorAll('#sctrack .cell, #sctrack .wday').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k)); // Ring sofort beim Klick, nicht erst nach dem Überblenden
@@ -1641,7 +1735,7 @@ document.addEventListener('click', (ev) => {
   }
   else if (a === 'setlight') { S.light = b.dataset.light; try { localStorage.setItem('journal.light', S.light); } catch (e) {} applyLight(); }
   else if (a === 'setfx') { S.fx = b.dataset.fx; try { localStorage.setItem('journal.fx', S.fx); } catch (e) {} markFx(); }
-  else if (a === 'trashcur') { if (S.cur && S.cur.id) askDelete(S.cur.id); }
+  else if (a === 'trashcur') { if (S.cur && S.cur.id && hasContent(S.cur)) askDelete(S.cur.id); else syncTrash(); }
   else if (a === 'ctxopen') { const id = S.ctxId; hideCtx(); if (id) { S.navList = null; openEntryById(id); } }
   else if (a === 'ctxdel') { const id = S.ctxId; hideCtx(); if (id) askDelete(id); }
   else if (a === 'confirmdel') { const id = S.pendingDel; closeConfirm(); if (id) deleteEntry(id); }
@@ -1692,6 +1786,13 @@ function closeConfirm() { const c = $('confirm'); c.classList.remove('show'); S.
 async function deleteEntry(id) {
   const e = S.entries.find((x) => x.id === id); if (!e) return;
   const nb = S.cur === e ? (adjacentOf(-1) || adjacentOf(1)) : null;
+  let closedSheet = false;
+  if (S.cur === e && !isDesktop() && S.stack[S.stack.length - 1] === 'entry') { // iPhone: erst zurück dorthin, wo man war (Liste bleibt an ihrer Stelle), dann faltet sich die Karte dort zusammen
+    if (document.activeElement) document.activeElement.blur();
+    clearTimeout(saveTimer); e._savedSig = sigOf(e); S.cur = null; closedSheet = true;
+    S.stack.pop(); applyStack(); if (S.homeDirty) renderHome(); if (S.stack.includes('calendar')) renderCalendar(); if (S.stack.includes('search')) renderSearch();
+    await new Promise((r) => setTimeout(r, 480));
+  }
   const rows = [...document.querySelectorAll('.row[data-id="' + CSS.escape(id) + '"]')];
   for (const r of rows) { r.style.overflow = 'hidden'; r.animate([{ height: r.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px', borderBottomWidth: '0px' }], { duration: 380, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'forwards' }); }
   S.openRow = null;
@@ -1701,7 +1802,7 @@ async function deleteEntry(id) {
   Sync.markDeleted(id); Sync.soon(800);
   if (S.cur === e) { // offener Eintrag: iPhone zurück zur Liste, Mac zum Nachbarn
     if (isDesktop()) { S.cur = null; openEntry(nb || draftFor(keyOf(today()))); }
-    else { S.cur = null; if (S.stack[S.stack.length - 1] === 'entry') back(); }
+    else { S.cur = null; if (!closedSheet && S.stack[S.stack.length - 1] === 'entry') back(); }
   }
   if (S.searchHits) S.searchHits = S.searchHits.filter((x) => x !== e);
   if (S.navList) S.navList = S.navList.filter((x) => x !== e);
@@ -1745,44 +1846,65 @@ $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passiv
 /* Mac: eigene, ruhige Scroll-Leiste neben der Liste. Erscheint beim Scrollen oder wenn die Maus an den Rand kommt und bleibt ein paar Sekunden.
    Fährt man darüber oder zieht daran, zeigt sie die Jahre als Legende; beim Ziehen und schnellen Scrollen wandert der Monat als kleine Pille mit. */
 (function rail() {
-  const L = $('list'), R = document.createElement('div'); R.className = 'rail'; R.setAttribute('aria-hidden', 'true');
+  /* Mac: scrollt die Liste selbst. iPhone (Teil 2, 25.11.2026): scrollt die ganze Startseite – die Leiste beginnt dann an der Oberkante der Liste
+     (wandert beim Einklappen mit hoch bis unter den Kopf) und endet über dem unteren Rand; der helle iOS-Balken ist ausgeblendet. */
+  const L = $('list'), HOME = $('home'), R = document.createElement('div'); R.className = 'rail'; R.setAttribute('aria-hidden', 'true');
   R.innerHTML = '<div class="rail-y"></div><div class="rail-t"></div>'; document.body.appendChild(R);
   const Y = R.children[0], T = R.children[1], M = document.createElement('div'); M.className = 'scrub'; M.setAttribute('aria-hidden', 'true'); document.body.appendChild(M);
-  let H = 0, th = 0, top = 0, hideT = null, mT = null, drag = null, near = false, lastY = 0, lastT = 0, yKey = '', mTxt = '';
-  const ok = () => isDesktop() && S.stack[0] === 'home' && L.scrollHeight > L.clientHeight + 4;
+  let H = 0, th = 0, top = 0, thumbY = 0, hideT = null, mT = null, drag = null, near = false, lastY = 0, lastT = 0, yKey = '', mTxt = '';
+  const SC = () => (isDesktop() ? L : HOME);
+  const safeB = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-b')) || 0;
+  function edge() { // Oberkante, an der die Liste sichtbar beginnt (iPhone: unter dem eingeklappten Kopf)
+    if (isDesktop()) return L.getBoundingClientRect().top;
+    const bar = $('stickyTitle'); return bar.getBoundingClientRect().bottom + (bar.classList.contains('stuck') ? 14 : 0);
+  }
+  const ok = () => { const sc = SC(); return (isDesktop() ? S.stack[0] === 'home' : S.stack.length === 1 && S.stack[0] === 'home') && sc.scrollHeight > sc.clientHeight + 4 && L.querySelector('.row'); };
   function geo() {
-    const r = L.getBoundingClientRect(), ch = L.clientHeight, sh = L.scrollHeight;
-    top = r.top + 4; H = r.height - 8; th = Math.max(36, H * ch / sh);
-    R.style.transform = 'translate3d(' + Math.round(r.right - 15) + 'px,' + Math.round(top) + 'px,0)'; R.style.height = H + 'px';
+    const sc = SC(), ch = sc.clientHeight, sh = sc.scrollHeight;
+    if (isDesktop()) { const r = L.getBoundingClientRect(); top = r.top + 4; H = r.height - 8; th = Math.max(36, H * ch / sh); R.style.transform = 'translate3d(' + Math.round(r.right - 15) + 'px,' + Math.round(top) + 'px,0)'; }
+    else if (drag) { top = drag.top0; H = drag.H0; th = Math.max(44, H * ch / sh); } // beim Ziehen steht die Leiste still, auch wenn der Kopf einklappt
+    else { const r = HOME.getBoundingClientRect(); top = Math.max(L.getBoundingClientRect().top, edge()) + 10; H = Math.max(60, window.innerHeight - safeB() - 18 - top); th = Math.max(44, H * ch / sh); R.style.transform = 'translate3d(' + Math.round(r.right - 26) + 'px,' + Math.round(top) + 'px,0)'; }
+    R.style.height = H + 'px';
     return { ch, sh };
   }
   function place() {
-    const { ch, sh } = geo(), y = (sh > ch ? L.scrollTop / (sh - ch) : 0) * (H - th);
-    T.style.height = th + 'px'; T.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+    const sc = SC(), { ch, sh } = geo(), y = (sh > ch ? sc.scrollTop / (sh - ch) : 0) * (H - th);
+    T.style.height = th + 'px'; T.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)'; thumbY = y;
     return top + y + th / 2;
   }
   function years() { // Jahresanfänge als Legende, an der Stelle, an der der Daumen stünde
-    const { ch, sh } = geo(), key = S.listHTML + '|' + sh + '|' + H; if (key === yKey) return; yKey = key;
-    const L0 = L.getBoundingClientRect().top - L.scrollTop; let last = '', lastPos = -99, h = '';
+    const sc = SC(), { ch, sh } = geo(), key = S.listHTML + '|' + sh + '|' + H + '|' + isDesktop(); if (key === yKey) return; yKey = key;
+    // Zielposition: die erste Karte des Jahres steht knapp unter der Kante (iPhone: unter dem eingeklappten Kopf)
+    const st = getComputedStyle($('stickyTitle')), stuckEdge = isDesktop() ? 0 : (parseFloat(st.top) || 0) + $('stickyTitle').offsetHeight + 14 - HOME.getBoundingClientRect().top;
+    const base = sc.getBoundingClientRect().top - sc.scrollTop; let last = '', lastPos = -99, h = '';
     for (const row of L.querySelectorAll('.row')) {
       if (!row.offsetParent) continue; const yr = row.dataset.date.slice(0, 4); if (yr === last) continue; last = yr;
-      const target = Math.min(Math.max(0, row.getBoundingClientRect().top - L0 - 8), sh - ch), pos = target / (sh - ch) * (H - th) + th / 2;
-      if (pos - lastPos < 20) continue; lastPos = pos;
+      const target = Math.min(Math.max(0, row.getBoundingClientRect().top - base - 8 - stuckEdge), sh - ch), pos = target / (sh - ch) * (H - th) + th / 2;
+      if (pos - lastPos < 24) continue; lastPos = pos;
       h += '<button class="ry" data-y="' + target + '" style="top:' + pos.toFixed(1) + 'px">' + yr + '</button>';
     }
     Y.innerHTML = h;
   }
   function show(ms) { if (!ok()) return; R.classList.add('on'); clearTimeout(hideT); hideT = setTimeout(() => { if (!drag && !near) R.classList.remove('on', 'legend'); }, ms || 2600); }
+  function rowAtEdge() {
+    if (isDesktop()) return topRowOfList();
+    const e = edge() + 6; for (const r of L.querySelectorAll('.row')) { const b = r.getBoundingClientRect(); if (b.bottom > e) return r; } return null;
+  }
   function month(cy) {
-    const row = topRowOfList(); if (row) { const d = parseKey(row.dataset.date), t = MONTHS[d.getMonth()] + ' <i>' + d.getFullYear() + '</i>'; if (t !== mTxt) { mTxt = t; M.innerHTML = t; } }
-    M.style.transform = 'translate3d(' + Math.round(L.getBoundingClientRect().right - 26) + 'px,' + Math.round(cy) + 'px,0) translate(-100%,-50%)';
+    const row = rowAtEdge(); if (row) { const d = parseKey(row.dataset.date), t = MONTHS[d.getMonth()] + ' <i>' + d.getFullYear() + '</i>'; if (t !== mTxt) { mTxt = t; M.innerHTML = t; } }
+    const right = isDesktop() ? L.getBoundingClientRect().right - 26 : HOME.getBoundingClientRect().right - 34;
+    M.style.transform = 'translate3d(' + Math.round(right) + 'px,' + Math.round(cy) + 'px,0) translate(-100%,-50%)';
     M.classList.add('on'); clearTimeout(mT); mT = setTimeout(() => { if (!drag) M.classList.remove('on'); }, 900);
   }
-  L.addEventListener('scroll', () => {
-    if (!ok()) return; const cy = place(); show();
-    const now = performance.now(), v = Math.abs(L.scrollTop - lastY) / Math.max(1, now - lastT); lastY = L.scrollTop; lastT = now;
+  function onScroll(e) {
+    if (e.currentTarget !== SC() || !ok()) { if (!isDesktop() && e.currentTarget === HOME) { R.classList.remove('on', 'legend'); M.classList.remove('on'); } return; }
+    const sc = SC(), cy = place();
+    if (!isDesktop() && sc.scrollTop < 8 && !drag) { R.classList.remove('on'); return; } // ganz oben: keine Leiste (wie iOS)
+    show(isDesktop() ? 2600 : 1600);
+    const now = performance.now(), v = Math.abs(sc.scrollTop - lastY) / Math.max(1, now - lastT); lastY = sc.scrollTop; lastT = now;
     if (drag || v > 2.2 || M.classList.contains('on')) month(cy);
-  }, { passive: true });
+  }
+  L.addEventListener('scroll', onScroll, { passive: true }); HOME.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('mousemove', (e) => { // Maus nah am rechten Rand der Liste: Leiste kommt und bleibt, solange sie dort ist
     if (!isDesktop() || drag) return; const r = L.getBoundingClientRect();
     const n = e.clientX > r.right - 34 && e.clientX < r.right + 6 && e.clientY > r.top && e.clientY < r.bottom;
@@ -1790,16 +1912,19 @@ $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passiv
   }, { passive: true });
   R.addEventListener('pointerdown', (e) => {
     if (e.target.closest('.ry')) return; e.preventDefault(); const { ch, sh } = geo();
-    const ty = parseFloat((T.style.transform.match(/,([\d.]+)px/) || [0, 0])[1]) + top, inThumb = e.clientY >= ty && e.clientY <= ty + th;
-    drag = { off: inThumb ? e.clientY - ty : th / 2, ch, sh }; R.setPointerCapture(e.pointerId); R.classList.add('drag', 'legend'); years();
+    place(); const ty = thumbY + top, inThumb = e.clientY >= ty - 10 && e.clientY <= ty + th + 10;
+    if (!isDesktop() && !inThumb) return; // iPhone: nur der Daumen ist greifbar – ein Tipp daneben soll nicht springen
+    drag = { off: inThumb ? Math.max(0, Math.min(th, e.clientY - ty)) : th / 2, ch, sh, top0: top, H0: H }; R.setPointerCapture(e.pointerId); R.classList.add('drag', 'legend'); years();
+    if (!isDesktop() && navigator.vibrate) try { navigator.vibrate(8); } catch (err) {}
     move(e);
   });
-  function move(e) { if (!drag) return; const f = Math.max(0, Math.min(1, (e.clientY - top - drag.off) / (H - th))); L.scrollTop = f * (drag.sh - drag.ch); }
+  function move(e) { if (!drag) return; const f = Math.max(0, Math.min(1, (e.clientY - drag.top0 - drag.off) / (drag.H0 - th))); SC().scrollTop = f * (drag.sh - drag.ch); }
   R.addEventListener('pointermove', move);
   const end = () => { if (!drag) return; drag = null; R.classList.remove('drag'); if (!near) R.classList.remove('legend'); show(); clearTimeout(mT); mT = setTimeout(() => M.classList.remove('on'), 700); };
   R.addEventListener('pointerup', end); R.addEventListener('pointercancel', end);
-  Y.addEventListener('click', (e) => { const b = e.target.closest('.ry'); if (b) L.scrollTo({ top: +b.dataset.y, behavior: 'smooth' }); });
+  Y.addEventListener('click', (e) => { const b = e.target.closest('.ry'); if (b) SC().scrollTo({ top: +b.dataset.y, behavior: 'smooth' }); });
   window.addEventListener('resize', () => { yKey = ''; if (R.classList.contains('on')) place(); });
+  S.hideRail = () => { R.classList.remove('on', 'legend'); M.classList.remove('on'); };
 })();
 $('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
 for (const v of ['home', 'search']) $(v).addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
@@ -1845,6 +1970,20 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
     last = y;
   }, { passive: true });
 }
+
+/* iPhone: im weichen Auslauf unten ein kleiner Pfeil nach oben – erscheint, sobald man ein Stück gescrollt hat, und bringt einen ganz nach oben */
+(function toTop() {
+  const UP = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 18.5V6M6.5 11.5L12 6l5.5 5.5"/></svg>';
+  const views = ['home', 'search', 'settings'].map((v) => {
+    const view = $(v), b = document.createElement('button'); b.className = 'totop'; b.setAttribute('aria-label', 'Nach oben'); b.tabIndex = -1; b.innerHTML = UP;
+    view.appendChild(b);
+    const upd = () => { const on = !isDesktop() && view.scrollTop > Math.max(500, view.clientHeight * 0.9) && S.stack[S.stack.length - 1] === v && !typing(); if (on !== b.classList.contains('on')) { b.classList.toggle('on', on); b.tabIndex = on ? 0 : -1; } };
+    view.addEventListener('scroll', upd, { passive: true });
+    b.addEventListener('click', (e) => { e.stopPropagation(); b.classList.remove('on'); view.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
+    return upd;
+  });
+  S.syncTop = () => views.forEach((f) => f());
+})();
 
 /* Startseite: nach unten ziehen = aktualisieren */
 (function pullToRefresh() {
@@ -1918,6 +2057,12 @@ function linkTitle(next, p) {
       if (!label) return; shown = label;
       if (S.listTitle) setTitleNow(label); else { linkTitle(null, 0); animTitle(label, S.titleDir || 0, S.titleVert); }
       S.titleDir = 0; S.titleVert = false; return;
+    }
+    // was unter den Titel gleitet, blendet weich aus – keine halben Ringe oder Punkte unter dem Monat
+    for (const [el, pt, pb] of [[$('weekwrap'), 16, 12], [$('todayLine'), 0, 0], [document.querySelector('#home .herofoot'), 6, 6]]) {
+      if (!el) continue; const r = el.getBoundingClientRect(), t0 = r.top + pt, b0 = r.bottom - pb;
+      const f = Math.max(0, Math.min(1, (b0 - barRect.bottom) / Math.max(1, b0 - t0)));
+      el.style.opacity = f < 1 ? (f * f).toFixed(3) : '';
     }
     const edge = barRect.bottom + (stuck ? 14 : 0);
     let link = { next: null, p: 0 };
