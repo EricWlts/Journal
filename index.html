@@ -155,15 +155,20 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .topbar .setbtn,.topbar .newbtn{transition:opacity .25s var(--ease), transform .45s var(--sheet)}
 #home.searching .topbar .setbtn,#home.searching .topbar .newbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
 .newbtn{display:none;position:relative}
-/* kleiner Hinweis beim Darüberfahren (Mac) */
-.newbtn::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translate(-50%,-3px);white-space:nowrap;
-  padding:6px 10px;border-radius:8px;background:var(--linen);color:var(--night);font-size:12px;font-weight:500;letter-spacing:.01em;
-  opacity:0;pointer-events:none;transition:opacity .18s var(--ease), transform .25s var(--sheet);z-index:5}
-@media (hover:hover) and (pointer:fine){ .newbtn:hover::after{opacity:1;transform:translate(-50%,0);transition-delay:.45s} }
+/* Hinweise beim Darüberfahren (nur Mac/Maus): erscheinen erst nach einer knappen Sekunde, ganz weich und ohne Fläche hinter dem Symbol */
+.topbar [data-tip]{position:relative}
+.topbar [data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:50%;transform:translate(-50%,-4px);white-space:nowrap;
+  padding:6px 10px;border-radius:8px;background:var(--linen);color:var(--night);font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.01em;
+  opacity:0;filter:blur(2px);pointer-events:none;transition:opacity .25s var(--ease), transform .3s var(--sheet), filter .25s var(--ease);z-index:5}
+.topbar .searchbtn[data-tip]::after{left:auto;right:0;transform:translate(0,-4px)} /* bleibt in der Karte */
+@media (hover:hover) and (pointer:fine){
+  .topbar [data-tip]:hover::after{opacity:1;filter:blur(0);transform:translate(-50%,0);transition:opacity .6s var(--ease) .9s, transform .8s var(--sheet) .9s, filter .6s var(--ease) .9s}
+  .topbar .searchbtn[data-tip]:hover::after{transform:translate(0,0)}
+}
+#home.searching .searchbtn::after,#home.set-open .setbtn::after{display:none} /* bei offener Suche/Einstellungen kein Hinweis */
 .newbtn svg{transition:transform .2s var(--ease)}
 .newbtn:active svg{transform:scale(.84)} /* drücken: das Plus gibt leicht nach */
-@media (hover:hover) and (pointer:fine){ .newbtn:hover{background:rgba(242,243,239,.07)} }
-.newbtn{transition:background-color .2s var(--ease), opacity .25s var(--ease), transform .45s var(--sheet)}
+.newbtn{transition:opacity .25s var(--ease), transform .45s var(--sheet)}
 .newring{position:absolute;inset:7px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);pointer-events:none}
 .hitcount{padding:20px 0 4px}
 /* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
@@ -657,9 +662,9 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
       <div class="topbar">
         <div class="tabs sctabs" role="tablist"><button class="tab" role="tab" id="scWeek" data-act="sidemode" data-mode="week">Woche</button><button class="tab" role="tab" id="scMonth" data-act="sidemode" data-mode="month">Monat</button><button class="tab" role="tab" id="scYear" data-act="sidemode" data-mode="year">Jahr</button></div>
         <button class="iconbtn newbtn" data-act="today" aria-label="Neuer Eintrag (⌘N)" data-tip="Neuer Eintrag · ⌘N"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>
-        <button class="iconbtn setbtn" data-act="settings" aria-label="Einstellungen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+        <button class="iconbtn setbtn" data-act="settings" aria-label="Einstellungen" data-tip="Einstellungen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
         <label class="dsearch"><span class="sr">Suchbegriff</span><input id="dq" type="search" placeholder="Wonach suchst du?" autocomplete="off" spellcheck="false" tabindex="-1"></label>
-        <button class="iconbtn searchbtn" data-act="search" id="searchBtn" aria-label="Suchen"><svg class="i-mag" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><svg class="i-x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <button class="iconbtn searchbtn" data-act="search" id="searchBtn" aria-label="Suchen" data-tip="Suchen · ⌘F"><svg class="i-mag" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><svg class="i-x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </header>
     <div class="ptr" id="ptr" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle class="ptr-track" cx="15" cy="15" r="11"/><circle class="ptr-arc" cx="15" cy="15" r="11" pathLength="100"/></svg></div>
