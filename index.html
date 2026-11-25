@@ -160,8 +160,25 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home.searching .topbar .setbtn,#home.searching .topbar .newbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
 .newbtn{display:none;position:relative}
 .listfade{display:none}
-/* Monat beim schnellen Scrollen: kleine helle Pille wie die Hinweise, links neben dem Scrollbalken */
-.scrub{position:fixed;left:0;top:0;z-index:40;pointer-events:none;padding:6px 12px 7px;border-radius:8px;background:var(--night);color:var(--linen);
+/* Mac: eigene Scroll-Leiste (der Safari-Balken verschwindet zu schnell zum Greifen) mit Jahres-Legende */
+@media (min-width: 960px){ #home > #list{scrollbar-width:none} #home > #list::-webkit-scrollbar{display:none} }
+.rail{position:fixed;left:0;top:0;z-index:39;width:14px;opacity:0;pointer-events:none;transition:opacity .5s var(--ease);touch-action:none;cursor:default}
+.rail.on{opacity:1;pointer-events:auto;transition-duration:.2s}
+.rail::before{content:'';position:absolute;right:5px;top:0;bottom:0;width:2px;border-radius:1px;background:rgba(38,48,43,.08);opacity:0;transition:opacity .3s var(--ease)}
+.rail.legend::before{opacity:1}
+.rail-t{position:absolute;right:4px;top:0;width:4px;border-radius:3px;background:rgba(38,48,43,.3);transition:width .2s var(--ease), right .2s var(--ease), background-color .2s var(--ease)}
+.rail.legend .rail-t,.rail.drag .rail-t{width:6px;right:3px;background:rgba(38,48,43,.5)}
+html.night .rail::before{background:rgba(242,243,239,.08)}
+html.night .rail-t{background:rgba(242,243,239,.25)} html.night .rail.legend .rail-t,html.night .rail.drag .rail-t{background:rgba(242,243,239,.45)}
+.rail-y{position:absolute;right:16px;top:0;bottom:0;width:0}
+.ry{position:absolute;right:0;transform:translate3d(6px,-50%,0);padding:3px 8px 4px;border-radius:6px;background:var(--paper);color:var(--muted);
+  font-family:var(--serif);font-style:italic;font-size:16px;line-height:1;white-space:nowrap;opacity:0;pointer-events:none;
+  box-shadow:0 0 0 1px rgba(38,48,43,.06);transition:opacity .25s var(--ease), transform .4s var(--sheet), color .2s var(--ease)}
+.rail.legend .ry{opacity:1;transform:translate3d(0,-50%,0);pointer-events:auto}
+.ry:hover{color:var(--ink)}
+html.night .ry{box-shadow:0 0 0 1px rgba(242,243,239,.08)}
+/* Monat beim Ziehen und schnellen Scrollen: kleine Pille links neben der Leiste */
+.scrub{position:fixed;left:0;top:0;z-index:41;pointer-events:none;padding:6px 12px 7px;border-radius:8px;background:var(--night);color:var(--linen);
   font-family:var(--serif);font-size:19px;line-height:1;white-space:nowrap;box-shadow:0 10px 24px -14px rgba(0,0,0,.45);opacity:0;transition:opacity .35s var(--ease)}
 .scrub i{color:var(--mist)}
 .scrub.on{opacity:1;transition-duration:.18s}
@@ -340,11 +357,11 @@ html.night .scrub i{color:#6f7a71}
   transition:background-color .2s var(--ease), box-shadow .45s var(--sheet), margin .55s var(--sheet)}
 #list .row.has-more.grp-open{margin-bottom:3px;box-shadow:0 0 0 -3px var(--card), 0 0 0 -6px var(--card)}
 #list .row .more{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.02em;transition:opacity .3s var(--ease)}
-#list .row .more{display:inline-flex;align-items:center;gap:4px}
-#list .row .more svg{transition:transform .45s var(--sheet)}
-#list .row.grp-open .more svg{transform:rotate(180deg)}
+#list .row .more{display:grid;justify-items:end}
+#list .row .more > *{grid-area:1/1;font-style:normal;font-weight:500;white-space:nowrap;transition:opacity .3s var(--ease)}
+#list .row .more em{opacity:0}
 #list .row.grp-open .more b{opacity:0}
-#list .row .more b{font-weight:500;transition:opacity .25s var(--ease)}
+@media (hover:hover){ #list .row.grp-open.is-current:hover .more em{opacity:1;transition-delay:.35s} } /* offen: beim Darüberfahren leise der Hinweis, dass ein Klick zuklappt */
 #list .dmore{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--sheet)}
 #list .dmore.open{grid-template-rows:1fr}
 #list .dmore-in{min-height:0;overflow:hidden}
@@ -1080,7 +1097,7 @@ const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke=
 function rowHTML(e, prev, more, i) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit; more: weitere Einträge des Tages (zugeklappt darunter)
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
   const day = (prev ? (prev.date === e.date ? ' cont' : ' newday') : '') + (more ? ' has-more' : '');
-  const meta = np || more ? '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + (more ? '<span class="more" title="weitere Einträge an diesem Tag"><b>+' + more + '</b><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4l2.5 2.5L7.5 4"/></svg></span>' : '') + '</span>' : '';
+  const meta = np || more ? '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + (more ? '<span class="more"><b>+' + more + '</b><em>einklappen</em></span>' : '') + '</span>' : '';
   return '<button class="row' + day + '"' + (i != null ? ' style="--i:' + i + '"' : '') + ' data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
     '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
 }
@@ -1728,24 +1745,64 @@ document.addEventListener('contextmenu', (e) => { // Mac: Rechtsklick auf einen 
 document.addEventListener('pointerdown', (e) => { if (S.ctxId && !e.target.closest('#ctxmenu')) hideCtx(); }, true);
 document.addEventListener('keydown', (e) => { if (S.ctxId && e.key === 'Escape') { e.stopPropagation(); hideCtx(); } }, true);
 $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passive: true });
-/* Mac: beim Ziehen am Scrollbalken oder schnellem Scrollen erscheint neben dem Balken leise der Monat, durch den man gerade fährt */
-(function scrubber() {
-  const L = $('list'), tag = document.createElement('div'); tag.className = 'scrub'; tag.setAttribute('aria-hidden', 'true'); document.body.appendChild(tag);
-  let lastY = 0, lastT = 0, hideT = null, drag = false, shown = false, txt = '';
-  L.addEventListener('pointerdown', (e) => { if (isDesktop() && e.offsetX > L.clientWidth) drag = true; });
-  window.addEventListener('pointerup', () => { if (drag) { drag = false; clearTimeout(hideT); hideT = setTimeout(hide, 650); } });
-  function hide() { if (drag) return; shown = false; tag.classList.remove('on'); }
+/* Mac: eigene, ruhige Scroll-Leiste neben der Liste. Erscheint beim Scrollen oder wenn die Maus an den Rand kommt und bleibt ein paar Sekunden.
+   Fährt man darüber oder zieht daran, zeigt sie die Jahre als Legende; beim Ziehen und schnellen Scrollen wandert der Monat als kleine Pille mit. */
+(function rail() {
+  const L = $('list'), R = document.createElement('div'); R.className = 'rail'; R.setAttribute('aria-hidden', 'true');
+  R.innerHTML = '<div class="rail-y"></div><div class="rail-t"></div>'; document.body.appendChild(R);
+  const Y = R.children[0], T = R.children[1], M = document.createElement('div'); M.className = 'scrub'; M.setAttribute('aria-hidden', 'true'); document.body.appendChild(M);
+  let H = 0, th = 0, top = 0, hideT = null, mT = null, drag = null, near = false, lastY = 0, lastT = 0, yKey = '', mTxt = '';
+  const ok = () => isDesktop() && S.stack[0] === 'home' && L.scrollHeight > L.clientHeight + 4;
+  function geo() {
+    const r = L.getBoundingClientRect(), ch = L.clientHeight, sh = L.scrollHeight;
+    top = r.top + 4; H = r.height - 8; th = Math.max(36, H * ch / sh);
+    R.style.transform = 'translate3d(' + Math.round(r.right - 15) + 'px,' + Math.round(top) + 'px,0)'; R.style.height = H + 'px';
+    return { ch, sh };
+  }
+  function place() {
+    const { ch, sh } = geo(), y = (sh > ch ? L.scrollTop / (sh - ch) : 0) * (H - th);
+    T.style.height = th + 'px'; T.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+    return top + y + th / 2;
+  }
+  function years() { // Jahresanfänge als Legende, an der Stelle, an der der Daumen stünde
+    const { ch, sh } = geo(), key = S.listHTML + '|' + sh + '|' + H; if (key === yKey) return; yKey = key;
+    const L0 = L.getBoundingClientRect().top - L.scrollTop; let last = '', lastPos = -99, h = '';
+    for (const row of L.querySelectorAll('.row')) {
+      if (!row.offsetParent) continue; const yr = row.dataset.date.slice(0, 4); if (yr === last) continue; last = yr;
+      const target = Math.min(Math.max(0, row.getBoundingClientRect().top - L0 - 8), sh - ch), pos = target / (sh - ch) * (H - th) + th / 2;
+      if (pos - lastPos < 20) continue; lastPos = pos;
+      h += '<button class="ry" data-y="' + target + '" style="top:' + pos.toFixed(1) + 'px">' + yr + '</button>';
+    }
+    Y.innerHTML = h;
+  }
+  function show(ms) { if (!ok()) return; R.classList.add('on'); clearTimeout(hideT); hideT = setTimeout(() => { if (!drag && !near) R.classList.remove('on', 'legend'); }, ms || 2600); }
+  function month(cy) {
+    const row = topRowOfList(); if (row) { const d = parseKey(row.dataset.date), t = MONTHS[d.getMonth()] + ' <i>' + d.getFullYear() + '</i>'; if (t !== mTxt) { mTxt = t; M.innerHTML = t; } }
+    M.style.transform = 'translate3d(' + Math.round(L.getBoundingClientRect().right - 26) + 'px,' + Math.round(cy) + 'px,0) translate(-100%,-50%)';
+    M.classList.add('on'); clearTimeout(mT); mT = setTimeout(() => { if (!drag) M.classList.remove('on'); }, 900);
+  }
   L.addEventListener('scroll', () => {
-    if (!isDesktop()) return;
-    const now = performance.now(), y = L.scrollTop, v = Math.abs(y - lastY) / Math.max(1, now - lastT); lastY = y; lastT = now;
-    if (!shown && !drag && v < 2.2) return; // ruhiges Scrollen: nichts einblenden
-    const row = topRowOfList(); if (row) { const d = parseKey(row.dataset.date), t = MONTHS[d.getMonth()] + ' <i>' + d.getFullYear() + '</i>'; if (t !== txt) { txt = t; tag.innerHTML = t; } }
-    const r = L.getBoundingClientRect(), ch = L.clientHeight, sh = L.scrollHeight, th = Math.max(32, ch * ch / sh);
-    const cy = r.top + (sh > ch ? y / (sh - ch) : 0) * (ch - th) + th / 2;
-    tag.style.transform = 'translate3d(' + Math.round(r.left + L.clientWidth - 12) + 'px,' + Math.round(Math.max(r.top + 14, Math.min(r.bottom - 14, cy))) + 'px,0) translate(-100%,-50%)';
-    if (!shown) { shown = true; tag.classList.add('on'); }
-    clearTimeout(hideT); hideT = setTimeout(hide, 700);
+    if (!ok()) return; const cy = place(); show();
+    const now = performance.now(), v = Math.abs(L.scrollTop - lastY) / Math.max(1, now - lastT); lastY = L.scrollTop; lastT = now;
+    if (drag || v > 2.2 || M.classList.contains('on')) month(cy);
   }, { passive: true });
+  document.addEventListener('mousemove', (e) => { // Maus nah am rechten Rand der Liste: Leiste kommt und bleibt, solange sie dort ist
+    if (!isDesktop() || drag) return; const r = L.getBoundingClientRect();
+    const n = e.clientX > r.right - 34 && e.clientX < r.right + 6 && e.clientY > r.top && e.clientY < r.bottom;
+    if (n !== near) { near = n; if (n && ok()) { place(); years(); R.classList.add('legend'); show(); } else if (!n) { R.classList.remove('legend'); show(1400); } }
+  }, { passive: true });
+  R.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.ry')) return; e.preventDefault(); const { ch, sh } = geo();
+    const ty = parseFloat((T.style.transform.match(/,([\d.]+)px/) || [0, 0])[1]) + top, inThumb = e.clientY >= ty && e.clientY <= ty + th;
+    drag = { off: inThumb ? e.clientY - ty : th / 2, ch, sh }; R.setPointerCapture(e.pointerId); R.classList.add('drag', 'legend'); years();
+    move(e);
+  });
+  function move(e) { if (!drag) return; const f = Math.max(0, Math.min(1, (e.clientY - top - drag.off) / (H - th))); L.scrollTop = f * (drag.sh - drag.ch); }
+  R.addEventListener('pointermove', move);
+  const end = () => { if (!drag) return; drag = null; R.classList.remove('drag'); if (!near) R.classList.remove('legend'); show(); clearTimeout(mT); mT = setTimeout(() => M.classList.remove('on'), 700); };
+  R.addEventListener('pointerup', end); R.addEventListener('pointercancel', end);
+  Y.addEventListener('click', (e) => { const b = e.target.closest('.ry'); if (b) L.scrollTo({ top: +b.dataset.y, behavior: 'smooth' }); });
+  window.addEventListener('resize', () => { yKey = ''; if (R.classList.contains('on')) place(); });
 })();
 $('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
 for (const v of ['home', 'search']) $(v).addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
