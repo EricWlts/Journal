@@ -98,14 +98,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .twbtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
 .todayline.dir-r .ar-l,.todayline.dir-l .ar-r{opacity:0}
 .twbtn:active .tw,.twbtn:active .ar{opacity:.6}
-.weekwrap{margin:0 -24px;padding-top:16px;overflow:hidden;touch-action:pan-y}
+.weekwrap{margin:0 -24px -6px;padding:16px 0 6px;overflow:hidden;touch-action:pan-y} /* 6px unten Luft, damit der Ring um heute nicht abgeschnitten wird */
 .weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
 .weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .wday{display:flex;flex-direction:column;align-items:center;gap:8px}
 .wday .wd{font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--mist)}
 .dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .dark .is-entry .dot{background:var(--linen);color:var(--night)}
-.dark .is-today .dot{box-shadow:0 0 0 1px var(--linen) inset}
+
 .dark .is-missed .dot{font-weight:400;color:var(--linen)}
 .dark .is-future .dot{font-weight:400;color:var(--dim)}
 .herofoot{display:flex;justify-content:space-between;align-items:center;height:40px;font-size:13px;gap:16px}
@@ -244,8 +244,14 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #sidecal .dot::after{content:'';position:absolute;left:50%;top:calc(100% + 7px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--linen);
   opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
 #sidecal .is-sel .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
-.dark .is-now.is-entry .dot{box-shadow:inset 0 0 0 1px var(--linen), inset 0 0 0 3.5px var(--night)}
-.light .is-now.is-entry .dot{box-shadow:inset 0 0 0 1px var(--ink), inset 0 0 0 3.5px var(--paper)}
+/* iPhone wie Mac (Entwurf B): heute immer der Ring außen, geöffneter Tag = kleiner Punkt darunter */
+.dot{position:relative}
+.dark .is-now .dot{box-shadow:0 0 0 3px var(--night), 0 0 0 4px var(--linen)}
+.light .is-now .dot{box-shadow:0 0 0 3px var(--paper), 0 0 0 4px var(--ink);font-weight:600}
+.dot::after{content:'';position:absolute;left:50%;top:calc(100% + 6px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--ink);
+  opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
+.dark .dot::after{background:var(--linen)}
+.is-sel .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
 .sidecal .yd.e.n{box-shadow:0 0 0 1.5px var(--night), 0 0 0 2.5px var(--linen)}
 .yd.e.n{box-shadow:0 0 0 1.5px var(--paper), 0 0 0 2.5px var(--ink)}
 .todaypulse{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px var(--linen);pointer-events:none}
@@ -381,10 +387,9 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .cell{height:48px;display:flex;align-items:center;justify-content:center}
 .cell .dot{width:38px;height:38px;font-weight:400}
 .light .is-entry .dot{background:var(--ink);color:var(--linen);font-weight:600}
-.light .is-today .dot{box-shadow:0 0 0 1px var(--ink) inset;font-weight:600}
+
 .light .is-future .dot{color:var(--muted)}
-.is-sel .dot{box-shadow:0 0 0 2px var(--paper), 0 0 0 3px var(--ink)}
-.dark .is-sel .dot{box-shadow:0 0 0 2px var(--night), 0 0 0 3px var(--linen)}
+.is-sel .dot{box-shadow:none}
 .legend{margin-top:auto;padding-top:8px;display:flex;gap:20px;font-size:12px;color:var(--muted)}
 .legend span{display:flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -467,7 +472,7 @@ html.night :is(.btn:not(.ghost),.fxseg button[aria-checked="true"],.done span,.f
 html.night .yd.f{background:#4a514b}
 html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 60px -44px rgba(0,0,0,.8)}
 html.night .ctxmenu{box-shadow:0 0 0 1px var(--line), 0 24px 40px -20px rgba(0,0,0,.7)}
-html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(--paper), 0 0 0 3px var(--ink)}
+
 .ephotos{display:grid;gap:8px;margin-top:28px}
 .ephotos img{width:100%;height:auto;display:block;border-radius:8px;background:var(--stone)}
 .entry.in-l{animation:inl .42s var(--sheet)} .entry.in-r{animation:inr .42s var(--sheet)}
