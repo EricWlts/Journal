@@ -203,10 +203,15 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .scpill button{display:flex;align-items:center;justify-content:center;color:var(--mist);transition:color .3s var(--ease), background-color .2s var(--ease), transform .2s var(--sheet)}
 .scp-a{width:34px}
 .scp-a svg{transition:transform .35s var(--sheet)}
-.scp-h{padding:0 12px 0 11px;font-family:var(--serif);font-style:italic;font-size:17px;line-height:1;color:var(--dim) !important;cursor:default;
-  box-shadow:inset 1px 0 rgba(242,243,239,.09), inset -1px 0 rgba(242,243,239,.09);transition:color .4s var(--ease), background-color .2s var(--ease)}
-.scp-h.on{color:var(--linen) !important;cursor:pointer}
-.scpill:has(.scp-h.dir-l) .scp-a[data-dir="-1"],.scpill:has(.scp-h.dir-r) .scp-a[data-dir="1"]{color:var(--linen)}
+.scp-a[data-dir="-1"]{box-shadow:inset -1px 0 rgba(242,243,239,.09)} /* feine Trennlinie – auch, wenn die Kapsel geschlossen ist */
+/* *Heute* „atmet“: im aktuellen Zeitraum ist die Kapsel nur ‹ ›; außerhalb öffnet sie sich in der Mitte und das Wort gleitet hinein.
+   Die Kapsel steht rechtsbündig – daneben verschiebt sich nichts. */
+.scp-h{max-width:0;padding:0;overflow:hidden;white-space:nowrap;font-family:var(--serif);font-style:italic;font-size:17px;line-height:1;color:var(--linen) !important;
+  cursor:pointer;opacity:0;pointer-events:none;box-shadow:inset -1px 0 rgba(242,243,239,0);
+  transition:max-width .5s var(--sheet), padding .5s var(--sheet), opacity .2s var(--ease), box-shadow .3s var(--ease), background-color .2s var(--ease)}
+.scp-h.on{max-width:90px;padding:0 12px 0 11px;opacity:1;pointer-events:auto;box-shadow:inset -1px 0 rgba(242,243,239,.09);
+  transition:max-width .6s var(--sheet), padding .6s var(--sheet), opacity .45s var(--ease) .18s, box-shadow .3s var(--ease), background-color .2s var(--ease)}
+.scpill:has(.scp-h.on.dir-l) .scp-a[data-dir="-1"],.scpill:has(.scp-h.on.dir-r) .scp-a[data-dir="1"]{color:var(--linen)}
 @media (hover:hover) and (pointer:fine){
   .scpill .scp-a:hover,.scp-h.on:hover{background:rgba(242,243,239,.07);color:var(--linen)}
   .scp-a[data-dir="-1"]:hover svg{transform:translateX(-1.5px)} .scp-a[data-dir="1"]:hover svg{transform:translateX(1.5px)}
