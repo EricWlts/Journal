@@ -74,8 +74,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .herorest{padding-top:0;padding-bottom:8px}
 .stickytitle{position:sticky;top:var(--safe-t);z-index:6;background:var(--night);color:var(--linen);padding:0 24px}
 .stickytitle .title{margin:0;padding-top:8px;height:72px;position:relative;z-index:1;clip-path:inset(-40px -40px -14px -40px)} /* Rollen endet an der Kante der dunklen Fläche – Unterlängen bleiben sichtbar */
-.stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:var(--night);opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
-  box-shadow:0 1px 0 var(--nline)}
+.stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:28px;opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
+  background:linear-gradient(var(--night), var(--night)) left top / 100% 14px no-repeat,
+             radial-gradient(circle at 100% 100%, transparent 13.5px, var(--night) 14px) left bottom / 14px 14px no-repeat,
+             radial-gradient(circle at 0 100%, transparent 13.5px, var(--night) 14px) right bottom / 14px 14px no-repeat} /* die Liste läuft mit runden Ecken unter dem Kopf durch – wie ein Blatt */
 .stickytitle.stuck::after{opacity:1}
 .stickysearch{position:absolute;right:14px;top:8px;color:var(--linen);opacity:0;transform:translateY(-12px);pointer-events:none;
   transition:opacity .3s var(--ease), transform .45s var(--sheet)}
@@ -361,7 +363,8 @@ html.night .scrub i{color:#6f7a71}
 #list .row .more > *{grid-area:1/1;font-style:normal;font-weight:500;white-space:nowrap;transition:opacity .3s var(--ease)}
 #list .row .more em{opacity:0}
 #list .row.grp-open .more b{opacity:0}
-@media (hover:hover){ #list .row.grp-open.is-current:hover .more em{opacity:1;transition-delay:.35s} } /* offen: beim Darüberfahren leise der Hinweis, dass ein Klick zuklappt */
+@media (hover:hover){ #list .row.grp-open.is-current:hover .more em{opacity:1;transition-delay:.35s} }
+@media (max-width:959px){ #list .row.grp-open .more em{opacity:1} #list .row .more{margin:-12px -12px -12px 0;padding:12px 12px 12px 16px} } /* iPhone: „einklappen“ steht da und ist groß genug zum Antippen */ /* offen: beim Darüberfahren leise der Hinweis, dass ein Klick zuklappt */
 #list .dmore{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--sheet)}
 #list .dmore.open{grid-template-rows:1fr}
 #list .dmore-in{min-height:0;overflow:hidden}
@@ -481,6 +484,15 @@ html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gef�
 .edate .wd{font-size:15px;font-weight:600;color:var(--ink)}
 .edate .dn,.edate .dtm{display:none}
 .edate .dt{font-size:13px;font-weight:500;color:var(--olive);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:959px){ /* iPhone: kompakte Fassung der Mac-Randspalte – große Tageszahl, daneben Wochentag und Monat · Uhrzeit */
+  .enav{height:60px}
+  .edate{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;row-gap:3px;align-items:end}
+  .edate .dn{display:block;grid-column:1;grid-row:1 / span 2;align-self:center;font-family:var(--serif);font-size:42px;line-height:.9;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:lining-nums}
+  .edate .wd{grid-column:2;grid-row:1;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--olive)}
+  .edate .dt{display:none}
+  .edate .dtm{display:block;grid-column:2;grid-row:2;align-self:start;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .edate .savedot{grid-column:2;grid-row:1;position:static;justify-self:start;align-self:center;margin-left:0;transform-origin:left center}
+}
 .eact{position:relative;width:44px;height:44px;flex-shrink:0}
 .eact > button{position:absolute;inset:0}
 .trash{display:flex;align-items:center;justify-content:center;color:var(--muted);opacity:0;transform:scale(.7);pointer-events:none;
@@ -504,6 +516,26 @@ html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gef�
 .eline{height:1px;background:var(--line);margin-top:16px}
 .ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--olive)}
 .ebody:empty::before{content:attr(data-ph);color:var(--dim)}
+@media (max-width:959px){
+  /* Suche: dunkler Kopf mit großem Suchfeld, Treffer als Blatt darunter – wie Startseite und Kalender */
+  #search{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
+  #search .page.wide{padding:0;min-height:100%;display:flex;flex-direction:column}
+  #search .searchbox{display:block;position:relative;height:auto;margin:0;border:0;background:var(--night);padding:calc(var(--safe-t) + 54px) 24px 40px}
+  #search .searchbox::before{content:'Suche';position:absolute;left:24px;top:calc(var(--safe-t) + 18px);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+  #search .searchbox input{display:block;width:100%;height:52px;font-size:36px;color:var(--linen);border-bottom:1px solid var(--nline);caret-color:var(--mist)}
+  #search .searchbox input::placeholder{color:#58645b}
+  #results{flex:1;position:relative;margin:-20px 0 0;padding:20px 12px calc(var(--safe-b) + 110px);background:var(--paper);border-radius:14px 14px 0 0}
+  #results:empty::before{content:'Titel und Text werden durchsucht.';display:block;padding:8px 12px;font-size:14px;color:var(--muted)}
+  #results .emptylist{padding:8px 12px}
+  /* Knöpfe: etwas runder und griffiger, passend zu den Karten */
+  .btn{height:50px;border-radius:12px}
+  .page.wide{padding-bottom:calc(var(--safe-b) + 130px)}
+  /* weicher Auslauf am unteren Rand, unter den runden Knöpfen – Text läuft nicht mehr hart aus */
+  .fadebot{position:sticky;bottom:0;z-index:4;height:calc(var(--safe-b) + 72px);margin-top:calc(-1 * (var(--safe-b) + 72px));pointer-events:none;
+    background:linear-gradient(to bottom, color-mix(in srgb, var(--paper) 0%, transparent), var(--paper) 88%)}
+}
+.fadebot{display:none}
+@media (max-width:959px){ .fadebot{display:block} }
 /* Zählwerk: Ziffern rollen einzeln (x/y Tage) */
 .ch{display:inline-block;position:relative}
 .ch > span{display:inline-block}
@@ -805,6 +837,7 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
     <div class="list" id="list"></div>
     <div class="listfade" aria-hidden="true"></div>
     <div class="fabwrap"><button class="fab" data-act="today"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span id="fabLabel">Heute schreiben</span></button></div>
+    <div class="fadebot" aria-hidden="true"></div>
     <button class="floatbtn homeplus" data-act="today" id="homePlus" aria-label="Neuer Eintrag" title="Neuer Eintrag (⌘N)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>
   </section>
 
@@ -825,6 +858,7 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
       <div class="calarea" id="calarea"><div class="calviewport"><div class="caltrack" id="caltrack"></div></div><div class="legend" id="calLegend"></div></div>
       <div id="otd"></div>
     </div>
+    <div class="fadebot" aria-hidden="true"></div>
     <button class="floatbtn" data-act="back" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 
@@ -851,6 +885,7 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
       <label class="searchbox"><span class="sr">Suchbegriff</span><input id="q" type="search" enterkeyhint="search" placeholder="Wonach suchst du?" autocomplete="off"></label>
       <div id="results"></div>
     </div>
+    <div class="fadebot" aria-hidden="true"></div>
     <button class="floatbtn" data-act="back" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 
@@ -896,6 +931,7 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
         <p id="about"></p>
       </div>
     </div>
+    <div class="fadebot" aria-hidden="true"></div>
     <button class="floatbtn" data-act="back" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 </div>
@@ -1102,7 +1138,7 @@ function rowHTML(e, prev, more, i) { // prev: Eintrag davor – gleicher Tag: nu
     '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
 }
 function openGroups(now) { // der Tag des geöffneten Eintrags klappt auf, alle anderen zu
-  let k = S.cur && S.cur.id ? S.cur.date : null;
+  let k = !isDesktop() ? (S.mOpen || null) : S.cur && S.cur.id ? S.cur.date : null;
   if (S.foldDay && S.foldDay !== k) S.foldDay = null; // ein anderer Tag gewählt: Zuklappen vergessen
   if (k && S.foldDay === k) k = null;
   document.querySelectorAll('#list .dmore').forEach((g) => {
@@ -1431,7 +1467,7 @@ async function renderEntry(dir) {
   const e = S.cur; const d = new Date(e.created);
   $('eWd').textContent = WDLONG[d.getDay()];
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-  $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + '\n' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); // Mac: Randspalte, bewusst zwei Zeilen
+  $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + (isDesktop() ? '\n' : ' ') + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); // Mac: Randspalte, bewusst zwei Zeilen
   $('entry').classList.toggle('has-id', !!e.id); saveMark(null);
   $('eTitle').textContent = e.title || '';
   $('eBody').textContent = e.text || '';
@@ -1648,6 +1684,9 @@ document.addEventListener('click', (ev) => {
   else if (a === 'canceldel') { closeConfirm(); closeRow(); }
   else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
     const r = S.openRow.getBoundingClientRect(); if (S.openRow === b && ev.clientX > r.right - ROW_OPEN) askDelete(b.dataset.id); else closeRow();
+  }
+  else if (a === 'open' && !isDesktop() && b.classList.contains('has-more') && b.closest('#list') && (!b.classList.contains('grp-open') || ev.target.closest('.more'))) { // iPhone: erster Tipp klappt den Tag auf, „einklappen“ wieder zu
+    S.mOpen = b.classList.contains('grp-open') ? null : b.dataset.date; openGroups();
   }
   else if (a === 'open' && isDesktop() && b.classList.contains('has-more') && b.closest('#list') && S.cur && S.cur.id === b.dataset.id) { // offener Stapel: noch ein Klick klappt ihn zu bzw. wieder auf
     S.foldDay = S.foldDay === b.dataset.date ? null : b.dataset.date; openGroups();
