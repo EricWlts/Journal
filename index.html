@@ -160,8 +160,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   padding:6px 10px;border-radius:8px;background:var(--linen);color:var(--night);font-size:12px;font-weight:500;letter-spacing:.01em;
   opacity:0;pointer-events:none;transition:opacity .18s var(--ease), transform .25s var(--sheet);z-index:5}
 @media (hover:hover) and (pointer:fine){ .newbtn:hover::after{opacity:1;transform:translate(-50%,0);transition-delay:.45s} }
-.newbtn svg{transition:transform .45s var(--sheet)}
-.newbtn:active svg{transform:rotate(90deg) scale(.9)}
+.newbtn svg{transition:transform .2s var(--ease)}
+.newbtn:active svg{transform:scale(.84)} /* drücken: das Plus gibt leicht nach */
+@media (hover:hover) and (pointer:fine){ .newbtn:hover{background:rgba(242,243,239,.07)} }
+.newbtn{transition:background-color .2s var(--ease), opacity .25s var(--ease), transform .45s var(--sheet)}
+.newring{position:absolute;inset:7px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);pointer-events:none}
 .hitcount{padding:20px 0 4px}
 /* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
 .scnav{height:48px;display:flex;align-items:center;justify-content:space-between;position:relative;margin-top:2px}
@@ -1953,6 +1956,18 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
   app.addEventListener('touchend', end, { passive: true });
   app.addEventListener('touchcancel', end, { passive: true });
 })();
+
+/* Plus (Mac): beim Klick dreht sich das Kreuz mit einer kleinen Feder eine Vierteldrehung weiter,
+   ein feiner Ring läuft sanft nach außen – wie ein Tropfen Tinte, der aufs Papier fällt */
+$('home').querySelector('.newbtn').addEventListener('click', (e) => {
+  const b = e.currentTarget, svg = b.querySelector('svg');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  svg.getAnimations().forEach((a) => a.cancel());
+  svg.animate([{ transform: 'rotate(0deg) scale(.84)' }, { transform: 'rotate(100deg) scale(1.08)', offset: 0.55 }, { transform: 'rotate(90deg) scale(1)' }],
+    { duration: 620, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' });
+  const r = document.createElement('span'); r.className = 'newring'; b.appendChild(r);
+  r.animate([{ transform: 'scale(.7)', opacity: 0.55 }, { transform: 'scale(1.9)', opacity: 0 }], { duration: 760, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }).onfinish = () => r.remove();
+});
 
 /* Seite (Mac): Klick in den Text oder ⌘N spannt das Blatt als hochkante Seite in die Mitte; Esc oder ein Klick ins Dunkel löst es wieder */
 (function pageMode() {
