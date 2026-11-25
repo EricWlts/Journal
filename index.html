@@ -1851,7 +1851,7 @@ $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passiv
   const L = $('list'), HOME = $('home'), R = document.createElement('div'); R.className = 'rail'; R.setAttribute('aria-hidden', 'true');
   R.innerHTML = '<div class="rail-y"></div><div class="rail-t"></div>'; document.body.appendChild(R);
   const Y = R.children[0], T = R.children[1], M = document.createElement('div'); M.className = 'scrub'; M.setAttribute('aria-hidden', 'true'); document.body.appendChild(M);
-  let H = 0, th = 0, top = 0, thumbY = 0, hideT = null, mT = null, drag = null, near = false, lastY = 0, lastT = 0, yKey = '', mTxt = '';
+  const samples = []; let H = 0, th = 0, top = 0, thumbY = 0, hideT = null, mT = null, drag = null, near = false, lastY = 0, lastT = 0, yKey = '', mTxt = '';
   const SC = () => (isDesktop() ? L : HOME);
   const safeB = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-b')) || 0;
   function edge() { // Oberkante, an der die Liste sichtbar beginnt (iPhone: unter dem eingeklappten Kopf)
@@ -1894,15 +1894,20 @@ $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passiv
     const row = rowAtEdge(); if (row) { const d = parseKey(row.dataset.date), t = MONTHS[d.getMonth()] + ' <i>' + d.getFullYear() + '</i>'; if (t !== mTxt) { mTxt = t; M.innerHTML = t; } }
     const right = isDesktop() ? L.getBoundingClientRect().right - 26 : HOME.getBoundingClientRect().right - 34;
     M.style.transform = 'translate3d(' + Math.round(right) + 'px,' + Math.round(cy) + 'px,0) translate(-100%,-50%)';
-    M.classList.add('on'); clearTimeout(mT); mT = setTimeout(() => { if (!drag) M.classList.remove('on'); }, 900);
+    M.leaving = false; M.classList.add('on'); clearTimeout(mT); mT = setTimeout(() => { if (!drag) M.classList.remove('on'); }, 900);
   }
   function onScroll(e) {
     if (e.currentTarget !== SC() || !ok()) { if (!isDesktop() && e.currentTarget === HOME) { R.classList.remove('on', 'legend'); M.classList.remove('on'); } return; }
     const sc = SC(), cy = place();
     if (!isDesktop() && sc.scrollTop < 8 && !drag) { R.classList.remove('on'); return; } // ganz oben: keine Leiste (wie iOS)
     show(isDesktop() ? 2600 : 1600);
-    const now = performance.now(), v = Math.abs(sc.scrollTop - lastY) / Math.max(1, now - lastT); lastY = sc.scrollTop; lastT = now;
-    if (drag || v > 2.2 || M.classList.contains('on')) month(cy);
+    // Monats-Pille nur beim Ziehen oder wirklich schnellen Scrollen: Tempo über die letzten ~120 ms geglättet (einzelne Sprünge zählen nicht);
+    // ist sie da, bleibt sie nur, solange es schnell weitergeht – beim normalen Lesen-Scrollen verschwindet sie sofort
+    const now = performance.now(); samples.push([now, sc.scrollTop]); while (samples.length > 2 && now - samples[0][0] > 120) samples.shift();
+    const dt = now - samples[0][0], v = dt > 40 ? Math.abs(sc.scrollTop - samples[0][1]) / dt : 0; lastY = sc.scrollTop; lastT = now;
+    const fast = isDesktop() ? 4 : 2.2, keep = isDesktop() ? 2 : 1.2;
+    if (drag || v > fast || (M.classList.contains('on') && v > keep)) month(cy);
+    else if (M.classList.contains('on') && !drag && !M.leaving) { M.leaving = true; clearTimeout(mT); mT = setTimeout(() => M.classList.remove('on'), 200); }
   }
   L.addEventListener('scroll', onScroll, { passive: true }); HOME.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('mousemove', (e) => { // Maus nah am rechten Rand der Liste: Leiste kommt und bleibt, solange sie dort ist
