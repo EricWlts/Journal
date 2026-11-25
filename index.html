@@ -383,9 +383,41 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .eline{height:1px;background:var(--line);margin-top:16px}
 .ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--olive)}
 .ebody:empty::before{content:attr(data-ph);color:var(--dim)}
+/* Zählwerk: Ziffern rollen einzeln (x/y Tage) */
+.ch{display:inline-block;position:relative}
+.ch > span{display:inline-block}
+.ch .chold{position:absolute;left:0;top:0;pointer-events:none}
+.sect .sub{margin-top:22px}
+/* Speicherpunkt: Ring = ungespeichert, gefüllter Tintenpunkt = gespeichert, blendet dann aus */
+.edate{position:relative}
+.savedot{width:6px;height:6px;border-radius:50%;flex:none;align-self:center;margin-left:10px;box-shadow:inset 0 0 0 1px var(--olive);opacity:0;transform:scale(.6);
+  transition:opacity .5s var(--ease), transform .5s var(--sheet), background-color .35s var(--ease)}
+.savedot.pending{opacity:.85;transform:none}
+.savedot.saved{opacity:.85;transform:none;background:var(--olive)}
+.savedot.saved.pop{animation:inkpop .6s var(--sheet)}
+.savedot.rest{opacity:0;transition:opacity 1.6s var(--ease)}
+@keyframes inkpop{0%{transform:scale(.6)}45%{transform:scale(1.35)}100%{transform:none}}
+@media (max-width:959px){.savedot{position:absolute;left:100%;bottom:6px;margin-left:8px}}
+/* Titel fliegt aus der Karte in das Blatt (Mac) */
+.flytitle{position:fixed;z-index:70;margin:0;pointer-events:none;transform-origin:0 0;white-space:nowrap;will-change:transform,opacity}
+#entry .etitle.flying{visibility:hidden}
 /* Schreibmaschine: getippte Schrift, wie auf Papier angeschlagen */
 .tw .entry{padding-bottom:75vh} /* genug Papier, damit die Schreibzeile auf ihrer Höhe bleiben kann */
-.tw .ebody{font-family:'Courier Prime',ui-monospace,'SF Mono',Menlo,monospace;font-size:16.5px;line-height:1.85;letter-spacing:0;color:#2b3430;caret-color:var(--ink)}
+.tw .ebody{font-family:'Courier Prime',ui-monospace,'SF Mono',Menlo,monospace;font-size:16.5px;line-height:1.85;letter-spacing:0;color:var(--twink, #2b3430);caret-color:var(--ink)}
+/* Licht nach Tageszeit: Papier wird morgens frischer, abends wärmer, spät minimal gedämpft */
+html[data-light="morgen"]{--paper:#eeede8;--sheetbg:#f7f7f3}
+html[data-light="abend"]{--paper:#ede8df;--sheetbg:#f5f1e9}
+html[data-light="spaet"]{--paper:#e8e2d7;--sheetbg:#f0eadf;--stone:#ddd8cd}
+.app,.view,#entry,#home{transition-property:background-color;transition-duration:1.2s}
+/* Nacht: dieselbe Palette, umgekehrt – der dunkle Kopf bleibt der dunkelste Ton */
+html.night{--paper:#181c17;--sheetbg:#1e231d;--stone:#252b24;--ink:#e4e7df;--ink2:#c3cac4;--muted:#9aa59c;--olive:#a3b4a7;--line:#2f3631;--empty:#353b36;--night:#0b0d0a;--twink:#dfe3da}
+html.night .row.is-current,html.night :is(#list,#results) .row.is-current{background:#2b322c}
+html.night .light .is-entry .dot{color:var(--night)}
+html.night :is(.btn:not(.ghost),.fxseg button[aria-checked="true"],.done span,.floatbtn,.toast){background:var(--linen);color:var(--night)}
+html.night .yd.f{background:#4a514b}
+html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 60px -44px rgba(0,0,0,.8)}
+html.night .ctxmenu{box-shadow:0 0 0 1px var(--line), 0 24px 40px -20px rgba(0,0,0,.7)}
+html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(--paper), 0 0 0 3px var(--ink)}
 .ephotos{display:grid;gap:8px;margin-top:28px}
 .ephotos img{width:100%;height:auto;display:block;border-radius:8px;background:var(--stone)}
 .entry.in-l{animation:inl .42s var(--sheet)} .entry.in-r{animation:inr .42s var(--sheet)}
@@ -468,6 +500,10 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   .herofoot{display:none}
   #entry .floatbtn{display:none}
   .homeplus{right:32px;bottom:32px}
+  /* Fokus: beim Schreiben tritt die Seitenleiste leise zurück, eine Mausbewegung holt sie zurück */
+  #home > *{transition:opacity .35s var(--ease), transform .45s var(--sheet)}
+  .app.focus #home > *{opacity:.08;transform:translate3d(-6px,0,0);transition:opacity 1.6s var(--ease), transform 2s var(--sheet)}
+  .app.focus #home > .homeplus{opacity:0;pointer-events:none}
   .fxsect{display:block}
   #list{padding-bottom:24px}
   .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
@@ -615,7 +651,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   <section class="view is-off" id="entry" aria-label="Eintrag">
     <div class="entry" id="entryInner">
       <div class="enav">
-        <div class="edate"><span class="wd" id="eWd"></span><span class="dt" id="eDt"></span></div>
+        <div class="edate"><span class="wd" id="eWd"></span><span class="dt" id="eDt"></span><span class="savedot" id="saveDot" aria-hidden="true"></span></div>
         <div class="eact"><button class="trash" data-act="trashcur" id="trashBtn" aria-label="Eintrag löschen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 6.5h15M9.5 6.5V4.75h5V6.5M6.5 6.5l.85 12.2a1.5 1.5 0 0 0 1.5 1.4h6.3a1.5 1.5 0 0 0 1.5-1.4l.85-12.2M10 10.5v6M14 10.5v6"/></svg></button>
         <button class="done" data-act="done" id="doneBtn" aria-label="Fertig"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button></div>
       </div>
@@ -668,6 +704,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
         <h2>Schrift beim Schreiben</h2>
         <p>Schreibmaschine setzt deinen Text in getippte Lettern, und die Zeile, in der du schreibst, bleibt ruhig auf einer Höhe – wie eingespanntes Papier.</p>
         <div class="fxseg" role="radiogroup" aria-label="Schrift"><button role="radio" data-act="settw" data-tw="0">Klassisch</button><button role="radio" data-act="settw" data-tw="1">Schreibmaschine</button></div>
+        <p class="sub">Anschlag hören – ein leises Klacken beim Tippen und ein Zeilenvorschub bei Enter (nur Schreibmaschine).</p>
+        <div class="fxseg" role="radiogroup" aria-label="Anschlag hören"><button role="radio" data-act="setsnd" data-snd="0">Aus</button><button role="radio" data-act="setsnd" data-snd="1">An</button></div>
+      </div>
+      <div class="sect">
+        <h2>Licht</h2>
+        <p>Mit der Tageszeit wird das Papier morgens etwas frischer und abends wärmer. Nacht dreht die Farben für das Schreiben im Dunkeln um.</p>
+        <div class="fxseg" role="radiogroup" aria-label="Licht"><button role="radio" data-act="setlight" data-light="auto">Tageszeit</button><button role="radio" data-act="setlight" data-light="hell">Hell</button><button role="radio" data-act="setlight" data-light="nacht">Nacht</button></div>
       </div>
       <div class="sect fxsect">
         <h2>Übergänge</h2>
@@ -753,6 +796,24 @@ function reindex() {
   for (const e of S.entries) { if (!S.byDate.has(e.date)) S.byDate.set(e.date, []); S.byDate.get(e.date).push(e); }
 }
 const hasEntry = (k) => (S.hitDays ? S.hitDays.has(k) : S.byDate.has(k)); // während der Suche (Mac) zählen nur Tage mit Treffern
+function setCount(el, a, b) { // „2/7“ – geänderte Ziffern rollen einzeln, rauf beim Zunehmen, runter beim Abnehmen
+  const s = b ? a + '/' + b : '0', prev = el.dataset.v; if (prev === s) return; el.dataset.v = s;
+  const [na, nb] = s.split('/'), chars = (x) => [...x].map((c) => '<span class="ch"><span>' + c + '</span></span>').join('');
+  el.innerHTML = chars(na) + (nb !== undefined ? '<span class="of">/' + chars(nb) + '</span>' : '');
+  if (prev === undefined || el.offsetParent === null || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const [pa, pb] = prev.split('/'), up = +na !== +pa ? +na > +pa : +(nb || 0) >= +(pb || 0), d = up ? 1 : -1;
+  const roll = (nodes, o, n) => nodes.forEach((ch, i) => {
+    const j = o.length - (n.length - i), oc = j >= 0 ? o[j] : ''; if (oc === n[i]) return;
+    ch.firstChild && ch.animate([{ transform: 'translate3d(0,' + (d * 0.5) + 'em,0)', opacity: 0, filter: 'blur(1.5px)' }, { transform: 'none', opacity: 1, filter: 'blur(0)' }], { duration: 460, delay: (nodes.length - 1 - i) * 40, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'backwards' });
+    if (oc) {
+      const g = document.createElement('span'); g.className = 'chold'; g.textContent = oc; ch.appendChild(g);
+      g.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate3d(0,' + (-d * 0.5) + 'em,0)', opacity: 0, filter: 'blur(1.5px)' }], { duration: 240, delay: (nodes.length - 1 - i) * 40, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' }).onfinish = () => g.remove();
+    }
+  });
+  const kids = [...el.children], ofEl = el.querySelector('.of');
+  roll(kids.filter((k) => k.classList.contains('ch')), pa || '', na);
+  if (ofEl && nb) roll([...ofEl.querySelectorAll('.ch')], pb || '', nb);
+}
 function countRange(from, to) { // inclusive dates; counts written days
   let n = 0; const d = new Date(from);
   while (d <= to) { if (hasEntry(keyOf(d))) n++; d.setDate(d.getDate() + 1); }
@@ -834,7 +895,7 @@ function renderWeek() {
   $('weektrack').innerHTML = weekPanelHTML(off - 1) + weekPanelHTML(off) + weekPanelHTML(off + 1);
   resetTrack($('weektrack'));
   const end = sun < t ? sun : t; const elapsed = mon > t ? 0 : Math.round((end - mon) / 864e5) + 1;
-  $('weekCount').innerHTML = elapsed ? countRange(mon, end) + '<span class="of">/' + elapsed + '</span>' : '0';
+  setCount($('weekCount'), elapsed ? countRange(mon, end) : 0, elapsed);
   $('weekStat').classList.toggle('is-empty', !elapsed);
   const tl = $('todayLine'); tl.classList.toggle('on', off !== 0); $('thisWeekBtn').tabIndex = off === 0 ? -1 : 0;
   if (off !== 0) { tl.classList.toggle('dir-l', off > 0); tl.classList.toggle('dir-r', off < 0); }
@@ -852,7 +913,7 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
   tr.style.transform = 'translate3d(' + (dir > 0 ? 2 * trackX(tr) : 0) + 'px,0,0)';
   setTimeout(() => { trackBusy = false; done(); }, d + 10);
 }
-function shiftWeek(dir, ms) { fadeWith([$('weekStat')], 0); slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); softIn($('weekStat')); }, ms); }
+function shiftWeek(dir, ms) { slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }, ms); }
 const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>';
 function rowHTML(e) {
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
@@ -902,7 +963,7 @@ function renderCalendar() {
   const last = mode === 'month' ? new Date(y, m, daysIn(y, m)) : new Date(y, 11, 31);
   $('calTitle').innerHTML = mode === 'month' ? titleHTML(MONTHS[m], y) : titleHTML('Das Jahr', y);
   const end = last < t ? last : t; const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
-  $('calCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '0';
+  setCount($('calCount'), elapsed ? countRange(first, end) : 0, elapsed);
   $('calStats').classList.toggle('is-empty', !elapsed);
   $('caltrack').innerHTML = [-1, 0, 1].map((o) => { const p = periodOf(o); return '<div class="calpanel">' + (mode === 'month' ? monthGridHTML(p.y, p.m, false) : yearHTML(p.y)) + '</div>'; }).join('');
   resetTrack($('caltrack'));
@@ -946,7 +1007,7 @@ function renderSide() {
   const first = mode === 'week' ? mon : mode === 'month' ? new Date(y, m, 1) : new Date(y, 0, 1);
   const last = mode === 'week' ? sun : mode === 'month' ? new Date(y, m, daysIn(y, m)) : new Date(y, 11, 31);
   const end = last < t ? last : t; const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
-  $('scCount').innerHTML = elapsed ? countRange(first, end) + '<span class="of">/' + elapsed + '</span>' : '0';
+  setCount($('scCount'), elapsed ? countRange(first, end) : 0, elapsed);
   $('scStat').classList.toggle('is-empty', !elapsed);
   $('scWeek').setAttribute('aria-selected', mode === 'week'); $('scMonth').setAttribute('aria-selected', mode === 'month'); $('scYear').setAttribute('aria-selected', mode === 'year');
   const isNow = mode === 'week' ? !w : y === t.getFullYear() && (mode === 'year' || m === t.getMonth());
@@ -1011,11 +1072,10 @@ function sidePanelHTML(st) { return st.mode === 'week' ? weekPanelHTML(st.w) : '
 function sideMove(dir, next, ms, after) {
   if (trackBusy) return;
   const target = Object.assign({}, S.side, next), fx = S.fx, tr = $('sctrack');
-  fadeWith([$('scStat')], 0);
   if (!S.dsearch && !S.listTitle) animTitle(sideTitleOf(target), dir);
   if (fx === 'slide' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const nb = tr.children[dir > 0 ? 2 : 0]; if (nb) nb.outerHTML = sidePanelHTML(target); updateSideSel();
-    slideTrack(tr, dir, () => { Object.assign(S.side, next); renderSide(); softIn($('scStat')); if (after) after(); }, ms || 440);
+    slideTrack(tr, dir, () => { Object.assign(S.side, next); renderSide(); if (after) after(); }, ms || 440);
     return;
   }
   trackBusy = true;
@@ -1023,7 +1083,7 @@ function sideMove(dir, next, ms, after) {
   const off = Math.round(new DOMMatrix(getComputedStyle(tr).transform).m41 - trackX(tr)); // falls das Trackpad den Kalender schon verschoben hat
   const o0 = parseFloat(getComputedStyle(old).opacity) || 1, clone = old.cloneNode(true); clone.style.opacity = ''; clone.style.transition = '';
   const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true'); ghost.appendChild(clone); vp.appendChild(ghost);
-  Object.assign(S.side, next); renderSide(); softIn($('scStat'));
+  Object.assign(S.side, next); renderSide();
   const np = tr.children[1], E = 'cubic-bezier(0.32, 0.72, 0, 1)';
   if (!off && target.mode !== 'year') { // Woche/Monat: Kopfzeile bleibt stehen, nur die Tage wechseln – als Welle in Laufrichtung
     clone.querySelectorAll('.wd, .wdhead').forEach((x) => { x.style.visibility = 'hidden'; });
@@ -1135,7 +1195,7 @@ async function renderEntry(dir) {
   const e = S.cur; const d = new Date(e.created);
   $('eWd').textContent = WDLONG[d.getDay()];
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-  $('entry').classList.toggle('has-id', !!e.id);
+  $('entry').classList.toggle('has-id', !!e.id); saveMark(null);
   $('eTitle').textContent = e.title || '';
   $('eBody').textContent = e.text || '';
   const ph = $('ePhotos'); ph.innerHTML = '';
@@ -1158,6 +1218,13 @@ function draftFor(k) {
   return { id: null, date: k, created: d.toISOString(), title: '', text: '', photos: [], source: 'app' };
 }
 let saveTimer = null;
+function saveMark(st) {
+  const d = $('saveDot'); clearTimeout(saveMark.t);
+  if (!st) { d.className = 'savedot'; return; }
+  if (st === 'pending') { d.className = 'savedot pending'; return; }
+  d.className = 'savedot saved'; void d.offsetWidth; d.classList.add('pop');
+  saveMark.t = setTimeout(() => d.classList.add('rest'), 2200);
+}
 function onEdit() {
   const e = S.cur; if (!e) return;
   e.title = $('eTitle').textContent.replace(/\n+/g, ' ');
@@ -1165,6 +1232,7 @@ function onEdit() {
   if (!$('eBody').textContent) $('eBody').innerHTML = '';
   if (!$('eTitle').textContent) $('eTitle').innerHTML = '';
   if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); $('entry').classList.add('has-id'); }
+  if (e.id) saveMark('pending');
   clearTimeout(saveTimer); saveTimer = setTimeout(saveCur, 350);
 }
 const sigOf = (e) => (e.title || '') + '\u0001' + (e.text || '') + '\u0001' + (e.photos || []).join(',');
@@ -1178,6 +1246,7 @@ async function saveCur() {
     Sync.markDeleted(e.id); e.id = null;
   } else {
     e._dirty = true; await DB.put('entries', e);
+    if (S.cur === e) saveMark('saved');
   }
   Sync.soon();
   S.homeDirty = true;
@@ -1192,6 +1261,24 @@ function openDay(k) {
   const list = S.byDate.get(k);
   go('entry');
   openEntry(list && list.length ? list[0] : draftFor(k));
+}
+function flyTitle(fromEl) { // Mac: der Titel löst sich aus der Karte und landet groß im Blatt
+  const to = $('eTitle'); if (!to.textContent.trim() || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const fr = fromEl.getBoundingClientRect(), tr = to.getBoundingClientRect(), cs = getComputedStyle(to), fcs = getComputedStyle(fromEl);
+  const k = parseFloat(fcs.fontSize) / parseFloat(cs.fontSize); if (!fr.width || !tr.width) return;
+  const fly = document.createElement('div'); fly.className = 'flytitle'; fly.textContent = to.textContent.split('\n')[0];
+  Object.assign(fly.style, { left: tr.left + 'px', top: tr.top + 'px', fontFamily: cs.fontFamily, fontSize: cs.fontSize, lineHeight: cs.lineHeight, letterSpacing: cs.letterSpacing, color: cs.color });
+  document.body.appendChild(fly);
+  const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.1, flh = parseFloat(fcs.lineHeight) || parseFloat(fcs.fontSize) * 1.1;
+  const dx = fr.left - tr.left, dy = fr.top - tr.top - (lh * k - flh) / 2;
+  to.classList.add('flying');
+  const a = fly.animate([
+    { transform: 'translate3d(' + dx + 'px,' + dy + 'px,0) scale(' + k + ')', color: fcs.color, opacity: 0.0, letterSpacing: fcs.letterSpacing },
+    { opacity: 1, offset: 0.12 },
+    { transform: 'none', color: cs.color, opacity: 1, letterSpacing: cs.letterSpacing },
+  ], { duration: 720, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'both' });
+  const done = () => { to.classList.remove('flying'); fly.remove(); };
+  a.onfinish = done; setTimeout(done, 1200);
 }
 function newEntry() { // Plus / ⌘N: immer ein neues, leeres Blatt für heute – mehrere Einträge am Tag sind erlaubt
   const k = keyOf(today()), top = S.stack[S.stack.length - 1];
@@ -1325,6 +1412,8 @@ document.addEventListener('click', (ev) => {
     const k = b.dataset.key;
     if (b.closest('#caltrack') && S.cal.sel !== k) selectCalDay(k); else deskFade(() => openDay(k), (S.byDate.get(k) || [{}])[0].id || 'draft' + k);
   }
+  else if (a === 'setsnd') { S.snd = b.dataset.snd === '1'; try { localStorage.setItem('journal.snd', S.snd ? '1' : '0'); } catch (e) {} markTw(); if (S.snd) Sound.key(); }
+  else if (a === 'setlight') { S.light = b.dataset.light; try { localStorage.setItem('journal.light', S.light); } catch (e) {} applyLight(); }
   else if (a === 'settw') { S.tw = b.dataset.tw === '1'; try { localStorage.setItem('journal.tw', S.tw ? '1' : '0'); } catch (e) {} markTw(); }
   else if (a === 'setfx') { S.fx = b.dataset.fx; try { localStorage.setItem('journal.fx', S.fx); } catch (e) {} markFx(); }
   else if (a === 'trashcur') { if (S.cur && S.cur.id) askDelete(S.cur.id); }
@@ -1335,7 +1424,11 @@ document.addEventListener('click', (ev) => {
   else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
     const r = S.openRow.getBoundingClientRect(); if (S.openRow === b && ev.clientX > r.right - ROW_OPEN) askDelete(b.dataset.id); else closeRow();
   }
-  else if (a === 'open') { S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id; deskFade(() => openEntryById(id), id); }
+  else if (a === 'open') {
+    S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id;
+    const from = isDesktop() && S.stack[S.stack.length - 1] === 'entry' && !(S.cur && S.cur.id === id) ? b.querySelector('.ti') : null;
+    deskFade(() => { openEntryById(id); if (from) flyTitle(from); }, id);
+  }
   else if (a === 'today') newEntry();
   else if (a === 'entryback') {
     if (typing()) { document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
@@ -1390,9 +1483,65 @@ async function deleteEntry(id) {
   renderHome(); if (S.stack.includes('search')) renderSearch(); if (S.stack.includes('calendar')) renderCalendar();
   toast('Eintrag gelöscht');
 }
-function markTw() { document.documentElement.classList.toggle('tw', !!S.tw); document.querySelectorAll('[data-act=settw]').forEach((x) => x.setAttribute('aria-checked', (x.dataset.tw === '1') === !!S.tw)); }
-try { S.tw = localStorage.getItem('journal.tw') === '1'; } catch (e) { S.tw = false; }
+function markTw() {
+  document.documentElement.classList.toggle('tw', !!S.tw);
+  document.querySelectorAll('[data-act=settw]').forEach((x) => x.setAttribute('aria-checked', (x.dataset.tw === '1') === !!S.tw));
+  document.querySelectorAll('[data-act=setsnd]').forEach((x) => x.setAttribute('aria-checked', (x.dataset.snd === '1') === !!S.snd));
+}
+try { S.tw = localStorage.getItem('journal.tw') === '1'; S.snd = localStorage.getItem('journal.snd') === '1'; S.light = localStorage.getItem('journal.light') || 'auto'; } catch (e) { S.tw = false; S.snd = false; S.light = 'auto'; }
 markTw();
+/* Licht: Tageszeit (Papier verändert sich ganz leicht), Hell oder Nacht */
+function applyLight() {
+  const h = new Date().getHours(), html = document.documentElement, night = S.light === 'nacht';
+  html.classList.toggle('night', night);
+  html.dataset.light = S.light === 'auto' ? (h >= 5 && h < 10 ? 'morgen' : h >= 17 && h < 21 ? 'abend' : (h >= 21 || h < 5) ? 'spaet' : 'tag') : 'tag';
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = night ? '#0b0d0a' : '#12150f';
+  document.querySelectorAll('[data-act=setlight]').forEach((x) => x.setAttribute('aria-checked', x.dataset.light === S.light));
+}
+applyLight(); setInterval(applyLight, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) applyLight(); });
+/* Anschlag: kleine, selbst erzeugte Geräusche (Web Audio, keine Dateien) */
+const Sound = (() => {
+  let ctx = null, noise = null, out = null;
+  function ac() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+      ctx = new AC(); out = ctx.createGain(); out.gain.value = 0.55; out.connect(ctx.destination);
+      noise = ctx.createBuffer(1, Math.round(ctx.sampleRate * 0.25), ctx.sampleRate);
+      const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function hit(freq, dur, gain, q, at, sweepTo) { // gefilterter Rauschimpuls = Typenhebel auf Papier
+    const c = ac(); if (!c) return; const t = c.currentTime + (at || 0);
+    const src = c.createBufferSource(); src.buffer = noise; src.playbackRate.value = 0.9 + Math.random() * 0.2;
+    const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(freq, t); f.Q.value = q;
+    if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t + dur);
+    const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f).connect(g).connect(out); src.start(t, Math.random() * 0.1); src.stop(t + dur + 0.03);
+  }
+  function thump(freq, dur, gain, at) { // dumpfer Körper der Maschine
+    const c = ac(); if (!c) return; const t = c.currentTime + (at || 0);
+    const o = c.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(freq, t); o.frequency.exponentialRampToValueAtTime(freq * 0.55, t + dur);
+    const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(out); o.start(t); o.stop(t + dur + 0.03);
+  }
+  return {
+    key() { hit(2300 + Math.random() * 900, 0.045, 0.32, 1.3); thump(150 + Math.random() * 40, 0.05, 0.16); },
+    space() { hit(1300, 0.055, 0.26, 1); thump(115, 0.07, 0.2); },
+    back() { hit(1700, 0.035, 0.18, 1.6); },
+    ret() { hit(700, 0.16, 0.12, 0.7, 0, 2600); hit(1900, 0.06, 0.34, 1.1, 0.17); thump(95, 0.14, 0.26, 0.17); },
+  };
+})();
+['eTitle', 'eBody'].forEach((id) => $(id).addEventListener('input', (e) => {
+  if (!S.tw || !S.snd) return;
+  const t = e.inputType || '';
+  if (t === 'insertParagraph' || t === 'insertLineBreak' || (t === 'insertText' && e.data === '\n')) Sound.ret();
+  else if (t.startsWith('delete')) Sound.back();
+  else if (t === 'insertText' && e.data === ' ') Sound.space();
+  else if (t.startsWith('insert')) Sound.key();
+}));
 function markFx() { document.querySelectorAll('.fxseg button').forEach((x) => x.setAttribute('aria-checked', x.dataset.fx === S.fx)); }
 try { S.fx = localStorage.getItem('journal.fx') || 'fade'; } catch (e) { S.fx = 'fade'; }
 markFx();
@@ -1778,6 +1927,24 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
   }
   app.addEventListener('touchend', end, { passive: true });
   app.addEventListener('touchcancel', end, { passive: true });
+})();
+
+/* Fokus (Mac): nach ein paar Sekunden ununterbrochenem Schreiben tritt die Seitenleiste zurück */
+(function focusMode() {
+  let t = null, last = 0, on = false, mx = null;
+  const app = $('app'), set = (v) => { if (on === v) return; on = v; mx = null; app.classList.toggle('focus', v); };
+  const input = () => {
+    if (!isDesktop()) return; last = performance.now();
+    if (!on && !t) t = setTimeout(() => { t = null; if (performance.now() - last < 1800 && typing() && S.stack[S.stack.length - 1] === 'entry') set(true); }, 2600);
+  };
+  $('eBody').addEventListener('input', input); $('eTitle').addEventListener('input', input);
+  window.addEventListener('mousemove', (e) => {
+    if (!on) return; if (!mx) { mx = [e.screenX, e.screenY]; return; }
+    if (Math.hypot(e.screenX - mx[0], e.screenY - mx[1]) > 36) set(false);
+  }, { passive: true });
+  window.addEventListener('wheel', (e) => { if (on && e.clientX < (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--side')) || 480)) set(false); }, { passive: true });
+  document.addEventListener('focusout', () => setTimeout(() => { if (!typing()) set(false); }, 0));
+  S.unfocus = () => set(false);
 })();
 
 /* Tastatur: Cursor beim Tippen im sichtbaren Bereich halten */
