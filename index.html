@@ -1354,7 +1354,6 @@ function revealDown() { // wie frisch geschrieben: eine weiche Kante läuft von 
   for (const pre of ['webkitMask', 'mask']) { el.style[pre + 'Image'] = 'linear-gradient(to bottom, #000 0, #000 ' + V + 'px, transparent ' + (V + F) + 'px)'; el.style[pre + 'Size'] = '100% ' + (2 * V + F) + 'px'; el.style[pre + 'Repeat'] = 'no-repeat'; }
   const from = '0px ' + (-(V + F)) + 'px';
   const a = el.animate([{ webkitMaskPosition: from, maskPosition: from }, { webkitMaskPosition: '0px 0px', maskPosition: '0px 0px' }], { duration: 1150, easing: 'cubic-bezier(0.3, 0.15, 0.25, 1)', fill: 'both' });
-  el.animate([{ transform: 'translate3d(0,-6px,0)' }, { transform: 'none' }], { duration: 1150, easing: 'cubic-bezier(0.3, 0.15, 0.25, 1)' });
   const end = () => { a.cancel(); unmask(el); };
   a.onfinish = end; clearTimeout(revealDown.t); revealDown.t = setTimeout(() => { if (a.playState !== 'finished') return; end(); }, 1400);
 }
