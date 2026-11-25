@@ -609,9 +609,6 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
   #list{padding:0 18px 40px}
-  /* Einrasten im Schwung: der Browser rechnet die Rastpunkte direkt in die Scrollbewegung ein – oben steht immer eine ganze Karte bzw. ein Monatskopf */
-  #list .row,#list .sep{scroll-snap-align:start}
-  #home.cal-in > #list{scroll-snap-type:y proximity} /* Einrasten nur bei eingefahrenem Kalender – sonst kämpft es mit dem Einfahren und ruckelt */
   /* weicher Auslauf unten als ruhende Fläche über der Liste (keine Maske auf dem scrollenden Element – die ruckelt in Safari) */
   .listfade{display:block;position:absolute;left:0;width:var(--side);bottom:18px;height:28px;pointer-events:none;z-index:2;
     background:linear-gradient(to bottom, color-mix(in srgb, var(--paper) 0%, transparent), var(--paper))} /* die letzte Karte kann ganz über den weichen Rand gescrollt werden */
