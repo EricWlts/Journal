@@ -1787,11 +1787,23 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
   S.autoScrollUntil = performance.now() + 900; L.scrollTo({ top: target, behavior: 'smooth' });
 }
 (function listRest() {
-  /* Mac: kommt die Liste zur Ruhe, rastet sie sanft ein – oben beginnt immer eine ganze Karte (oder ein Monatskopf),
-     im selben Abstand zum Kalender wie links und rechts (18px). Nie ein abgeschnittener Kartenrest oben. */
-  const L = $('list'); let t = null;
+  /* Mac: kommt die Liste zur Ruhe, rastet sie ganz sanft ein – oben beginnt immer eine ganze Karte (oder ein Monatskopf),
+     im selben Abstand zum Kalender wie links und rechts (18px). Eigene, langsame Bewegung (0,9s, weich auslaufend),
+     damit es fast unbemerkt passiert; jede neue Scrollbewegung bricht sie sofort ab. */
+  const L = $('list'); let t = null, anim = 0, moving = false;
+  const stop = () => { if (anim) cancelAnimationFrame(anim); anim = 0; moving = false; };
+  ['wheel', 'pointerdown', 'keydown', 'touchstart'].forEach((ev) => L.addEventListener(ev, stop, { passive: true }));
+  function glide(to) {
+    const from = L.scrollTop, d = to - from, dur = Math.min(1100, 650 + Math.abs(d) * 4), t0 = performance.now();
+    moving = true; S.autoScrollUntil = t0 + dur + 120;
+    const ease = (x) => 1 - Math.pow(1 - x, 4); // sehr weich auslaufen
+    (function step(now) {
+      const k = Math.min(1, (now - t0) / dur); L.scrollTop = from + d * ease(k);
+      if (k < 1 && moving) anim = requestAnimationFrame(step); else { anim = 0; moving = false; }
+    })(t0);
+  }
   L.addEventListener('scroll', () => {
-    if (!isDesktop()) return; clearTimeout(t);
+    if (!isDesktop() || moving) return; clearTimeout(t);
     t = setTimeout(() => {
       if (S.autoScrollUntil && performance.now() < S.autoScrollUntil) return;
       const max = L.scrollHeight - L.clientHeight; if (L.scrollTop <= 1 || L.scrollTop >= max - 1) return;
@@ -1802,9 +1814,8 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       if (hidden < r.height * 0.5) d = -hidden; // knapp angeschnitten: Karte ganz zeigen
       else { const nx = items[items.indexOf(cut) + 1]; if (!nx) return; d = nx.getBoundingClientRect().top - (lt - 1); } // sonst: die nächste beginnt oben
       if (Math.abs(d) < 1) return;
-      S.autoScrollUntil = performance.now() + 700;
-      L.scrollTo({ top: Math.max(0, Math.min(max, L.scrollTop + d)), behavior: 'smooth' });
-    }, 180);
+      glide(Math.max(0, Math.min(max, L.scrollTop + d)));
+    }, 320);
   }, { passive: true });
 })();
 (function listSync() {
