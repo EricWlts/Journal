@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Journal</title>
 <meta name="theme-color" content="#12150f">
+<script>/* Licht schon vor dem ersten Bild setzen – sonst blendet der Hintergrund beim Öffnen sichtbar nach */
+try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().getHours(), R = document.documentElement;
+  R.dataset.light = L === 'auto' ? (H >= 5 && H < 10 ? 'morgen' : H >= 17 && H < 21 ? 'abend' : (H >= 21 || H < 5) ? 'spaet' : 'tag') : 'tag';
+  if (L === 'nacht') R.classList.add('night'); } catch (e) {}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -444,7 +448,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 html[data-light="morgen"]{--paper:#eeede8;--sheetbg:#f7f7f3}
 html[data-light="abend"]{--paper:#ede8df;--sheetbg:#f5f1e9}
 html[data-light="spaet"]{--paper:#e8e2d7;--sheetbg:#f0eadf;--stone:#ddd8cd}
-.app,.view,#entry,#home{transition-property:background-color;transition-duration:1.2s}
+.app,.view,#entry,#home,.list{transition-property:background-color;transition-duration:1.2s}
 /* Nacht: dieselbe Palette, umgekehrt – der dunkle Kopf bleibt der dunkelste Ton */
 html.night{--card:rgba(242,243,239,.045);--cardh:rgba(242,243,239,.075);--cardp:rgba(242,243,239,.1);--paper:#181c17;--sheetbg:#1e231d;--stone:#252b24;--ink:#e4e7df;--ink2:#c3cac4;--muted:#9aa59c;--olive:#a3b4a7;--line:#2f3631;--empty:#353b36;--night:#0b0d0a}
 html.night .row.is-current,html.night :is(#list,#results) .row.is-current{background:#2b322c}
@@ -487,6 +491,15 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
 .ptr.spin svg{animation:ptrspin .9s cubic-bezier(0.5, 0.15, 0.5, 0.85) infinite}
 @keyframes ptrspin{from{transform:rotate(-90deg)}to{transform:rotate(270deg)}}
 @media (min-width: 960px){.ptr{display:none}}
+/* Mac: Hintergrund dunkler als die Karten – die Einträge liegen hell darauf wie Blätter auf dem Tisch (je Lichtstufe) */
+@media (min-width: 960px){
+  html:not(.night){--card:rgba(255,255,255,.5);--cardh:rgba(255,255,255,.7);--cardp:rgba(255,255,255,.85)}
+  html:not(.night),html:not(.night)[data-light="tag"]{--paper:#e0ddd4}
+  html:not(.night)[data-light="morgen"]{--paper:#e1e0d9}
+  html:not(.night)[data-light="abend"]{--paper:#dfd8cc}
+  html:not(.night)[data-light="spaet"]{--paper:#d9d1c4}
+  html.night{--paper:#121510;--card:rgba(242,243,239,.055);--cardh:rgba(242,243,239,.085)}
+}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field span{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
 .field input{height:48px;border:0;border-bottom:1px solid var(--line);background:transparent;font:400 17px var(--sans);color:var(--ink);outline:none;border-radius:0;padding:0}
@@ -603,7 +616,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px;margin-bottom:18px;border-radius:10px} /* Liste endet wie das Blatt 18px über dem Fensterrand */ /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px;margin-bottom:18px} /* Liste endet wie das Blatt 18px über dem Fensterrand */ /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
