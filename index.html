@@ -160,6 +160,13 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home.searching .topbar .setbtn,#home.searching .topbar .newbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
 .newbtn{display:none;position:relative}
 .listfade{display:none}
+/* Monat beim schnellen Scrollen: kleine helle Pille wie die Hinweise, links neben dem Scrollbalken */
+.scrub{position:fixed;left:0;top:0;z-index:40;pointer-events:none;padding:6px 12px 7px;border-radius:8px;background:var(--night);color:var(--linen);
+  font-family:var(--serif);font-size:19px;line-height:1;white-space:nowrap;box-shadow:0 10px 24px -14px rgba(0,0,0,.45);opacity:0;transition:opacity .35s var(--ease)}
+.scrub i{color:var(--mist)}
+.scrub.on{opacity:1;transition-duration:.18s}
+html.night .scrub{background:var(--linen);color:#12150f}
+html.night .scrub i{color:#6f7a71}
 /* Hinweise beim Darüberfahren (nur Mac/Maus): erscheinen erst nach einer knappen Sekunde, ganz weich und ohne Fläche hinter dem Symbol */
 .topbar [data-tip]{position:relative}
 .topbar [data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:50%;transform:translate(-50%,-4px);white-space:nowrap;
@@ -241,7 +248,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   transition:box-shadow .6s var(--sheet), transform .5s var(--sheet), background-color .3s var(--ease), color .3s var(--ease)}
 /* Ausgewählter Tag (geöffneter Eintrag) = Ring außen; heute = kleiner heller Punkt unter dem Tag (Eric 25.11.2026, umgedreht gegenüber Entwurf B) */
 #sidecal .is-now .dot{font-weight:600}
-#sidecal .is-sel .dot{box-shadow:inset 0 0 0 0 rgba(242,243,239,0), inset 0 0 0 0 rgba(18,21,15,0), 0 0 0 3px var(--night), 0 0 0 4px var(--linen);font-weight:600}
+/* Ring als eigene Ebene: blendet und wächst nur über opacity/transform – kein Schatten-Übergang, keine Schriftänderung, daher kein Flackern */
+#sidecal .dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);opacity:0;transform:scale(.86);
+  transition:opacity .18s var(--ease), transform .45s var(--sheet);pointer-events:none;will-change:transform,opacity}
+#sidecal .dot,#sidecal .is-sel .dot{box-shadow:none}
+#sidecal .is-sel .dot::before{opacity:1;transform:none;transition:opacity .28s var(--ease), transform .55s var(--sheet)}
 #sidecal .dot::after{content:'';position:absolute;left:50%;top:calc(100% + 7px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--linen);
   opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
 #sidecal .is-now .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
@@ -329,7 +340,11 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   transition:background-color .2s var(--ease), box-shadow .45s var(--sheet), margin .55s var(--sheet)}
 #list .row.has-more.grp-open{margin-bottom:3px;box-shadow:0 0 0 -3px var(--card), 0 0 0 -6px var(--card)}
 #list .row .more{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.02em;transition:opacity .3s var(--ease)}
-#list .row.grp-open .more{opacity:0}
+#list .row .more{display:inline-flex;align-items:center;gap:4px}
+#list .row .more svg{transition:transform .45s var(--sheet)}
+#list .row.grp-open .more svg{transform:rotate(180deg)}
+#list .row.grp-open .more b{opacity:0}
+#list .row .more b{font-weight:500;transition:opacity .25s var(--ease)}
 #list .dmore{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--sheet)}
 #list .dmore.open{grid-template-rows:1fr}
 #list .dmore-in{min-height:0;overflow:hidden}
@@ -343,7 +358,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 :is(#list,#results) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
 :is(#list,#results) .row.is-current .tm{color:var(--mist)}
 /* hell: der gewählte Eintrag ist leiser – er liegt wie das offene Blatt hell auf, mit feinem Tinten-Rand (Nacht bleibt dunkel) */
-html:not(.night) :is(#list,#results) .row.is-current{background:#3a463f} /* gefüllt wie vorher, eine Spur heller als die Tinte */
+html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gefüllt wie vorher, eine Spur heller als die Tinte */
 :is(#list,#results) .row.is-current .more{color:var(--mist)}
 @media (hover:hover) and (pointer:fine){
     :is(#list,#results) .row:not(.is-current):hover{background:var(--cardh)}
@@ -1065,12 +1080,14 @@ const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke=
 function rowHTML(e, prev, more, i) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit; more: weitere Einträge des Tages (zugeklappt darunter)
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
   const day = (prev ? (prev.date === e.date ? ' cont' : ' newday') : '') + (more ? ' has-more' : '');
-  const meta = np || more ? '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + (more ? '<span class="more">+' + more + '</span>' : '') + '</span>' : '';
+  const meta = np || more ? '<span class="mt">' + (np ? '<span class="ph">' + CAM + np + '</span>' : '') + (more ? '<span class="more" title="weitere Einträge an diesem Tag"><b>+' + more + '</b><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4l2.5 2.5L7.5 4"/></svg></span>' : '') + '</span>' : '';
   return '<button class="row' + day + '"' + (i != null ? ' style="--i:' + i + '"' : '') + ' data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
     '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
 }
 function openGroups(now) { // der Tag des geöffneten Eintrags klappt auf, alle anderen zu
-  const k = S.cur && S.cur.id ? S.cur.date : null;
+  let k = S.cur && S.cur.id ? S.cur.date : null;
+  if (S.foldDay && S.foldDay !== k) S.foldDay = null; // ein anderer Tag gewählt: Zuklappen vergessen
+  if (k && S.foldDay === k) k = null;
   document.querySelectorAll('#list .dmore').forEach((g) => {
     const on = g.dataset.day === k, first = g.previousElementSibling;
     if (g.classList.contains('open') === on) return;
@@ -1602,6 +1619,7 @@ document.addEventListener('click', (ev) => {
   else if (a === 'thisweek') { const dir = S.weekOff > 0 ? -1 : 1; fadeWith([$('weekStat')], 0); S.weekOff -= dir; slideTrack($('weektrack'), dir, () => { S.weekOff = 0; renderWeek(); softIn($('weekStat')); }); }
   else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
     const k = b.dataset.key;
+    if (b.closest('#sctrack')) document.querySelectorAll('#sctrack .cell, #sctrack .wday').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k)); // Ring sofort beim Klick, nicht erst nach dem Überblenden
     if (b.closest('#caltrack') && S.cal.sel !== k) selectCalDay(k); else deskFade(() => openDay(k), (S.byDate.get(k) || [{}])[0].id || 'draft' + k);
   }
   else if (a === 'setlight') { S.light = b.dataset.light; try { localStorage.setItem('journal.light', S.light); } catch (e) {} applyLight(); }
@@ -1613,6 +1631,9 @@ document.addEventListener('click', (ev) => {
   else if (a === 'canceldel') { closeConfirm(); closeRow(); }
   else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
     const r = S.openRow.getBoundingClientRect(); if (S.openRow === b && ev.clientX > r.right - ROW_OPEN) askDelete(b.dataset.id); else closeRow();
+  }
+  else if (a === 'open' && isDesktop() && b.classList.contains('has-more') && b.closest('#list') && S.cur && S.cur.id === b.dataset.id) { // offener Stapel: noch ein Klick klappt ihn zu bzw. wieder auf
+    S.foldDay = S.foldDay === b.dataset.date ? null : b.dataset.date; openGroups();
   }
   else if (a === 'open') {
     S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id;
@@ -1707,6 +1728,25 @@ document.addEventListener('contextmenu', (e) => { // Mac: Rechtsklick auf einen 
 document.addEventListener('pointerdown', (e) => { if (S.ctxId && !e.target.closest('#ctxmenu')) hideCtx(); }, true);
 document.addEventListener('keydown', (e) => { if (S.ctxId && e.key === 'Escape') { e.stopPropagation(); hideCtx(); } }, true);
 $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passive: true });
+/* Mac: beim Ziehen am Scrollbalken oder schnellem Scrollen erscheint neben dem Balken leise der Monat, durch den man gerade fährt */
+(function scrubber() {
+  const L = $('list'), tag = document.createElement('div'); tag.className = 'scrub'; tag.setAttribute('aria-hidden', 'true'); document.body.appendChild(tag);
+  let lastY = 0, lastT = 0, hideT = null, drag = false, shown = false, txt = '';
+  L.addEventListener('pointerdown', (e) => { if (isDesktop() && e.offsetX > L.clientWidth) drag = true; });
+  window.addEventListener('pointerup', () => { if (drag) { drag = false; clearTimeout(hideT); hideT = setTimeout(hide, 650); } });
+  function hide() { if (drag) return; shown = false; tag.classList.remove('on'); }
+  L.addEventListener('scroll', () => {
+    if (!isDesktop()) return;
+    const now = performance.now(), y = L.scrollTop, v = Math.abs(y - lastY) / Math.max(1, now - lastT); lastY = y; lastT = now;
+    if (!shown && !drag && v < 2.2) return; // ruhiges Scrollen: nichts einblenden
+    const row = topRowOfList(); if (row) { const d = parseKey(row.dataset.date), t = MONTHS[d.getMonth()] + ' <i>' + d.getFullYear() + '</i>'; if (t !== txt) { txt = t; tag.innerHTML = t; } }
+    const r = L.getBoundingClientRect(), ch = L.clientHeight, sh = L.scrollHeight, th = Math.max(32, ch * ch / sh);
+    const cy = r.top + (sh > ch ? y / (sh - ch) : 0) * (ch - th) + th / 2;
+    tag.style.transform = 'translate3d(' + Math.round(r.left + L.clientWidth - 12) + 'px,' + Math.round(Math.max(r.top + 14, Math.min(r.bottom - 14, cy))) + 'px,0) translate(-100%,-50%)';
+    if (!shown) { shown = true; tag.classList.add('on'); }
+    clearTimeout(hideT); hideT = setTimeout(hide, 700);
+  }, { passive: true });
+})();
 $('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
 for (const v of ['home', 'search']) $(v).addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
 function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
