@@ -607,7 +607,9 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:21px} .row .n{font-size:28px}
-  #list{padding:0 18px 40px} /* die letzte Karte kann ganz über den weichen Rand gescrollt werden */
+  #list{padding:0 18px 40px}
+  /* Einrasten im Schwung: der Browser rechnet die Rastpunkte direkt in die Scrollbewegung ein – oben steht immer eine ganze Karte bzw. ein Monatskopf */
+  #list .row,#list .sep{scroll-snap-align:start} /* die letzte Karte kann ganz über den weichen Rand gescrollt werden */
   /* Seitenleiste: der dunkle Kalender als schwebende Karte mit runden Ecken – wie das Blatt rechts */
   #home > .hero:first-of-type{margin:18px 18px 0;border-radius:14px 14px 0 0;padding:4px 16px 0}
   #home > .stickytitle{margin:0 18px;padding:0 16px}
@@ -625,7 +627,7 @@ html.night .light .is-sel .dot,html.night .is-sel .dot{box-shadow:0 0 0 2px var(
   .ephotos{grid-template-columns:1fr 1fr}
   #home{display:flex;flex-direction:column;overflow:hidden}
   #home > *{flex:none}
-  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px;margin-bottom:18px;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent)} /* unten löst sich die Liste weich auf; Liste endet wie das Blatt 18px über dem Fensterrand */ /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:18px;margin-bottom:18px;scroll-snap-type:y proximity;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent)} /* unten löst sich die Liste weich auf; Liste endet wie das Blatt 18px über dem Fensterrand */ /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
   .stickytitle::after{display:none}
   #homeTitle{cursor:pointer}
   #homeTitle:hover .y{color:var(--mist)}
@@ -1786,38 +1788,6 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
   if (Math.abs(L.scrollTop - target) < 2) return;
   S.autoScrollUntil = performance.now() + 900; L.scrollTo({ top: target, behavior: 'smooth' });
 }
-(function listRest() {
-  /* Mac: kommt die Liste zur Ruhe, rastet sie ganz sanft ein – oben beginnt immer eine ganze Karte (oder ein Monatskopf),
-     im selben Abstand zum Kalender wie links und rechts (18px). Eigene, langsame Bewegung (0,9s, weich auslaufend),
-     damit es fast unbemerkt passiert; jede neue Scrollbewegung bricht sie sofort ab. */
-  const L = $('list'); let t = null, anim = 0, moving = false;
-  const stop = () => { if (anim) cancelAnimationFrame(anim); anim = 0; moving = false; };
-  ['wheel', 'pointerdown', 'keydown', 'touchstart'].forEach((ev) => L.addEventListener(ev, stop, { passive: true }));
-  function glide(to) {
-    const from = L.scrollTop, d = to - from, dur = Math.min(1100, 650 + Math.abs(d) * 4), t0 = performance.now();
-    moving = true; S.autoScrollUntil = t0 + dur + 120;
-    const ease = (x) => 1 - Math.pow(1 - x, 4); // sehr weich auslaufen
-    (function step(now) {
-      const k = Math.min(1, (now - t0) / dur); L.scrollTop = from + d * ease(k);
-      if (k < 1 && moving) anim = requestAnimationFrame(step); else { anim = 0; moving = false; }
-    })(t0);
-  }
-  L.addEventListener('scroll', () => {
-    if (!isDesktop() || moving) return; clearTimeout(t);
-    t = setTimeout(() => {
-      if (S.autoScrollUntil && performance.now() < S.autoScrollUntil) return;
-      const max = L.scrollHeight - L.clientHeight; if (L.scrollTop <= 1 || L.scrollTop >= max - 1) return;
-      const lt = L.getBoundingClientRect().top + 1, items = [...L.querySelectorAll('.row, .sep')];
-      const cut = items.find((el) => { const r = el.getBoundingClientRect(); return r.top < lt && r.bottom > lt; }); if (!cut) return;
-      const r = cut.getBoundingClientRect(), hidden = lt - 1 - r.top;
-      let d;
-      if (hidden < r.height * 0.5) d = -hidden; // knapp angeschnitten: Karte ganz zeigen
-      else { const nx = items[items.indexOf(cut) + 1]; if (!nx) return; d = nx.getBoundingClientRect().top - (lt - 1); } // sonst: die nächste beginnt oben
-      if (Math.abs(d) < 1) return;
-      glide(Math.max(0, Math.min(max, L.scrollTop + d)));
-    }, 320);
-  }, { passive: true });
-})();
 (function listSync() {
   /* Mac: der Kalender fährt beim Scrollen mit dem Finger ein (wie eine einfahrende Leiste in iOS).
      Erst wird die Leiste kleiner, dann scrollt die Liste. Nach oben: am Listenanfang fährt sie wieder aus. */
