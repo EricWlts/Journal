@@ -798,8 +798,15 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   .todayline.on{--hw:0px}
   .herofoot .hfr{display:flex;align-items:center;gap:8px}
   .calhero{position:relative}
-  .calpill{position:absolute;right:24px;margin-top:-44px}
-  .scpill .scp-a{width:38px}
+  .calpill{position:absolute;right:24px;margin-top:-46px}
+  /* Kapsel am iPhone breiter und griffiger (Mac bleibt 32px/34px) */
+  .scpill{height:36px;border-radius:9px}
+  .scpill .scp-a{width:52px}
+  .scpill .scp-h{font-size:18px}
+  .scpill .scp-h.on{max-width:120px;padding:0 20px 0 19px}
+  /* Woche: wie am Mac folgen beim Wischen nur die Tage gedämpft dem Finger, Wochentage bleiben stehen */
+  #weekwrap{position:relative}
+  #weektrack .dragging .wday .dot{transform:translate3d(var(--dx,0px),0,0);opacity:var(--do,1);transition:none}
   /* Pfeil nach oben im weichen Auslauf */
   .totop{position:fixed;left:50%;bottom:calc(var(--safe-b) + 14px);z-index:14;width:44px;height:44px;margin-left:-22px;display:flex;align-items:center;justify-content:center;
     color:var(--olive);opacity:0;transform:translate3d(0,10px,0) scale(.9);pointer-events:none;
@@ -1160,15 +1167,18 @@ function pulseToday(tr) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const panel = tr.children[1]; if (!panel) return;
   const dot = panel.querySelector('[data-key="' + keyOf(today()) + '"] .dot') || panel.querySelector('.yd.t, .yd.n'); if (!dot) return;
-  const ring = document.createElement('span'); ring.className = 'todaypulse'; if (dot.classList.contains('yd')) { ring.style.position = 'absolute'; dot.style.position = 'relative'; }
-  dot.appendChild(ring);
-  ring.animate([{ transform: 'scale(1)', opacity: 0.6 }, { transform: 'scale(2)', opacity: 0 }], { duration: 1100, delay: 160, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' }).onfinish = () => ring.remove();
+  Promise.all(dot.getAnimations().map((a) => a.finished.catch(() => {}))).then(() => { // erst wenn die Welle den Tag abgesetzt hat
+    if (!dot.isConnected) return;
+    const ring = document.createElement('span'); ring.className = 'todaypulse'; if (dot.classList.contains('yd')) { ring.style.position = 'absolute'; dot.style.position = 'relative'; }
+    dot.appendChild(ring);
+    ring.animate([{ transform: 'scale(1)', opacity: 0.6 }, { transform: 'scale(2)', opacity: 0 }], { duration: 1100, delay: 120, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' }).onfinish = () => ring.remove();
+  });
 }
 function weekToToday() {
   const off = S.weekOff; if (!off || trackBusy) return; const dir = off > 0 ? -1 : 1;
   S.toTodayWk = true; setPill($('wkTodayBtn'), false);
   flipTrack($('weektrack'), Math.abs(off), dir, (k) => { S.weekOff = off + dir * k; renderWeek(); },
-    () => slideTrack($('weektrack'), dir, () => { S.weekOff = 0; S.toTodayWk = false; renderWeek(); pulseToday($('weektrack')); }, 400));
+    () => { S.toTodayWk = false; S.weekOff = -dir; weekMove(dir, () => pulseToday($('weektrack'))); });
 }
 function calToday() {
   const t = today(), { mode, y, m } = S.cal; if (trackBusy) return;
@@ -1189,7 +1199,40 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
   tr.style.transform = 'translate3d(' + (dir > 0 ? 2 * trackX(tr) : 0) + 'px,0,0)';
   setTimeout(() => { trackBusy = false; done(); }, d + 10);
 }
-function shiftWeek(dir, ms) { slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }, ms); }
+function shiftWeek(dir, ms) { if (!isDesktop()) { weekMove(dir); return; } slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }, ms); }
+/* iPhone-Woche wie am Mac (sideMove): Wochentage bleiben stehen, nur die Tage wechseln als Welle in Laufrichtung,
+   der Titel wischt mit (animTitle). Hat der Finger die Tage schon verschoben (--dx/--do), startet die Welle genau dort. */
+function weekMove(dir, after) {
+  const tr = $('weektrack'); if (trackBusy) return;
+  const next = S.weekOff + dir, mon = weekStart(next), ref = next === 0 ? today() : new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 3);
+  const stuck = $('stickyTitle').classList.contains('stuck');
+  if (S.fx === 'slide' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const p = tr.children[1]; if (p) { p.classList.remove('dragging'); p.style.removeProperty('--dx'); p.style.removeProperty('--do'); }
+    slideTrack(tr, dir, () => { S.weekOff = next; renderWeek(); if (after) after(); }, 400); return;
+  }
+  trackBusy = true;
+  const vp = tr.parentElement, old = tr.children[1], cs = getComputedStyle(vp);
+  const dx = parseFloat(old.style.getPropertyValue('--dx')) || 0, dop = old.style.getPropertyValue('--do') ? parseFloat(old.style.getPropertyValue('--do')) : 1;
+  const clone = old.cloneNode(true); clone.classList.remove('dragging'); clone.style.removeProperty('--dx'); clone.style.removeProperty('--do');
+  clone.querySelectorAll('.wd').forEach((x) => { x.style.visibility = 'hidden'; });
+  const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true');
+  ghost.style.padding = cs.paddingTop + ' 0 ' + cs.paddingBottom; ghost.appendChild(clone); vp.appendChild(ghost);
+  if (!stuck) animTitle(MONTHS[ref.getMonth()] + '|' + ref.getFullYear(), dir, S.fx === 'roll');
+  S.weekOff = next; renderWeek();
+  const np = tr.children[1], E = 'cubic-bezier(0.32, 0.72, 0, 1)', roll = S.fx === 'roll';
+  const cells = (p) => [...p.querySelectorAll('.wday')].map((c, i) => ({ dot: c.querySelector('.dot'), col: i })).filter((c) => c.dot);
+  const order = (c) => (dir > 0 ? c.col : 6 - c.col);
+  for (const c of cells(clone)) {
+    const from = 'translate3d(' + dx + 'px,0,0)', tx = roll ? 'translate3d(' + dx + 'px,' + (-dir * 10) + 'px,0)' : 'translate3d(' + (dx - dir * 12) + 'px,0,0)';
+    c.dot.animate([{ opacity: dop, transform: from, filter: 'blur(0)' }, { opacity: 0, transform: tx, filter: 'blur(2px)' }], { duration: 220, delay: order(c) * 14, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' });
+  }
+  for (const c of cells(np)) {
+    const tx = roll ? 'translate3d(0,' + (dir * 12) + 'px,0)' : 'translate3d(' + (dir * 16) + 'px,0,0)';
+    c.dot.animate([{ opacity: 0, transform: tx, filter: 'blur(1.5px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 600, delay: 80 + order(c) * 28, easing: E, fill: 'backwards' });
+  }
+  if (after) setTimeout(after, 260);
+  setTimeout(() => { ghost.remove(); trackBusy = false; }, 720);
+}
 const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>';
 function rowHTML(e, prev) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
@@ -2204,6 +2247,10 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       const p = Math.max(0, Math.min(1, x / W));
       underEl.style.transform = 'translate3d(' + (-28 + 28 * p) + '%,0,0)';
       underEl.style.setProperty('--dim', String(0.12 * (1 - p)));
+    } else if (mode === 'track' && track.id === 'weektrack') { // wie am Mac: nur die Tage folgen gedämpft dem Finger
+      const p = track.children[1]; p.classList.add('dragging');
+      const x = Math.sign(dx) * Math.min(Math.abs(dx) * 0.45, 70 + Math.max(0, Math.abs(dx) * 0.45 - 70) * 0.3);
+      p.style.setProperty('--dx', x.toFixed(1) + 'px'); p.style.setProperty('--do', Math.max(0.2, 1 - Math.abs(dx) / (W * 0.55)).toFixed(3));
     } else if (mode === 'track') {
       track.style.transform = 'translate3d(' + trackX(track, dx) + 'px,0,0)';
       const f = Math.max(0, 1 - Math.abs(dx) / (W * 0.45));
@@ -2307,7 +2354,11 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       const w = track.parentElement.clientWidth;
       if (Math.abs(projX) > w * 0.4 && Math.sign(projX) === Math.sign(dx) || Math.abs(dx) > w * 0.5) {
         const dir = dx < 0 ? 1 : -1; const ms = restMs(w - Math.abs(dx), vx);
-        if (track.id === 'caltrack') shiftCal(dir, ms); else shiftWeek(dir, ms);
+        if (track.id === 'caltrack') shiftCal(dir, ms); else weekMove(dir);
+      } else if (track.id === 'weektrack') { // zurückgleiten
+        const p = track.children[1], x = p.style.getPropertyValue('--dx') || '0px', o = parseFloat(p.style.getPropertyValue('--do')) || 1;
+        p.classList.remove('dragging'); p.style.removeProperty('--dx'); p.style.removeProperty('--do');
+        p.querySelectorAll('.wday .dot').forEach((d) => d.animate([{ transform: 'translate3d(' + x + ',0,0)', opacity: o }, { transform: 'none', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' }));
       } else {
         track.style.transition = 'transform .38s var(--sheet)'; track.style.transform = 'translate3d(' + trackX(track) + 'px,0,0)';
         for (const el of (track.id === 'caltrack' ? [$('calStats'), $('calTitle')] : [$('weekStat')])) { el.style.transition = 'opacity .38s var(--ease)'; el.style.opacity = ''; }
