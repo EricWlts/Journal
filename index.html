@@ -471,7 +471,6 @@ html.night .light .is-entry .dot{color:var(--night)}
 html.night :is(.btn:not(.ghost),.fxseg button[aria-checked="true"],.done span,.floatbtn,.toast){background:var(--linen);color:var(--night)}
 html.night .yd.f{background:#4a514b}
 html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 60px -44px rgba(0,0,0,.8)}
-html.night .ctxmenu{box-shadow:0 0 0 1px var(--line), 0 24px 40px -20px rgba(0,0,0,.7)}
 
 .ephotos{display:grid;gap:8px;margin-top:28px}
 .ephotos img{width:100%;height:auto;display:block;border-radius:8px;background:var(--stone)}
@@ -514,6 +513,22 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--line), 0 24px 40px -20px rgba(0,0
   html:not(.night)[data-light="abend"]{--paper:#dfd8cc}
   html:not(.night)[data-light="spaet"]{--paper:#d9d1c4}
   html.night{--paper:#121510;--card:rgba(242,243,239,.055);--cardh:rgba(242,243,239,.085)}
+}
+/* Nacht verfeinert (Entwurf J1, 25.11.2026): ein feiner Rand trägt die Form statt Schatten; feste, leicht grüne Kartentöne; Text etwas ruhiger */
+html.night{color-scheme:dark;--hair:rgba(242,243,239,.07);--card:#1d221c;--cardh:#222821;--cardp:#272d26}
+html.night .ebody{color:#d3d9d1}
+html.night :is(#list,#results) .row:not(.is-current){box-shadow:inset 0 0 0 1px rgba(242,243,239,.035)}
+html.night .ephotos img{filter:brightness(.88)}
+html.night .confirm .cpanel{box-shadow:0 0 0 1px var(--hair), 0 30px 60px -30px rgba(0,0,0,.8)}
+html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0,0,.7)}
+@media (min-width: 960px){
+  html.night{--card:#181c17;--cardh:#1d221c;--cardp:#222821}
+  /* Kalenderkarte: derselbe feine Rand wie das Blatt (drei Teile – oben, Mitte, unten) */
+  html.night #home > .hero:first-of-type{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair), inset 0 1px 0 var(--hair)}
+  html.night #home > .stickytitle{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair)}
+  html.night #home > .herorest{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair), inset 0 -1px 0 var(--hair)}
+  html.night .view:not(#home){box-shadow:0 0 0 1px var(--hair), 0 30px 60px -44px rgba(0,0,0,.8)}
+  html.night .app.a4 #entry.view{box-shadow:0 0 0 1px rgba(242,243,239,.09), 0 70px 160px -50px #000, 0 24px 50px -28px rgba(0,0,0,.8)}
 }
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field span{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
