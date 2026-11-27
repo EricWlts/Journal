@@ -31,10 +31,10 @@ Testdaten für Playwright: ~40 Einträge in den letzten 60 Tagen in IndexedDB `j
 
 ## Schritte
 
-### ☐ 1 · Grundlagen
+### ☑ 1 · Grundlagen
 Regeln 1, 5, 6 und 8 global umsetzen: Variablen, Kontrast-Töne, `::selection`, `caret-color`, Typo-Klassen. Rein visuell, keine Funktionsänderung.
 
-### ☐ 2 · Karte wird Blatt (iPhone) — `entwurf/Blatt5.dc.html`
+### ☑ 2 · Karte wird Blatt (iPhone) — `entwurf/Blatt5.dc.html`
 Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Öffnen:** Die angetippte Karte wächst zum Blatt (0,8 s `--sheet`). Tageszahl und Titel gleiten an ihren Platz. Der Text wird von oben nach unten freigelegt (Maskenkante wie `revealDown`). Unter dem Datum zieht sich eine feine Linie auf. Die Startseite tritt zurück (scale .94, brightness .6, saturate .85).
 - **Schließen per Zurück-Knopf oder Runterziehen:** Die Geometrie *und* der Zieh-Versatz laufen mit derselben Kurve zur Karte (0,82 s), ohne Hochspringen. Im Blatt steckt eine **exakte Kopie der Karte**, die in den letzten 0,34 s einblendet. Die echte Karte wird im selben Bild ohne Übergang sichtbar. Keine Lande-Animation, kein Nachrasten.
@@ -42,7 +42,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Runterziehen:** Das Blatt folgt dem Finger (×0,62, scale bis −10 %, runde Ecken), die Startseite kommt dabei nach vorn. Ab 120 px oder mit Schwung (> 0,6 px/ms) schließt es.
 - Das bestehende Wischen nach links/rechts zwischen Einträgen und das Löschen müssen weiter funktionieren.
 
-### ☐ 3 · Gedrückt halten (iPhone) — `entwurf/Vorschau3.dc.html`
+### ☑ 3 · Gedrückt halten (iPhone) — `entwurf/Vorschau3.dc.html`
 - Langes Drücken auf eine Karte in Liste oder Suche (480 ms): Die Karte gibt nach (scale .965), dann hebt sie sich als Vorschau ab. Der Hintergrund wird weichgezeichnet (`backdrop-filter: blur(14px)`, 28 % dunkel).
 - Darunter ein Menü: Öffnen / Als Markdown teilen (`navigator.share` oder Kopieren) / Löschen … (Ziegelrot, bestehende Bestätigung).
 - **Schließen:** Das Menü verschwindet zuerst (0,18 s). Vorschau und Hintergrund laufen mit derselben Kurve und Dauer zurück, die Kartenkopie blendet im Flug ein, die echte Karte ist im selben Bild da. Kein Blinken.
