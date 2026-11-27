@@ -101,7 +101,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Standort:** `navigator.geolocation` (einmal fragen, ungefähr). Ortsname über einen kostenlosen Dienst ohne Schlüssel, Wetter über Open-Meteo. **Nur** gespeichert wird „Leer · 4° Nebel“ sowie Sonnenauf- und -untergang im neuen Eintrag, **keine Koordinaten**. Offline: weglassen, nichts anzeigen.
 - Am Mac denselben Mond und dieselben Sonnenzeiten in der Kalenderkarte unter der Linie.
 
-### ☐ 8 · Feinschliff & Abnahme
+### ☑ 8 · Feinschliff & Abnahme
 - Regel 2 (unterbrechbar) und Regel 3 (Herkunft) für Einstellungen und Suche prüfen und nachziehen.
 - Regel 4 (Haptik) einbauen, Regel 7 (leere Zustände).
 - `prefers-reduced-motion`: Alle Bewegungen werden zu kurzen Überblendungen.

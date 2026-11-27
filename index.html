@@ -1386,7 +1386,7 @@ const mondayIdx = (d) => (d.getDay() + 6) % 7;
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
 const isDesktop = () => window.matchMedia('(min-width: 960px)').matches;
-const typing = () => { const a = document.activeElement; return a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'TEXTAREA'); };
+const typing = () => { const a = document.activeElement; return a && !a.closest('#hapL') && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'TEXTAREA'); };
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2600); }
 
 /* ---------- storage (IndexedDB) ---------- */
@@ -2368,7 +2368,7 @@ function yearAgo(k) { const d = parseKey(k); const y = new Date(d.getFullYear() 
 const SUNI = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 14a5 5 0 0 1 10 0"/></svg>';
 function metaHTML(e) { return (e.wx ? '<span>' + esc(e.wx) + '</span>' : '') + (e.sun ? '<span class="sb">' + SUNI + esc(e.sun) + '</span>' : ''); }
 /* Haptik iPhone (iOS 18+, Regel 4): ein versteckter Schalter <input switch> gibt beim Umschalten ein leises Tippen. Scheitert leise. */
-function haptic() { try { if (isDesktop() || !matchMedia('(pointer:coarse)').matches) return; const l = $('hapL'); if (l) l.click(); } catch (e) {} }
+function haptic() { try { if (isDesktop() || !matchMedia('(pointer:coarse)').matches) return; const l = $('hapL'); if (!l) return; const prev = document.activeElement; l.click(); const i = l.querySelector('input'); i.blur(); if (prev && prev !== document.body && prev !== i && prev.focus) prev.focus({ preventScroll: true }); } catch (e) {} } // Fokus nie behalten
 $('hapL').addEventListener('click', (e) => e.stopPropagation());
 /* PLAN 7 · Jahreslinie, Mond, Ort & Wetter. Gespeichert wird nur „Leer · 4° Nebel“ und die Sonnenzeiten im neuen Eintrag – nie Koordinaten. */
 const SKY = { lat: null, lon: null, wx: '', wxAt: 0, day: '', sig: '' };
@@ -2642,7 +2642,7 @@ function back() {
   if (isDesktop() && S.stack[S.stack.length - 1] === 'settings' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     if (back.busy) return; back.busy = true;
     $('settings').classList.add('leaving');
-    setTimeout(() => {
+    back.lt = setTimeout(() => {
       back.busy = false; setTimeout(() => $('settings').classList.remove('leaving'), 600);
       S.stack.pop(); const e = $('entry'); e.classList.remove('returning'); void e.offsetWidth; e.classList.add('returning');
       applyStack(); if (S.homeDirty) renderHome();
@@ -2796,7 +2796,7 @@ document.addEventListener('click', (ev) => {
   const a = b.dataset.act;
   if (a === 'search') { deskSearch(!S.dsearch); }
   else if (a === 'qchip') { $('dq').value = b.dataset.w; S.qKeep = false; dqRun(); $('dq').blur(); }
-  else if (a === 'settings') { if (S.stack[S.stack.length - 1] === 'settings') back(); else { const r = b.getBoundingClientRect(), v = $('settings'); v.style.setProperty('--ox', Math.round(r.left + r.width / 2) + 'px'); v.style.setProperty('--oy', Math.round(r.top + r.height / 2) + 'px'); renderAbout(); go('settings'); } } // zweiter Klick schließt
+  else if (a === 'settings') { if (back.busy && S.stack[S.stack.length - 1] === 'settings') { clearTimeout(back.lt); back.busy = false; $('settings').classList.remove('leaving'); } /* Regel 2: mitten im Schließen wieder auf */ else if (S.stack[S.stack.length - 1] === 'settings') back(); else { const r = b.getBoundingClientRect(), v = $('settings'); v.style.setProperty('--ox', Math.round(r.left + r.width / 2) + 'px'); v.style.setProperty('--oy', Math.round(r.top + r.height / 2) + 'px'); renderAbout(); go('settings'); } } // zweiter Klick schließt
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); S.cal.sel = null; renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; S.cal.sel = null; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
   else if (a === 'pickmonth') { morphSwap($('caltrack'), false, () => { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }); softIn($('calTitle'), $('calStats')); }
