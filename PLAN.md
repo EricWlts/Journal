@@ -4,12 +4,12 @@ Ziel: Die App soll sich anfühlen wie die hochwertigste Journal-App überhaupt. 
 Canvas mit allen Prototypen: https://claude.ai/artifact/W8y7G1RXm8PdtXMzabVB8Q (nur zur Ansicht).
 Quellcode der freigegebenen Prototypen liegt in `entwurf/*.dc.html`. Das ist kein lauffähiges HTML, sondern eine Vorlage. Übernehmen sollst du CSS, Zeiten, Kurven, Werte und Logik, nicht das Template-Format.
 
-## Arbeitsweise (sparsam!)
-- Der Haupt-Agent (Orchestrator) liest **nicht** die ganze `index.html` (~220 KB). Er liest diese Datei und vergibt je Schritt **einen** Unteragenten mit `model: "sonnet"`. Für reines Suchen nimmt er `Explore` mit `model: "haiku"`.
-- Brief an den Unteragenten: die Schrittnummer aus diesem Plan, die nötigen `entwurf/`-Dateien, „nur grep + gezielte Ausschnitte lesen, keine ganze Datei“ und die CLAUDE.md-Regeln (unten kurz).
-- Nach jedem Schritt prüft ein **zweiter** Unteragent (`model: "sonnet"`), der den Code nicht geschrieben hat. Er testet mit Playwright (Chrome) auf iPhone 390×844 mit Touch und Mac 1280×800, mit Testdaten in IndexedDB (siehe unten), und schaut sich Screenshots an. Mängel gehen zurück an den ersten Unteragenten, höchstens 2 Runden.
-- Danach: `sw.js` VERSION +1, Commit (deutsch, kurz), Push auf `main`. **Ein Push pro Schritt.** So bleibt die App immer lauffähig.
-- Am Ende jeder Sitzung: CLAUDE.md um die neuen Funktionen ergänzen, knapp und im bestehenden Stil. In dieser Datei den Schritt abhaken (☑).
+## Arbeitsweise (SPARMODUS – gilt ab 27.11.2026 abends)
+- **Keine Unteragenten.** Ein Agent pro Chat, **ein Schritt pro Chat**. Unteragenten starten jedes Mal kalt und lesen alles neu – das war zu teuer.
+- `index.html` (~220 KB) **nie ganz lesen**: nur `grep -n` und gezielte Ausschnitte (`sed -n 'A,Bp'`, max. ~150 Zeilen am Stück). Aus `entwurf/` nur die eine Datei des Schritts, und davon nur CSS/Logik-Teile.
+- **Test ohne Bilder:** Playwright headless, iPhone 390×844 (Touch) und Mac 1280×800; prüfen per `page.evaluate` (Elemente da, Klassen/Zustände richtig, keine Konsolenfehler) – **keine Screenshots ansehen**, höchstens einen einzigen am Ende, wenn etwas unklar ist. Die optische Abnahme macht Eric am iPhone.
+- Danach: `sw.js` VERSION +1, Commit (deutsch, kurz), Push auf `main`, Schritt hier abhaken (☑), CLAUDE.md nur mit 1–3 knappen Zeilen ergänzen.
+- Antwort an Eric: max. 5 Sätze.
 - Nie Bestehendes verschlechtern. Nicht wieder einbauen, was laut CLAUDE.md entfernt wurde (Schreibmaschine/Geräusche, Stapel, Fußzeile, Einrasten der Liste, Fokus-Modus, Feder-/Tinteneffekt).
 
 Testdaten für Playwright: ~40 Einträge in den letzten 60 Tagen in IndexedDB `journal` / Store `entries` (`{id,date:'YYYY-MM-DD',created,modified,title,text,photos:[],source:'local'}`) einfügen, dann neu laden.
@@ -30,6 +30,7 @@ Testdaten für Playwright: ~40 Einträge in den letzten 60 Tagen in IndexedDB `j
 9. **Papier:** Helle Flächen bekommen `box-shadow: inset 0 1px 0 rgba(255,255,255,.55–.7)` und 16px Rundung oben (iPhone-Blätter).
 
 ## Schritte
+(◐ = gebaut und hochgeladen, aber nicht abgehakt – zu Beginn kurz prüfen, ob es vollständig ist, dann ☑.)
 
 ### ☑ 1 · Grundlagen
 Regeln 1, 5, 6 und 8 global umsetzen: Variablen, Kontrast-Töne, `::selection`, `caret-color`, Typo-Klassen. Rein visuell, keine Funktionsänderung.
@@ -48,7 +49,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Schließen:** Das Menü verschwindet zuerst (0,18 s). Vorschau und Hintergrund laufen mit derselben Kurve und Dauer zurück, die Kartenkopie blendet im Flug ein, die echte Karte ist im selben Bild da. Kein Blinken.
 - Das bestehende Wisch-zum-Löschen darf nicht kollidieren: Langes Drücken nur ohne Bewegung (< 8 px).
 
-### ☐ 4a · Monat als Startseite (iPhone) — `entwurf/Start4.dc.html`
+### ◐ 4a · Monat als Startseite (iPhone) — `entwurf/Start4.dc.html`
 - **Startseite:** Der dunkle Kopf zeigt den ganzen Monat. Scrollen der Liste klappt den Monat 1:1 mit dem Finger zur Woche des gewählten Tages ein: Reihen laufen zusammen und blenden aus, erst dann scrollt die Liste. Beim Loslassen gleitet es ganz auf oder zu (Schwung zählt). Ganz oben nach oben scrollen klappt es wieder auf.
 - **Wechsel wie am Mac** (`sideMove`/`weekMove`):
   - Der alte Inhalt wird als Geist kopiert und gleitet 12 px weg (0,22 s, blur 2px, gestaffelt 14 ms).
@@ -61,7 +62,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Zählwerk:** „x/y Tage“ rollt Ziffer für Ziffer (gibt es schon: `setCount`).
 - **Mac** (`entwurf/MacStart2.dc.html`): dieselbe Welle, dasselbe Daumenkino und dieselbe Ring-Logik in der Seitenleiste. Bestehendes, das schon stimmt, bleibt.
 
-### ☐ 4b · Jahr (iPhone + Mac) — `Start4`
+### ◐ 4b · Jahr (iPhone + Mac) — `Start4`
 - Ein Tipp auf den großen Monatstitel zoomt den Monat an seinen Platz im Jahr. Der Titel wird zu „Das Jahr *2026*“. Die anderen Monate kommen von ihm aus nach außen.
 - Umschalter „Monate | Übersicht“ (Übersicht = heutige Siebenerblöcke, eine Zeile pro Monat). Beim Umschalten wandert jeder Tag einzeln an seinen neuen Platz (0,9 s `--sheet`, gestaffelt nach Monat).
 - Ein Tipp auf einen Monat zoomt hinein.
