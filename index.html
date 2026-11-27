@@ -106,9 +106,24 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .twbtn:active .tw,.twbtn:active .ar{opacity:.6}
 /* iPhone-Startseite (PLAN 4a): Monat im dunklen Kopf. Der Monatsblock (.weekwrap, 6 Zeilen à 48px) bleibt beim Scrollen mit dem Finger 1:1 gekoppelt:
    er hängt oben fest (sticky, top negativ), die Zeilen laufen über --p (0 offen … 1 eingeklappt, aus der Scrollposition) zur Woche des gewählten Tages zusammen. */
-.mwd{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px));z-index:6;height:44px;background:var(--night);color:var(--mist);padding:22px 24px 0;box-sizing:border-box;
+.mwd{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px) + 16px);z-index:6;height:28px;background:var(--night);color:var(--mist);padding:6px 24px 0;box-sizing:border-box;
   display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;font-size:12px;font-weight:500;letter-spacing:.1em;line-height:14px}
-.mwd::before{content:'';position:absolute;left:24px;right:24px;top:8px;height:1px;background:var(--nline)}
+.yline{position:relative;height:1px;background:var(--nline);--yp:50%}
+.yline::before{content:'';position:absolute;left:0;top:0;height:1px;width:var(--yp);background:color-mix(in srgb, var(--copper) 70%, transparent)}
+.yline::after{content:'';position:absolute;top:-3px;left:var(--yp);width:1px;height:7px;background:var(--copper)}
+.ylinew{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px));z-index:6;height:16px;background:var(--night);padding:8px 24px 0;box-sizing:border-box} /* Jahreslinie (PLAN 7): kupfern bis heute, mit Marke */
+.ylinew .yrmini{top:-2px;margin-top:0;z-index:3}
+/* Mond und Sonne (PLAN 7): eine leise Zeile unter der Jahreslinie; scrollt am iPhone unter die Linie weg */
+.sky{display:flex;align-items:center;gap:14px;height:34px;color:var(--mist)}
+.skyw{background:var(--night);padding:8px 24px 12px}
+.sky .moon{flex:0 0 34px;width:34px;height:34px;display:block}
+.sky .mtx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sky .mn{font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.1;color:#e2e6df;white-space:nowrap}
+.sky .mx{font-size:11.5px;line-height:1.2;color:#7f8b81;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sky .sun{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;color:#9aa59c;font-variant-numeric:tabular-nums;opacity:0;transition:opacity var(--t3) var(--ease)}
+.sky .sun.on{opacity:1}
+.sky .sun > span{display:flex;align-items:center;gap:6px}
+.sky .sun svg{width:15px;height:15px}
 .weekwrap{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px) + 44px - var(--hch, 240px));z-index:5;height:calc(var(--hch, 240px) + 48px);background:var(--night);overflow-x:clip;overflow-y:visible;touch-action:pan-y;--p:0;transition:height var(--t3) var(--sheet)} /* --hch = (Zeilen − 1) × 48px: der Block ist so hoch wie der Monat Zeilen hat */
 .weekwrap::after{content:'';position:absolute;left:0;right:0;top:100%;height:28px;opacity:0;transition:opacity var(--t1) var(--ease);pointer-events:none;
   background:linear-gradient(var(--night), var(--night)) left top / 100% 14px no-repeat,
@@ -120,7 +135,6 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
   transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)} /* eingeklappt: kleine Heute-Kapsel am unteren Rand des Kopfs, damit man auch beim Scrollen zurück zu heute kommt */
 .wkmini.on,.yrmini.on{opacity:1;transform:none;pointer-events:auto;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet)}
 .wkmini svg,.yrmini svg{width:10px;height:10px;transition:transform var(--t2) var(--sheet)} .wkmini.dir-r svg,.yrmini.dir-r svg{transform:rotate(180deg)}
-.mwd .yrmini{top:-2px;margin-top:0;z-index:3}
 
 /* Jahr (PLAN 4b): Ein Tipp auf den Monatstitel zoomt den Monat an seinen Platz im Jahr (iPhone: Kopf der Startseite, Mac: Seitenleiste).
    Die Jahresebene (.ylay) liegt als eigene Ebene über dem Monat: jeder Tag ist ein absolut platziertes Feld (.yz), Monate/Übersicht sind nur zwei Lagen
@@ -173,7 +187,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .hfr .yseg{position:absolute;right:34px;top:50%;margin-top:-16px}
 .scnav .yseg{position:absolute;left:50%;top:50%;margin:-16px 0 0 -86px}
 .mwd > span{transition:opacity var(--t2) var(--ease)}
-.mwd .ymk{top:22px}
+.mwd .ymk{top:6px}
 #home.yr.yo .mwd .ymk{opacity:1;transition:opacity var(--t3) var(--ease) .3s}
 #home.yr .mwd > span:not(.ymk){opacity:0}
 .weekwrap.yrt{transition-duration:.9s}
@@ -827,13 +841,15 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   #homeTitle .t,#homeTitle .y{display:inline-block;will-change:transform}
   #homeTitle .y{padding-right:.12em} /* kursive Ziffern nicht abschneiden */
   #home.cal-in .stickytitle #scStat{opacity:0}
-  .weekwrap,.mwd,.weekline,#todayLine{display:none}
+  .weekwrap,.mwd,.weekline,#todayLine,.ylinew,#skyH{display:none}
+  .scinner .yline{margin:0}
+  .scinner .skyw{padding:12px 0 2px;background:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:42px;bottom:42px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
   .sidecal{display:block;overflow:hidden;margin:8px -24px 0;padding:0 24px} /* reicht bis an den Rand: nichts wird vorzeitig abgeschnitten */
   .sidecal.snapping{transition:height .45s var(--sheet)}
-  .scinner{padding-bottom:6px;transform-origin:50% 0;border-top:1px solid var(--nline)}
+  .scinner{padding-bottom:6px;transform-origin:50% 0}
   #home.cal-in .scinner{pointer-events:none}
   .minibar{display:none}
   .row .ti{font-size:22.5px;line-height:1.15} .row .n{font-size:28px}
@@ -1193,11 +1209,13 @@ html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
     </header>
     <div class="ptr" id="ptr" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle class="ptr-track" cx="15" cy="15" r="11"/><circle class="ptr-arc" cx="15" cy="15" r="11" pathLength="100"/></svg></div>
     <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1><div class="title titlenext" id="homeTitleNext" aria-hidden="true"></div><button class="iconbtn stickysearch" data-act="search" aria-label="Suchen" tabindex="-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><svg class="i-x2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="mwd dark" id="mwd" aria-hidden="true"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span><div class="ymk" id="yMarks"></div><button class="yrmini" id="yrMini" data-act="yrtoday" aria-label="Zurück zu diesem Jahr" tabindex="-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Heute</button></div>
+    <div class="ylinew dark" id="yLineW"><div class="yline"></div><button class="yrmini" id="yrMini" data-act="yrtoday" aria-label="Zurück zu diesem Jahr" tabindex="-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Heute</button></div>
+    <div class="skyw dark" id="skyH"><div class="sky"><svg class="moon" viewBox="-17 -17 34 34" role="img" aria-label=""></svg><span class="mtx"><span class="mn"></span><span class="mx"></span></span><span class="sun"></span></div></div>
+    <div class="mwd dark" id="mwd" aria-hidden="true"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span><div class="ymk" id="yMarks"></div></div>
     <div class="weekwrap dark" id="weekwrap"><div class="weektrack" id="weektrack"></div><div class="ylay pre" id="yearlay"></div><button class="wkmini" id="wkMini" data-act="thisweek" aria-label="Zurück zu heute" tabindex="-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Heute</button></div>
     <header class="hero dark herorest">
       <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      <div class="sidecal" id="sidecal"><div class="scinner">
+      <div class="sidecal" id="sidecal"><div class="scinner"><div class="yline"></div><div class="skyw" id="skyM"><div class="sky"><svg class="moon" viewBox="-17 -17 34 34" role="img" aria-label=""></svg><span class="mtx"><span class="mn"></span><span class="mx"></span></span><span class="sun"></span></div></div>
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
         <div class="scnav"><span id="scStat"><span class="count" id="scCount"></span><span class="lbl">Tage</span><span class="away" id="scAway"></span></span>
           <span class="yseg" role="group" aria-label="Jahresansicht"><span class="ysk"></span><button data-act="ylayout" data-l="months" aria-pressed="true">Monate</button><button data-act="ylayout" data-l="overview" aria-pressed="false">Übersicht</button></span>
@@ -2295,7 +2313,7 @@ function tidyBody(b) { // erste Zeile in einen eigenen Absatz holen, sobald die 
 /* ---------- Beim Schreiben: Tagesimpuls, Begrüßung, Ort & Wetter, Heute vor einem Jahr ---------- */
 const WS = (() => { const d = { imp: true, meta: true, mem: true }; try { return Object.assign(d, JSON.parse(localStorage.getItem('journal.write') || '{}')); } catch (e) { return d; } })();
 function markW() { document.querySelectorAll('.wrow[data-k]').forEach((r) => r.setAttribute('aria-checked', WS[r.dataset.k] ? 'true' : 'false')); }
-function toggleW(k) { WS[k] = !WS[k]; try { localStorage.setItem('journal.write', JSON.stringify(WS)); } catch (e) {} markW(); }
+function toggleW(k) { WS[k] = !WS[k]; try { localStorage.setItem('journal.write', JSON.stringify(WS)); } catch (e) {} markW(); if (k === 'meta') { SKY.sig = ''; paintSky(); if (WS.meta) locate(true); } }
 let IMP = null;
 function loadImp() { if (IMP || loadImp.p) return; loadImp.p = fetch('impulse.json').then((r) => r.json()).then((j) => { if (Array.isArray(j) && j.length) { IMP = j; writeAids(); } }).catch(() => { loadImp.p = null; }); }
 const AID = { e: null, i: -1, mem: false }; // das neue Blatt, für das Impuls und Erinnerung gelten; i < 0 = Impuls des Tages
@@ -2333,9 +2351,97 @@ function impNext() { // anderer Impuls: Wörter verschwimmen raus, die neuen bau
 function yearAgo(k) { const d = parseKey(k); const y = new Date(d.getFullYear() - 1, d.getMonth(), d.getDate()); if (y.getMonth() !== d.getMonth()) return null; const L = S.byDate.get(keyOf(y)); return L && L.length ? L[L.length - 1] : null; }
 const SUNI = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 14a5 5 0 0 1 10 0"/></svg>';
 function metaHTML(e) { return (e.wx ? '<span>' + esc(e.wx) + '</span>' : '') + (e.sun ? '<span class="sb">' + SUNI + esc(e.sun) + '</span>' : ''); }
+/* PLAN 7 · Jahreslinie, Mond, Ort & Wetter. Gespeichert wird nur „Leer · 4° Nebel“ und die Sonnenzeiten im neuen Eintrag – nie Koordinaten. */
+const SKY = { lat: null, lon: null, wx: '', wxAt: 0, day: '', sig: '' };
+const pad2 = (n) => (n < 10 ? '0' : '') + n;
+const hm = (d) => d.getHours() + ':' + pad2(d.getMinutes());
+function moonAge(d) { const jd = d.getTime() / 864e5 + 2440587.5; const x = ((jd - 2451550.1) / 29.530588853) % 1; return x < 0 ? x + 1 : x; }
+const moonName = (a) => a < .03 || a > .97 ? 'Neumond' : a < .22 ? 'Zunehmende Sichel' : a < .28 ? 'Erstes Viertel' : a < .47 ? 'Zunehmender Mond' : a < .53 ? 'Vollmond' : a < .72 ? 'Abnehmender Mond' : a < .78 ? 'Letztes Viertel' : 'Abnehmende Sichel';
+function moonInfo(now) {
+  const at = (k) => moonAge(new Date(now.getFullYear(), now.getMonth(), now.getDate() + k, 21)), a = at(0), nm = moonName(a);
+  let toFull = 30, toNew = 30;
+  for (let k = 0; k < 31; k++) { const x = at(k), y = at(k + 1); if (toFull === 30 && x <= .5 && y > .5) toFull = k; if (toNew === 30 && y < x) toNew = k; }
+  const n = Math.min(toFull, toNew) + 1, what = toFull <= toNew ? 'Vollmond' : 'Neumond';
+  const next = nm === 'Vollmond' ? 'Heute Nacht voll' : nm === 'Neumond' ? 'Heute Nacht dunkel' : what + (n === 1 ? ' morgen' : ' in ' + n + ' Tagen');
+  return { a, nm, next };
+}
+function moonSVG(a, id) { // echt beleuchtet: zunehmend rechts hell, weiche Schattengrenze, Mondmeere, schwacher Erdschein
+  const r = 15, rx = Math.abs(Math.cos(2 * Math.PI * a)) * r, wax = a < .5, o = wax ? 1 : 0, i = wax ? (a < .25 ? 0 : 1) : (a > .75 ? 1 : 0);
+  const lit = a < .012 || a > .988 ? 'M 0 0 Z' : 'M 0 ' + (-r) + ' A ' + r + ' ' + r + ' 0 0 ' + o + ' 0 ' + r + ' A ' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + i + ' 0 ' + (-r) + ' Z';
+  return '<defs><radialGradient id="ml' + id + '" cx="38%" cy="36%" r="72%"><stop offset="0" stop-color="#f7f4ea"/><stop offset=".68" stop-color="#e2ddcc"/><stop offset="1" stop-color="#b8b3a2"/></radialGradient>'
+    + '<filter id="mf' + id + '" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".7"/></filter>'
+    + '<mask id="mm' + id + '"><rect x="-17" y="-17" width="34" height="34" fill="#000"/><path d="' + lit + '" fill="#fff" filter="url(#mf' + id + ')"/></mask></defs>'
+    + '<circle r="15" fill="#1b201c"/><circle r="15" fill="#c9cdc4" opacity=".07"/>'
+    + '<g mask="url(#mm' + id + ')"><circle r="15" fill="url(#ml' + id + ')"/><g fill="#8b8676" opacity=".32"><ellipse cx="-5" cy="-5" rx="5" ry="4"/><ellipse cx="3" cy="-3.5" rx="3.4" ry="3"/><ellipse cx="5.5" cy="1.2" rx="4" ry="3.1"/><ellipse cx="10.5" cy="-2" rx="1.9" ry="2.4"/><ellipse cx="-7.5" cy="3.5" rx="4.4" ry="6.2"/><ellipse cx="1.5" cy="7.5" rx="3.2" ry="2"/></g><circle cx="-2" cy="10" r="1.1" fill="#fbf9f1" opacity=".55"/></g>'
+    + '<circle r="15" fill="none" stroke="rgba(242,243,239,.14)" stroke-width=".8"/>';
+}
+function sunTimes(date, lat, lon) { // NOAA-Näherung; Ortszeit inkl. Sommerzeit über Date; Polartag/-nacht abgefangen
+  const R = Math.PI / 180, y = date.getFullYear(), m = date.getMonth(), d = date.getDate();
+  const n = Date.UTC(y, m, d, 12) / 864e5 + 2440587.5 - 2451545 - lon / 360;
+  const g = (357.529 + 0.98560028 * n) * R, q = 280.459 + 0.98564736 * n;
+  const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * R, eps = (23.439 - 0.00000036 * n) * R;
+  const dec = Math.asin(Math.sin(eps) * Math.sin(L));
+  const ra = Math.atan2(Math.cos(eps) * Math.sin(L), Math.cos(L)) / R / 15;
+  let eqt = ((q / 15 - ra) % 24 + 36) % 24 - 12; // Zeitgleichung in Stunden
+  const cosH = (Math.sin(-0.833 * R) - Math.sin(lat * R) * Math.sin(dec)) / (Math.cos(lat * R) * Math.cos(dec));
+  if (cosH > 1) return { polar: 'Polarnacht' }; if (cosH < -1) return { polar: 'Mitternachtssonne' };
+  const H = Math.acos(cosH) / R / 15, noon = 12 - lon / 15 - eqt, base = Date.UTC(y, m, d);
+  return { rise: new Date(base + (noon - H) * 36e5), set: new Date(base + (noon + H) * 36e5) };
+}
+const SUNUP = '<svg viewBox="0 0 24 24" fill="none" stroke="#c9a06a" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 19h18M7 15a5 5 0 0 1 10 0M12 3v6M9 6l3-3 3 3"/></svg>';
+const SUNDN = '<svg viewBox="0 0 24 24" fill="none" stroke="#7f8b81" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 19h18M7 15a5 5 0 0 1 10 0M12 9V3M9 6l3 3 3-3"/></svg>';
+function sunNow() { if (SKY.lat == null) return null; return sunTimes(new Date(), SKY.lat, SKY.lon); }
+function sunStr() { const t = sunNow(); return !t ? '' : t.polar ? t.polar : hm(t.rise) + ' – ' + hm(t.set); }
+function paintSky() {
+  const now = new Date(), day = keyOf(now), t = WS.meta ? sunNow() : null, sig = day + '|' + (t ? sunStr() : '');
+  const y0 = new Date(now.getFullYear(), 0, 1), days = (new Date(now.getFullYear() + 1, 0, 1) - y0) / 864e5;
+  const yp = ((now - y0) / 864e5 / days * 100).toFixed(2) + '%', doy = Math.floor((now - y0) / 864e5) + 1;
+  document.querySelectorAll('.yline').forEach((l) => { l.style.setProperty('--yp', yp); l.title = 'Tag ' + doy + ' von ' + days; });
+  if (sig === SKY.sig) return; SKY.sig = sig;
+  const mi = moonInfo(now);
+  document.querySelectorAll('.sky').forEach((el, k) => {
+    const sv = el.querySelector('.moon'); sv.innerHTML = moonSVG(mi.a, k); sv.setAttribute('aria-label', mi.nm);
+    el.querySelector('.mn').textContent = mi.nm; el.querySelector('.mx').textContent = mi.next;
+    const su = el.querySelector('.sun');
+    su.innerHTML = !t ? '' : t.polar ? '<span>' + t.polar + '</span>' : '<span aria-label="Sonnenaufgang">' + SUNUP + hm(t.rise) + '</span><span aria-label="Sonnenuntergang">' + SUNDN + hm(t.set) + '</span>';
+    su.classList.toggle('on', !!t);
+  });
+}
+const geoSt = () => { try { return localStorage.getItem('journal.geo') || ''; } catch (e) { return ''; } };
+const setGeo = (v) => { try { localStorage.setItem('journal.geo', v); } catch (e) {} };
+const WXW = (c) => c === 0 ? 'klar' : c === 1 ? 'heiter' : c === 2 ? 'wolkig' : c === 3 ? 'bedeckt' : c === 45 || c === 48 ? 'Nebel' : c >= 51 && c <= 57 ? 'Niesel' : c >= 61 && c <= 67 ? 'Regen' : c >= 71 && c <= 77 ? 'Schnee' : c >= 80 && c <= 82 ? 'Schauer' : c >= 85 && c <= 86 ? 'Schneeschauer' : c >= 95 ? 'Gewitter' : '';
+function locate(ask) { // einmal fragen, ungefähr; abgelehnt = nie wieder fragen
+  if (!WS.meta || !navigator.geolocation || SKY.locating) return; const st = geoSt();
+  if (st === 'no' || (!st && !ask)) return;
+  SKY.locating = true;
+  navigator.geolocation.getCurrentPosition((p) => {
+    SKY.locating = false; setGeo('ok');
+    SKY.lat = Math.round(p.coords.latitude * 100) / 100; SKY.lon = Math.round(p.coords.longitude * 100) / 100;
+    SKY.sig = ''; paintSky(); fillMeta(); fetchWx();
+  }, (err) => { SKY.locating = false; if (err && err.code === 1) setGeo('no'); }, { enableHighAccuracy: false, maximumAge: 3 * 36e5, timeout: 20000 });
+}
+async function fetchWx() {
+  if (SKY.lat == null || !navigator.onLine || Date.now() - SKY.wxAt < 30 * 6e4) return; SKY.wxAt = Date.now();
+  const la = SKY.lat, lo = SKY.lon;
+  const get = (u) => fetch(u, { cache: 'no-store', referrerPolicy: 'no-referrer' }).then((r) => r.ok ? r.json() : null).catch(() => null);
+  const [pl, w] = await Promise.all([
+    get('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + la + '&longitude=' + lo + '&localityLanguage=de'),
+    get('https://api.open-meteo.com/v1/forecast?latitude=' + la + '&longitude=' + lo + '&current=temperature_2m,weather_code&timezone=auto')]);
+  const place = pl ? (pl.city || pl.locality || '') : '';
+  const c = w && w.current, wx = c && typeof c.temperature_2m === 'number' ? (Math.round(c.temperature_2m) + '° ' + WXW(c.weather_code)).trim() : '';
+  if (!place && !wx) { SKY.wxAt = 0; return; } // offline oder Dienst weg: nichts anzeigen
+  SKY.wx = [place, wx].filter(Boolean).join(' · '); fillMeta();
+}
+function fillMeta() { // nur das neue Blatt von heute bekommt Ort, Wetter und Sonnenzeiten
+  const e = S.cur; if (!e || !WS.meta || AID.e !== e || e.date !== keyOf(new Date())) return;
+  let ch = false; const ss = sunStr();
+  if (SKY.wx && !e.wx) { e.wx = SKY.wx; ch = true; } if (ss && !e.sun) { e.sun = ss; ch = true; }
+  if (!ch) return; writeAids();
+  if (e.id) { e._dirty = true; DB.put('entries', e).then(() => Sync.soon()).catch(() => {}); }
+}
 function writeAids() {
   const e = S.cur; if (!e) return;
-  if (AID.e !== e && !e.id && !hasContent(e)) { AID.e = e; AID.i = -1; AID.mem = false; $('eImp').dataset.for = ''; } // neues, leeres Blatt
+  if (AID.e !== e && !e.id && !hasContent(e)) { AID.e = e; AID.i = -1; AID.mem = false; $('eImp').dataset.for = ''; if (WS.meta) { if (SKY.lat == null) locate(true); else { fetchWx(); setTimeout(fillMeta, 0); } } } // neues, leeres Blatt
   const fresh = AID.e === e, empty = !hasContent(e);
   const mh = metaHTML(e); if ($('eMeta').innerHTML !== mh) { $('eMeta').innerHTML = mh; $('eMetaP').innerHTML = mh; }
   const box = $('eImp'), want = fresh && WS.imp;
@@ -2797,6 +2903,7 @@ function setTheme() {
 }
 window.addEventListener('resize', () => setTheme());
 applyLight(); setInterval(applyLight, 5 * 60 * 1000);
+paintSky(); locate(false); setInterval(() => { paintSky(); fetchWx(); }, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) applyLight(); });
 function markFx() { document.querySelectorAll('.fxseg button').forEach((x) => x.setAttribute('aria-checked', x.dataset.fx === S.fx)); }
 try { S.fx = localStorage.getItem('journal.fx') || 'fade'; } catch (e) { S.fx = 'fade'; }
@@ -3066,7 +3173,9 @@ function linkTitle(next, p) {
     const wk = $('weekwrap'), tb = bar.offsetHeight;
     if (tb && S.tb !== tb) { S.tb = tb; home.style.setProperty('--tb', tb + 'px'); }
     const safeT = parseFloat(getComputedStyle(bar).top) || 0, hero = home.querySelector(':scope > .hero');
-    const d0 = S.d0 = hero ? Math.max(0, hero.offsetHeight - safeT) : 0; // so weit scrollt der obere Streifen weg, bevor der Titel hängen bleibt
+    const skyEl = $('skyH'), skyH = skyEl ? skyEl.offsetHeight : 0;
+    const d0 = S.d0 = (hero ? Math.max(0, hero.offsetHeight - safeT) : 0) + skyH; // so weit scrollt der obere Streifen (und die Mondzeile) weg, bevor der Monat einklappt
+    if (skyEl) { const yb = $('yLineW').getBoundingClientRect().bottom, sr = skyEl.getBoundingClientRect(); const f = Math.max(0, Math.min(1, (sr.bottom - 12 - yb) / Math.max(1, sr.height - 12))); skyEl.style.opacity = f < 1 ? (f * f).toFixed(3) : ''; }
     const p = Math.max(0, Math.min(1, (home.scrollTop - d0) / (S.hch || HM_CH)));
     if (p !== S.hp) {
       const was = (S.hp || 0) > 0.999; S.hp = p; wk.style.setProperty('--p', p.toFixed(4));
@@ -3791,7 +3900,7 @@ async function renderAbout() {
 /* ---------- Abgleich über ein privates GitHub-Repository ---------- */
 async function pool(items, n, fn) { let i = 0; const run = async () => { while (i < items.length) { const k = i++; await fn(items[k]); } }; await Promise.all(Array.from({ length: Math.min(n, items.length) }, run)); }
 const b64ToBytes = (b64) => { const bin = atob(b64.replace(/\s/g, '')); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
-const cleanEntry = (e) => ({ id: e.id, date: e.date, created: e.created, modified: e.modified || e.created, title: e.title || '', text: e.text || '', photos: e.photos || [], source: e.source || 'app' });
+const cleanEntry = (e) => Object.assign({ id: e.id, date: e.date, created: e.created, modified: e.modified || e.created, title: e.title || '', text: e.text || '', photos: e.photos || [], source: e.source || 'app' }, e.wx ? { wx: e.wx } : {}, e.sun ? { sun: e.sun } : {});
 const deviceName = () => /iPhone|iPad/.test(navigator.userAgent) ? 'iPhone' : /Mac/.test(navigator.userAgent) ? 'Mac' : 'Gerät';
 function sniffType(u) {
   if (u[0] === 0x89 && u[1] === 0x50) return 'image/png';

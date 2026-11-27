@@ -92,7 +92,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Randspalte Mac:** Tageszahl, Wochentag, „November 2026“ / Uhrzeit, kupferne Linie, „Leer · 4° Nebel“, kleiner Sonnenbogen „8:19 – 16:18“ (heller). Mehr nicht. Kein Mond im Eintrag.
 - **iPhone-Kopf** entsprechend: Ort und Wetter sowie Sonnenzeiten als eine leise Zeile.
 
-### ☐ 7 · Jahreslinie, Mond, Ort & Wetter — `entwurf/Kopf2.dc.html`
+### ☑ 7 · Jahreslinie, Mond, Ort & Wetter — `entwurf/Kopf2.dc.html`
 - **Jahreslinie:** Die vorhandene Linie unter dem Monatstitel wird zur Jahreslinie: kupfern gefüllt bis heute, mit einer Marke. Kein neues Element, gilt auf iPhone und Mac.
 - **Zeile darunter:**
   - Links der Mond, 34px, **echt beleuchtet**: Phase aus dem Datum (Synodenmonat 29,530588853 d ab JD 2451550,1), zunehmend rechts hell, weiche Schattengrenze, angedeutete Mondmeere, schwacher Erdschein.
