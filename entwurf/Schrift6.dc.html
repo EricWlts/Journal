@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Schlicht ruhige Randspalte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;display=swap">
+<style>
+body{margin:0}
+.opt{display:block;width:100%;border:0;background:transparent;text-align:left;padding:14px 16px;border-radius:10px;cursor:pointer;color:#f2f3ef;font-family:Manrope,sans-serif;transition:background-color .4s}
+.opt:hover{background:rgba(242,243,239,.05)}.opt.on{background:rgba(242,243,239,.09)}
+.sw{width:30px;height:30px;border-radius:50%;border:0;cursor:pointer;box-shadow:0 0 0 1px rgba(242,243,239,.15);transition:box-shadow .4s,transform .4s cubic-bezier(.32,.72,0,1)}
+.sw.on{box-shadow:0 0 0 2px #12150f,0 0 0 3px #f2f3ef;transform:scale(1.06)}
+.body{position:relative;font-family:Manrope,sans-serif;font-size:19px;line-height:1.75;color:#2b332e;white-space:pre-wrap;word-wrap:break-word;cursor:text}
+.tB .body{font-family:Newsreader,serif;font-size:20.5px;line-height:1.6;color:#2b2722;font-optical-sizing:auto;font-variant-numeric:oldstyle-nums proportional-nums;font-kerning:normal;hyphens:auto}
+.p{min-height:1em}
+.p+.p{margin-top:1.05em}
+.tE .p0{font-family:Newsreader,serif;font-weight:500;font-size:23px;line-height:1.45;color:#1f2420}
+.mr{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#6f7a71;font-variant-numeric:tabular-nums;height:22px}
+.mr svg{flex:none}
+.ini{display:none}
+.tB .ini{display:block;float:left;font-family:'Instrument Serif',serif;font-size:96px;line-height:.78;margin:.08em .1em -.06em -.02em;font-variant-numeric:normal;letter-spacing:0;transition:color 1s}
+.tB .p0 .c0{display:none}
+.ch{}
+@keyframes pen{0%{background-image:linear-gradient(90deg,#1c2026 0 46%,#0c1016 50%,rgba(12,16,22,0) 54%);background-size:260% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}100%{background-image:linear-gradient(90deg,#1c2026 0 46%,#0c1016 50%,rgba(12,16,22,0) 54%);background-size:260% 100%;background-position:0 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}}
+@keyframes dry{from{color:#1c2026}}
+.cr{display:inline-block;width:0;height:1em;position:relative;vertical-align:baseline}
+.cr i{position:absolute;left:-1px;bottom:-.24em;width:2px;height:1.2em;border-radius:1px;animation:breathe 1.3s ease-in-out infinite;transition:opacity .3s}
+.cr.typing i{animation:none}
+.cr.off i{opacity:0;animation:none}
+@keyframes breathe{0%,45%{opacity:1}70%{opacity:.08}100%{opacity:1}}
+textarea.ghostin{position:absolute;inset:0;width:100%;height:100%;resize:none;outline:0;border:0;padding:0;margin:0;background:transparent;color:transparent;caret-color:transparent;font:inherit;line-height:inherit;white-space:pre-wrap;overflow:hidden}
+textarea.ghostin::selection{background:transparent}
+.fade{animation:fd .8s cubic-bezier(.2,.7,.2,1) both}
+@keyframes fd{from{opacity:0;filter:blur(3px)}}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#e0ddd4;font-family:Manrope,system-ui,sans-serif;color:#26302b;overflow:hidden">
+  <div style="position:absolute;left:18px;top:18px;width:456px;bottom:18px;border-radius:14px;background:#12150f;color:#f2f3ef;box-sizing:border-box;padding:28px 20px">
+    <div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1;letter-spacing:-.015em;padding:0 16px">Ohne Überschrift</div>
+    <div style="font-size:13px;color:#9aa59c;margin-top:10px;padding:0 16px;line-height:1.55">Das Blatt beginnt direkt mit der Initiale. Absätze mit Leerzeile, ganz normal.</div>
+    <div style="display:flex;flex-direction:column;gap:4px;margin-top:22px">
+      <button class="opt {{oA}}" onClick="{{toA}}"><div style="font-family:'Instrument Serif',serif;font-size:24px">Schlicht</div><div style="font-size:12.5px;color:#9aa59c;margin-top:4px">Keine Überschrift. Die erste Zeile ist der Titel, bis du Enter drückst – sie sieht aus wie der restliche Text.</div></button>
+      <button class="opt {{oB}}" onClick="{{toB}}"><div style="font-family:'Instrument Serif',serif;font-size:24px">Erste Zeile betont</div><div style="font-size:12.5px;color:#9aa59c;margin-top:4px">Wie schlicht, aber die erste Zeile ist eine Spur größer und kräftiger – ein leiser Titel.</div></button>
+    </div>
+    <div style="height:1px;background:#2c342e;margin:22px 16px"></div>
+    <div style="padding:0 16px">
+      <div style="font-size:9.5px;letter-spacing:.2em;font-weight:600;color:#7f8b81">WÄRME · AKZENT</div>
+      <div style="display:flex;gap:14px;margin-top:14px">
+        <sc-for list="{{accs}}" as="a" hint-placeholder-count="3"><button class="sw {{a.on}}" onClick="{{a.pick}}" aria-label="{{a.name}}" style="background:{{a.c}}"></button></sc-for>
+      </div>
+      <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;color:#c9d0ca;margin-top:12px">{{accName}}</div>
+      <div style="font-size:12.5px;color:#9aa59c;margin-top:4px;line-height:1.5">Nur an drei Stellen: Initiale, Schreibmarke, kleine Linie in der Randspalte.</div>
+    </div>
+  </div>
+  <div class="{{tCls}}" style="position:absolute;left:492px;top:18px;right:18px;bottom:18px;border-radius:14px;background:{{paper}};transition:background-color .8s;box-shadow:0 0 0 1px rgba(38,48,43,.15),inset 0 1px 0 rgba(255,255,255,.7),0 20px 50px rgba(38,48,43,.08);padding:84px 72px 0;display:grid;grid-template-columns:112px 1fr;column-gap:44px;box-sizing:border-box">
+    <div style="border-right:1px solid #d6d4cc;height:236px">
+      <div style="font-family:'Instrument Serif',serif;font-size:68px;line-height:.9;letter-spacing:-.015em;color:#1f2420">26</div>
+      <div style="font-size:10.5px;letter-spacing:.22em;font-weight:600;color:#506055;margin-top:14px">DONNERSTAG</div>
+      <div style="font-size:13px;color:#6f7a71;margin-top:8px;line-height:1.55;font-variant-numeric:tabular-nums">November 2026<br>8:58</div>
+      <div style="width:28px;height:1px;background:{{acc}};margin:18px 0 12px;transition:background-color 1s"></div>
+      <div style="font-size:12.5px;color:#6f7a71;line-height:1.7;font-variant-numeric:tabular-nums">Leer · 4° Nebel</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:#8d998f;line-height:1.7;font-variant-numeric:tabular-nums"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a9b2aa" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 14a5 5 0 0 1 10 0"></path></svg>8:19 – 16:18</div>
+    </div>
+    <div style="min-width:0;max-width:{{measure}}px">
+      <div class="body" style="margin-top:2px" onClick="{{focus}}">
+        <sc-for list="{{paras}}" as="p" hint-placeholder-count="3"><div class="p {{p.cls}}"><sc-if value="{{p.first}}" hint-placeholder-val="{{ false }}"><span class="ini" style="color:{{acc}}">{{iniChar}}</span></sc-if><sc-for list="{{p.toks}}" as="t" hint-placeholder-count="40"><span class="{{t.c}}"><sc-if value="{{t.cr}}" hint-placeholder-val="{{ false }}"><i style="background:{{acc}}"></i></sc-if>{{t.t}}</span></sc-for></div></sc-for>
+        <textarea class="ghostin" ref="{{taRef}}" aria-label="Eintrag schreiben" spellcheck="false" value="{{text}}" onInput="{{onIn}}" onSelect="{{onSel}}" onKeyUp="{{onSel}}" onFocus="{{onFoc}}" onBlur="{{onBlur}}"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    this.state = { t: 'B', em: false, a: 1, caret: 0, foc: false, typing: false, text: 'Lange geschlafen, und draußen lag der Nebel.\nHeute war einer dieser Tage, an denen alles etwas langsamer läuft. Ich habe lange am Fenster gesessen, Kaffee getrunken und zugesehen, wie der Nebel über den Wiesen liegt.\nSpäter noch ein Stück am Deich gelaufen. Die Luft roch nach Salz und nassem Gras, und für eine Stunde war mein Kopf ganz still.\n' };
+    this.state.caret = this.state.text.length;
+    this.taRef = (el) => { this.ta = el; };
+  }
+  A(){ return [['Bernstein', '#b07a3c'], ['Kupfer', '#a35f3a'], ['Honig', '#c09544']]; }
+  base(){ if (this._base == null) this._base = this.state.text.length; return this._base; }
+  focus(){ if (this.ta) { this.ta.focus(); const n = this.ta.value.length; this.ta.setSelectionRange(n, n); this.setState({ caret: n, foc: true }); } }
+  input(e){
+    this.setState({ text: e.target.value, caret: e.target.selectionStart, typing: true });
+    clearTimeout(this._ty); this._ty = setTimeout(() => this.setState({ typing: false }), 650);
+  }
+  renderVals(){
+    const st = this.state, B = st.t === 'B', acc = this.A()[st.a][1];
+    /* jeder Buchstabe ist ein eigenes Element: neue tauchen auf und trocknen, ältere bleiben ruhig; die Schreibmarke ist Teil des Textes, daher sitzt sie immer genau */
+    let idx = 0; const lines = st.text.split('\n'), base = this.base();
+    const paras = lines.map((ln, i) => {
+      const toks = [];
+      for (let j = 0; j < ln.length; j++) { if (idx === st.caret) toks.push({ t: '', c: 'cr' + (st.typing ? ' typing' : '') + (st.foc ? '' : ' off'), cr: true }); toks.push({ t: ln[j], c: (idx >= base ? 'ch' : '') + (i === 0 && j === 0 ? ' c0' : ''), cr: false }); idx++; }
+      if (idx === st.caret) toks.push({ t: '', c: 'cr' + (st.typing ? ' typing' : '') + (st.foc ? '' : ' off'), cr: true });
+      if (!ln.length) toks.push({ t: '​', c: '', cr: false });
+      idx++;
+      return { cls: 'p' + i, first: i === 0 && ln.length > 0, toks };
+    });
+    return {
+      paras, text: st.text, iniChar: st.text[0] || '', tCls: 'tB' + (st.em ? ' tE' : ''), acc, paper: B ? '#f7f5ef' : '#f6f5f1',
+      ttlSize: B ? 58 : 50, gap: B ? 30 : 26, measure: B ? 600 : 640,
+      metaFont: B ? 'Newsreader,serif' : 'Manrope,sans-serif', metaStyle: B ? 'italic' : 'normal', metaSize: B ? 15.5 : 13, metaSize2: B ? 14.5 : 12, numVar: B ? 'oldstyle-nums' : 'tabular-nums',
+      oA: st.em ? '' : 'on', oB: st.em ? 'on' : '', toA: () => this.setState({ em: false }), toB: () => this.setState({ em: true }),
+      accs: this.A().map((x, i) => ({ name: x[0], c: x[1], on: i === st.a ? 'on' : '', pick: () => this.setState({ a: i }) })), accName: this.A()[st.a][0],
+      taRef: this.taRef, focus: () => this.focus(), onIn: (e) => this.input(e), onSel: (e) => this.setState({ caret: e.target.selectionStart }),
+      onFoc: () => this.setState({ foc: true }), onBlur: () => this.setState({ foc: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

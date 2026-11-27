@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Startseite wie am Mac</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.cell{position:absolute;width:48.857px;height:48px;display:grid;place-items:center;border:0;background:transparent;padding:0;font-family:Manrope,sans-serif;cursor:pointer;transition:top .75s cubic-bezier(.32,.72,0,1),opacity .5s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1),filter .5s}
+.cell span{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums;transition:background-color .5s,color .5s,box-shadow .8s cubic-bezier(.2,.7,.2,1)}
+.bg{position:absolute;left:24px;top:180px;width:342px;height:288px;transform-origin:0 0;transition:transform .85s cubic-bezier(.32,.72,0,1),opacity .4s .45s}
+.bg.y{transition:transform .85s cubic-bezier(.32,.72,0,1),opacity .3s .5s}
+.snap,.snap .cell,.snap .ring{transition:none !important}
+.live,.live .cell,.live .ring,.live .nd{transition:none !important}
+.cell>span{position:relative}
+.cell:active>span{transform:scale(.9);transition:transform .12s}
+.cell>span::before{content:"";position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 0 1px rgba(242,243,239,.92);opacity:0;transform:scale(.86);transition:opacity .18s cubic-bezier(.2,.7,.2,1),transform .45s cubic-bezier(.32,.72,0,1);pointer-events:none}
+.cell.sel>span::before{opacity:1;transform:none;transition:opacity .28s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.32,.72,0,1)}
+.cell>span::after{content:"";position:absolute;left:50%;top:calc(100% + 5px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#f2f3ef;opacity:0;transform:scale(0);pointer-events:none}
+.cell.now>span::after{opacity:1;transform:scale(1);transition:opacity .25s,transform .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes wR0{from{opacity:0;transform:translateX(16px);filter:blur(1.5px)}}@keyframes wR1{from{opacity:0;transform:translateX(16px);filter:blur(1.5px)}}
+@keyframes wL0{from{opacity:0;transform:translateX(-16px);filter:blur(1.5px)}}@keyframes wL1{from{opacity:0;transform:translateX(-16px);filter:blur(1.5px)}}
+@keyframes fR0{from{opacity:.25;transform:translateX(9px);filter:blur(1.6px)}}@keyframes fR1{from{opacity:.25;transform:translateX(9px);filter:blur(1.6px)}}
+@keyframes fL0{from{opacity:.25;transform:translateX(-9px);filter:blur(1.6px)}}@keyframes fL1{from{opacity:.25;transform:translateX(-9px);filter:blur(1.6px)}}
+@keyframes gR{to{opacity:0;transform:translateX(-12px);filter:blur(2px)}}@keyframes gL{to{opacity:0;transform:translateX(12px);filter:blur(2px)}}
+.wv.g0.dr .cell>span{animation:wR0 .6s cubic-bezier(.32,.72,0,1) backwards}.wv.g1.dr .cell>span{animation:wR1 .6s cubic-bezier(.32,.72,0,1) backwards}
+.wv.g0.dl .cell>span{animation:wL0 .6s cubic-bezier(.32,.72,0,1) backwards}.wv.g1.dl .cell>span{animation:wL1 .6s cubic-bezier(.32,.72,0,1) backwards}
+.fl.g0.dr .cell>span{animation:fR0 .15s cubic-bezier(.2,.7,.2,1)}.fl.g1.dr .cell>span{animation:fR1 .15s cubic-bezier(.2,.7,.2,1)}
+.fl.g0.dl .cell>span{animation:fL0 .15s cubic-bezier(.2,.7,.2,1)}.fl.g1.dl .cell>span{animation:fL1 .15s cubic-bezier(.2,.7,.2,1)}
+.gh.dr .cell>span{animation:gR .22s cubic-bezier(.4,0,1,1) forwards}.gh.dl .cell>span{animation:gL .22s cubic-bezier(.4,0,1,1) forwards}
+.gh .cell{transition:none}
+.ring{position:absolute;width:42px;height:42px;border-radius:50%;box-shadow:0 0 0 1px rgba(242,243,239,.9);pointer-events:none;transition:left .5s cubic-bezier(.32,.72,0,1),top .5s cubic-bezier(.32,.72,0,1),opacity .35s,transform .5s cubic-bezier(.32,.72,0,1),filter .3s}
+.ring.step{transition:left .07s linear,top .07s linear,opacity .2s,transform .25s,filter .2s;filter:blur(.7px);transform:scale(.92) !important}
+.flip .cell{transition:none !important;filter:blur(1.2px) !important;opacity:.85}
+.ttm.flip{transition:none !important}
+.nd{position:absolute;width:4px;height:4px;border-radius:50%;background:#f2f3ef;transition:opacity .4s,top .75s cubic-bezier(.32,.72,0,1)}
+.yd{position:absolute;display:grid;place-items:center;pointer-events:none;transition:left .9s cubic-bezier(.32,.72,0,1),top .9s cubic-bezier(.32,.72,0,1),opacity .55s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.32,.72,0,1)}
+.yd i{display:grid;place-items:center;border-radius:50%;font-style:normal;font-family:Manrope,sans-serif;font-weight:600;font-variant-numeric:tabular-nums;transition:width .9s cubic-bezier(.32,.72,0,1),height .9s cubic-bezier(.32,.72,0,1),font-size .6s,background-color .5s,color .5s,box-shadow .8s}
+.yl{position:absolute;font-size:9.5px;letter-spacing:.18em;font-weight:600;pointer-events:none;transition:left .9s cubic-bezier(.32,.72,0,1),top .9s cubic-bezier(.32,.72,0,1),opacity .5s,color .5s}
+.hit{position:absolute;border:0;background:transparent;padding:0;cursor:pointer}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#eeece6;border-radius:16px 16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.55);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;transition:top .8s cubic-bezier(.32,.72,0,1)}
+.sheet::-webkit-scrollbar{display:none}.sheet.live{transition:none}
+.ttm{display:inline-block;white-space:nowrap;letter-spacing:-.015em;transition:opacity .35s,filter .35s,transform .45s cubic-bezier(.2,.7,.2,1)}
+.ttm.out{opacity:0;filter:blur(6px);transform:translateY(-8px)}
+.fadeo{transition:opacity .45s,filter .45s,transform .5s cubic-bezier(.2,.7,.2,1)}.fadeo.out{opacity:0;filter:blur(4px);transform:translateY(6px);pointer-events:none}
+.hp{display:inline-flex;align-items:center;gap:7px;height:34px;border:1px solid #cfd0c8;border-radius:17px;background:transparent;font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;color:#26302b;cursor:pointer;overflow:hidden;white-space:nowrap;box-sizing:border-box;transition:max-width .7s cubic-bezier(.32,.72,0,1),opacity .45s,filter .45s,padding .7s cubic-bezier(.32,.72,0,1),border-color .5s}
+.hp.off{max-width:0 !important;opacity:0;filter:blur(4px);padding:0 !important;border-color:transparent;pointer-events:none}
+.pulse{position:absolute;width:42px;height:42px;border-radius:50%;box-shadow:0 0 0 1px #f2f3ef;pointer-events:none;animation:pl 1.2s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes pl{from{transform:scale(1);opacity:.9}to{transform:scale(2.2);opacity:0}}
+.card{display:grid;grid-template-columns:54px 1fr;width:100%;border:0;border-radius:12px;background:#e4e2db;text-align:left;padding:17px 18px 17px 20px;font-family:inherit;color:inherit;cursor:pointer;transition:background-color .45s,color .45s,transform .4s cubic-bezier(.2,.7,.2,1)}
+.card:active{transform:scale(.985)}.card.on{background:#2f3431;color:#f2f3ef}
+.card .ex{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.seg{display:inline-flex;height:32px;border:1px solid #cfd0c8;border-radius:16px;position:relative;overflow:hidden}
+.seg button{position:relative;z-index:1;border:0;background:transparent;font-family:Manrope,sans-serif;font-size:12.5px;font-weight:500;padding:0 14px;color:#506055;cursor:pointer;transition:color .45s}
+.seg button.on{color:#f2f3ef}
+.segk{position:absolute;top:2px;bottom:2px;border-radius:14px;background:#26302b;transition:left .55s cubic-bezier(.32,.72,0,1),width .55s cubic-bezier(.32,.72,0,1)}
+.dg{display:inline-block;height:1.05em;overflow:hidden;vertical-align:top}
+.dg b{display:block;font-weight:400;transition:transform .8s cubic-bezier(.32,.72,0,1)}
+.dg b span{display:block;height:1.05em;line-height:1.05em}
+.ib{border:0;background:transparent;width:44px;height:44px;display:grid;place-items:center;color:#f2f3ef;cursor:pointer;transition:opacity .4s,transform .5s cubic-bezier(.32,.72,0,1)}
+.ib.off{opacity:0;transform:scale(.8);pointer-events:none}
+.sf{position:absolute;top:22px;right:68px;height:44px;border-bottom:1px solid #3b4740;overflow:hidden;transition:width .75s cubic-bezier(.32,.72,0,1),border-color .5s}
+.sf input{position:absolute;left:0;top:0;height:44px;width:270px;border:0;outline:0;background:transparent;color:#f2f3ef;font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;padding:0}
+.sf input::placeholder{color:#5d685f}
+.chip{border:1px solid #cfd0c8;background:transparent;border-radius:15px;height:30px;padding:0 13px;font-family:Manrope,sans-serif;font-size:12.5px;color:#506055;cursor:pointer}
+.chip:active{background:#e4e2db}
+@keyframes chipin{from{opacity:0;transform:translateY(6px);filter:blur(3px)}}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#12150f;font-family:Manrope,system-ui,sans-serif;color:#f2f3ef;user-select:none">
+  <div class="sf" style="width:{{sfW}}px;border-color:{{sfLine}}">
+    <input ref="{{inputRef}}" placeholder="Wonach suchst du?" value="{{q}}" onInput="{{onQ}}" aria-label="Suchen">
+  </div>
+  <div style="position:absolute;top:22px;right:12px;display:flex">
+    <button class="ib {{setCls}}" aria-label="Einstellungen"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    <button class="ib" onClick="{{toggleSearch}}" aria-label="{{sLabel}}">
+      <sc-if value="{{searchOpen}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if>
+      <sc-if value="{{searchClosed}}" hint-placeholder-val="{{ true }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg></sc-if>
+    </button>
+  </div>
+  <button onClick="{{toggleYear}}" aria-label="Zwischen Monat und Jahr wechseln" style="position:absolute;top:74px;left:24px;border:0;background:transparent;padding:0;color:#f2f3ef;font-family:'Instrument Serif',serif;line-height:1;white-space:nowrap;cursor:pointer;text-align:left;display:flex;align-items:baseline;gap:12px"><span class="ttm {{ttCls}} {{flipCls}}" style="font-size:60px">{{tName}}</span><span style="font-size:38px;font-style:italic;color:#7f8b81;letter-spacing:-.01em">2026</span></button>
+  <div style="position:absolute;top:142px;left:24px;right:24px;height:1px;background:#2c342e"></div>
+  <div class="fadeo {{wdCls}}" style="position:absolute;top:156px;left:24px;width:342px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;color:#7f8b81;font-size:10px;letter-spacing:.18em;font-weight:600"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span></div>
+  <div class="fadeo {{mkCls}}" style="position:absolute;top:156px;left:24px;width:342px;height:14px;font-size:9.5px;color:#7f8b81;font-weight:600">
+    <sc-for list="{{marks}}" as="k" hint-placeholder-count="5"><span style="position:absolute;left:{{k.x}}px;width:20px;margin-left:-10px;text-align:center">{{k.n}}</span></sc-for>
+  </div>
+  <sc-for list="{{ydays}}" as="d" hint-placeholder-count="60">
+    <span class="yd" style="left:{{d.x}}px;top:{{d.y}}px;width:{{d.w}}px;height:{{d.h}}px;opacity:{{d.o}};transform:{{d.tf}};transition-delay:{{d.dl}}ms"><i style="width:{{d.s}}px;height:{{d.s}}px;font-size:{{d.fs}}px;background:{{d.b}};color:{{d.c}};box-shadow:{{d.sh}};transition-delay:{{d.gl}}ms">{{d.n}}</i></span>
+  </sc-for>
+  <sc-for list="{{ylabels}}" as="l" hint-placeholder-count="12"><span class="yl" style="left:{{l.x}}px;top:{{l.y}}px;opacity:{{l.o}};color:{{l.c}};transition-delay:{{l.dl}}ms">{{l.t}}</span></sc-for>
+  <sc-for list="{{yhits}}" as="h" hint-placeholder-count="12"><button class="hit" onClick="{{h.pick}}" aria-label="{{h.name}} öffnen" style="left:{{h.x}}px;top:{{h.y}}px;width:{{h.w}}px;height:{{h.h}}px;pointer-events:{{h.pe}}"></button></sc-for>
+  <div class="bg {{bgCls}} {{layerCls}}" style="transform:{{bgTf}};opacity:{{bgO}};pointer-events:{{bgPe}}" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}">
+    <sc-for list="{{cells}}" as="c" hint-placeholder-count="30">
+      <button class="cell {{c.sel}} {{c.now}}" onClick="{{c.pick}}" style="left:{{c.x}}px;top:{{c.y}}px;opacity:{{c.o}};transform:{{c.tf}};transition-delay:{{c.dl}}ms"><span style="background:{{c.b}};color:{{c.fg}};font-weight:{{c.fw}};box-shadow:{{c.sh}};transition-delay:{{c.gl}}ms;animation-delay:{{c.ad}}ms">{{c.n}}</span></button>
+    </sc-for>
+    <sc-if value="{{pulse.on}}" hint-placeholder-val="{{ false }}"><div class="pulse" style="left:{{pulse.x}}px;top:{{pulse.y}}px"></div></sc-if>
+  </div>
+  <sc-if value="{{hasGhost}}" hint-placeholder-val="{{ false }}">
+    <div class="gh {{ghCls}}" style="position:absolute;left:24px;top:180px;width:342px;height:288px;pointer-events:none;transform:translateX({{gdx}}px)">
+      <sc-for list="{{ghost}}" as="g" hint-placeholder-count="7"><span class="cell {{g.sel}} {{g.now}}" style="left:{{g.x}}px;top:{{g.y}}px"><span style="background:{{g.b}};color:{{g.fg}};font-weight:{{g.fw}};animation-delay:{{g.dl}}ms">{{g.n}}</span></span></sc-for>
+    </div>
+  </sc-if>
+  <div class="sheet {{shCls}}" ref="{{sheetRef}}" style="top:{{sheetTop}}px;color:#26302b">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 16px 12px 24px;height:38px">
+      <span style="display:flex;align-items:baseline;gap:9px">
+        <span class="num" style="font-family:'Instrument Serif',serif;font-size:30px;line-height:1.05;display:inline-flex"><sc-for list="{{digits}}" as="g" hint-placeholder-count="2"><span class="dg"><b style="transform:translateY({{g.y}});transition-delay:{{g.dl}}ms"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></b></span></sc-for><span style="color:#9aa59c">/{{tot}}</span></span>
+        <span style="font-size:12px;letter-spacing:.04em;color:#506055">{{unit}}</span>
+      </span>
+      <sc-if value="{{isYear}}" hint-placeholder-val="{{ false }}">
+        <span class="seg"><span class="segk" style="left:{{segk.l}}px;width:{{segk.w}}px"></span><button class="{{segM}}" onClick="{{toMonths}}">Monate</button><button class="{{segO}}" onClick="{{toOverview}}">Übersicht</button></span>
+      </sc-if>
+      <sc-if value="{{notYear}}" hint-placeholder-val="{{ true }}">
+        <button class="hp {{hpCls}}" onClick="{{today}}" style="max-width:120px;padding:0 15px 0 11px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="transform:rotate({{hpRot}}deg)"><path d="M15 6l-6 6 6 6"></path></svg>Heute</button>
+      </sc-if>
+    </div>
+    <sc-if value="{{showChips}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:8px;padding:2px 24px 14px;animation:chipin .6s cubic-bezier(.2,.7,.2,1) both"><button class="chip" onClick="{{qHafen}}">Hafen</button><button class="chip" onClick="{{qDeich}}">Deich</button><button class="chip" onClick="{{qTraining}}">Training</button><button class="chip" onClick="{{qRegen}}">Regen</button></div>
+    </sc-if>
+    <div class="fadeo {{listCls}}" style="display:flex;flex-direction:column;gap:6px;padding:0 12px 220px">
+      <sc-for list="{{entries}}" as="e" hint-placeholder-count="5">
+        <button class="card {{e.on}}" onClick="{{e.pick}}">
+          <span style="display:flex;flex-direction:column"><span class="num" style="font-family:'Instrument Serif',serif;font-size:34px;line-height:.95;letter-spacing:-.01em">{{e.d}}</span><span style="font-size:9.5px;letter-spacing:.18em;font-weight:600;margin-top:7px;opacity:.7">{{e.wd}}</span></span>
+          <span style="min-width:0"><span style="display:block;font-family:'Instrument Serif',serif;font-size:22px;line-height:1.12;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{e.title}}</span><span class="ex" style="font-size:13.5px;line-height:1.5;opacity:.72;margin-top:6px">{{e.ex}}</span></span>
+        </button>
+      </sc-for>
+      <sc-if value="{{noHits}}" hint-placeholder-val="{{ false }}"><div style="padding:30px 12px;font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;color:#8d998f">Nichts gefunden in diesem Monat.</div></sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    this.state = { year: false, yl: 'months', m: 10, sel: 27, c: 0, live: false, wave: '', dir: 1, snap: false, dx: 0, tOut: false, listOut: false, pulse: 0, search: false, q: '', qT: 0, gen: 0, mode: '', ghost: null, gdx: 0 };
+    this.sheetRef = (el) => this.bindSheet(el);
+    this.inputRef = (el) => { this.input = el; };
+  }
+  MN(){ return ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']; }
+  T(){ return ['Morgens am Hafen','Lange geschlafen','Erste Kälte','Spaziergang am Deich','Training: neue Bestmarke','Ein ruhiger Sonntag','Kurs: n8n-Workflows','Regen über Leer','Abends am Hafen','Gegenwind am Deich','Kaffee am Fenster','Training und Pizza','Nebel über den Wiesen','Ein Brief an mich','Regen und Tee','Ostfriesischer Himmel']; }
+  info(m){ return { first: (new Date(2026, m, 1).getDay() + 6) % 7, n: new Date(2026, m + 1, 0).getDate() }; }
+  has(m, d){ if (m > 10 || (m === 10 && d > 27)) return false; return ((d * 7 + m * 13) % 10) < 6; }
+  title(m, d){ const T = this.T(); return T[(d * 5 + m * 3) % T.length]; }
+  hit(m, d){ const q = this.state.q.trim().toLowerCase(); if (!q) return true; return this.has(m, d) && this.title(m, d).toLowerCase().includes(q); }
+  pos(m, d){ const k = this.info(m).first + d - 1; return { c: k % 7, r: Math.floor(k / 7) }; }
+  slot(m){ return { x: 24 + (m % 3) * 120, y: 180 + Math.floor(m / 3) * 116 }; }
+  later(ms, fn){ return setTimeout(fn, ms); }
+  bindSheet(el){
+    if (!el || el === this.sheet) return; this.sheet = el;
+    const MAX = 240;
+    const feed = (d) => {
+      const st = this.state; if (st.year) return false;
+      if (d > 0 && st.c < MAX) { this.setState({ c: Math.min(MAX, st.c + d), live: true }); this.settleSoon(); return true; }
+      if (d < 0 && el.scrollTop <= 0 && st.c > 0) { this.setState({ c: Math.max(0, st.c + d), live: true }); this.settleSoon(); return true; }
+      return false;
+    };
+    el.addEventListener('wheel', (e) => { if (feed(e.deltaY)) e.preventDefault(); }, { passive: false });
+    let ly = 0, lt = 0;
+    el.addEventListener('touchstart', (e) => { ly = e.touches[0].clientY; lt = performance.now(); this._v = 0; }, { passive: true });
+    el.addEventListener('touchmove', (e) => { const y = e.touches[0].clientY, d = ly - y, now = performance.now(); this._v = d / Math.max(1, now - lt); ly = y; lt = now; if (feed(d)) e.preventDefault(); }, { passive: false });
+    el.addEventListener('touchend', () => this.settle(), { passive: true });
+  }
+  settleSoon(){ clearTimeout(this._st); this._st = this.later(140, () => this.settle()); }
+  settle(){
+    const c = this.state.c; if (c === 0 || c === 240) { this.setState({ live: false }); return; }
+    const v = this._v || 0, to = Math.abs(v) > .4 ? (v > 0 ? 240 : 0) : (c > 120 ? 240 : 0);
+    this.setState({ live: false }, () => requestAnimationFrame(() => this.setState({ c: to })));
+  }
+  pDown(e){ if (this.state.year || this.busy) return; this._px = e.clientX; this._py = e.clientY; this._drag = false; this._pid = e.pointerId; this._pt = [e.clientX, performance.now()]; }
+  pMove(e){
+    if (this._px == null) return;
+    const dx = e.clientX - this._px, dy = e.clientY - this._py;
+    if (!this._drag && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { this._drag = true; e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(this._pid); }
+    if (this._drag) { const now = performance.now(); this._pv = (e.clientX - this._pt[0]) / Math.max(1, now - this._pt[1]); this._pt = [e.clientX, now]; this.setState({ dx, live: true }); }
+  }
+  pUp(){
+    const was = this._drag, dx = this.state.dx; this._px = null; this._drag = false;
+    if (!was) return;
+    if (Math.abs(dx) > 70 || Math.abs(this._pv || 0) > .5) this.shift(dx < 0 ? 1 : -1);
+    else this.setState({ dx: 0, live: false });
+  }
+  collapsed(){ return this.state.c > 120; }
+  look(m, d){ const w = this.has(m, d), fut = m > 10 || (m === 10 && d > 27); return { b: w ? '#f2f3ef' : 'transparent', fg: w ? '#12150f' : (fut ? '#4a5449' : '#c9d0ca'), fw: w ? 600 : 500 }; }
+  snapshot(dir){
+    /* was gerade zu sehen ist, wird zum Geist: er gleitet 12px weg und verschwimmt, während die neuen Tage als Welle hereinkommen */
+    const st = this.state, { n } = this.info(st.m), CW = 342 / 7, col = this.collapsed(), selRow = st.sel ? this.pos(st.m, st.sel).r : 0, out = [];
+    for (let d = 1; d <= n; d++) {
+      const r = this.pos(st.m, d); if (col && r.r !== selRow) continue;
+      const order = (dir > 0 ? r.c : 6 - r.c) + r.r * .35;
+      out.push({ n: d, x: r.c * CW, y: col ? 0 : r.r * 48, ...this.look(st.m, d), sel: d === st.sel ? 'sel' : '', now: st.m === 10 && d === 27 ? 'now' : '', dl: Math.round(order * 14) });
+    }
+    return out;
+  }
+  go(next, dir, after){
+    const st = this.state, mc = next.m !== undefined && next.m !== st.m;
+    this.busy = true;
+    this.setState({ ...next, ghost: this.snapshot(dir), gdx: st.dx * .38, gen: 1 - st.gen, dir, mode: 'wv', dx: 0, live: false, snap: true, tOut: mc, listOut: mc },
+      () => requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ snap: false, tOut: false, listOut: false }))));
+    clearTimeout(this._g); this._g = this.later(720, () => { this.busy = false; this.setState({ ghost: null }); });
+    if (after) this.later(560, after);
+  }
+  flip(frames, dir, land){
+    /* Daumenkino wie am Mac: kurz anlaufen (110/80/62 ms), dann gleichmäßig 50 ms – gebremst wird nur durch die Landung */
+    const T = [110, 80, 62]; let t = 0; this.busy = true;
+    this.setState({ listOut: true, tOut: false });
+    frames.forEach((f, i) => { t += T[i] || 50; this.later(t, () => this.setState({ ...f, gen: 1 - this.state.gen, dir, mode: 'fl', snap: true, ghost: null })); });
+    this.later(t + 40, () => { this.busy = false; land(); });
+  }
+  pick14(arr){ if (arr.length <= 14) return arr; const out = []; for (let i = 1; i <= 14; i++) { const v = arr[Math.round(i * (arr.length - 1) / 14)]; if (!out.includes(v)) out.push(v); } return out; }
+  weekDates(from, to){ /* Montage der Wochen zwischen zwei Daten (ohne Start und Ziel) */
+    const a = new Date(from), b = new Date(to), dir = b > a ? 1 : -1, out = [];
+    const mon = (x) => { const y = new Date(x); y.setDate(y.getDate() - (y.getDay() + 6) % 7); return y; };
+    let k = mon(a); const end = mon(b); k.setDate(k.getDate() + 7 * dir);
+    while ((dir > 0 ? k < end : k > end)) { out.push(new Date(k)); k.setDate(k.getDate() + 7 * dir); }
+    return out;
+  }
+  shift(dir){
+    const st = this.state; if (this.busy) return;
+    let m = st.m, sel = st.sel;
+    if (this.collapsed()) {
+      const base = new Date(2026, st.m, st.sel || 1); base.setDate(base.getDate() + dir * 7);
+      if (base.getFullYear() !== 2026) { this.setState({ dx: 0, live: false }); return; }
+      m = base.getMonth(); sel = base.getDate();
+    } else { m = st.m + dir; if (m < 0 || m > 11) { this.setState({ dx: 0, live: false }); return; } sel = m === 10 ? 27 : 0; }
+    this.go({ m, sel }, dir);
+  }
+  today(){
+    const st = this.state; if (this.busy) return;
+    const T = new Date(2026, 10, 27), pulse = () => this.setState({ pulse: Date.now() });
+    if (this.collapsed()) {
+      const cur = new Date(2026, st.m, st.sel || 1), mid = this.weekDates(cur, T), dir = T > cur ? 1 : -1;
+      if (st.m === 10 && this.pos(10, st.sel || 27).r === this.pos(10, 27).r) { this.setState({ sel: 27 }); this.later(200, pulse); return; }
+      const land = () => this.go({ m: 10, sel: 27 }, dir, pulse);
+      if (mid.length < 2) { land(); return; }
+      this.flip(this.pick14(mid).map((d) => ({ m: d.getMonth(), sel: d.getDate() })), dir, land);
+      return;
+    }
+    if (st.m === 10) { this.setState({ sel: 27 }); this.later(250, pulse); return; }
+    const dir = st.m < 10 ? 1 : -1, between = [];
+    for (let k = st.m + dir; k !== 10; k += dir) between.push(k);
+    const land = () => this.go({ m: 10, sel: 27 }, dir, pulse);
+    if (between.length < 2) { land(); return; }
+    this.flip(this.pick14(between).map((k) => ({ m: k, sel: 0 })), dir, land);
+  }
+  selDay(d){
+    const st = this.state; if (st.year || this.busy) return;
+    if (this.collapsed() && st.sel && this.pos(st.m, d).r !== this.pos(st.m, st.sel).r) {
+      /* Woche: über mehrere Wochen blättert es als Daumenkino, die letzte landet als Welle */
+      const from = new Date(2026, st.m, st.sel), to = new Date(2026, st.m, d), dir = to > from ? 1 : -1, mid = this.weekDates(from, to);
+      const land = () => this.go({ sel: d }, dir);
+      if (mid.length < 2) { land(); return; }
+      this.flip(mid.map((x) => ({ m: x.getMonth(), sel: x.getDate() })), dir, land);
+      return;
+    }
+    this.setState({ sel: d }); /* Monat: einfach auswählen – der Ring wächst am neuen Tag, der alte blendet aus */
+  }
+  toggleYear(){
+    const st = this.state; if (st.wave) return;
+    if (!st.year) { this.setState({ tOut: true }); this.later(200, () => this.setState({ year: true, c: 0, tOut: false, ylMorph: false })); }
+    else this.pickMonth(st.m);
+  }
+  pickMonth(m){
+    this.setState({ tOut: true });
+    this.later(200, () => this.setState({ m, sel: m === 10 ? 27 : 0, snap: true, tOut: false }, () => requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ snap: false, year: false })))));
+  }
+  toggleSearch(){
+    if (this.state.search) { this.setState({ search: false, q: '', qT: Date.now() }); if (this.input) this.input.blur(); }
+    else { this.setState({ search: true }); this.later(350, () => this.input && this.input.focus()); }
+  }
+  setQ(q){ this.setState({ q, qT: Date.now() }); }
+  digits(v, prev){
+    const s = String(v);
+    return s.split('').map((ch, i) => ({ y: (-1.05 * Number(ch)) + 'em', dl: (s.length - 1 - i) * 70 }));
+  }
+  renderVals(){
+    const st = this.state, MN = this.MN(), { n } = this.info(st.m), CW = 342 / 7;
+    const p = Math.min(1, st.c / 240), year = st.year, q = st.q.trim();
+    const selP = st.sel ? this.pos(st.m, st.sel) : { c: 0, r: 0 }, selRow = selP.r;
+    const GLOW = '0 0 0 4px rgba(242,243,239,.10), 0 0 22px rgba(242,243,239,.38)', NO = '0 0 0 0 rgba(242,243,239,0)';
+    const cells = [];
+    for (let d = 1; d <= n; d++) {
+      const r = this.pos(st.m, d), dist = Math.abs(r.r - selRow), w = this.has(st.m, d), fut = st.m > 10 || (st.m === 10 && d > 27), h = this.hit(st.m, d);
+      const hide = r.r !== selRow && !year;
+      let y = year ? r.r * 48 : r.r * 48 + (selRow - r.r) * 48 * p;
+      let o = hide ? Math.max(0, 1 - p * 1.8) : 1, tf = hide ? 'scale(' + (1 - .12 * p) + ')' : 'none';
+      let dl = (!st.live && !year && !st.snap) ? (p > .5 ? (5 - dist) * 28 : dist * 50) : 0;
+      if (st.dx) { tf = 'translateX(' + (st.dx * .38) + 'px)'; o = o * Math.max(.25, 1 - Math.abs(st.dx) / 420); }
+      const order = (st.dir > 0 ? r.c : 6 - r.c) + r.r * .35, ad = st.mode === 'wv' ? Math.round(80 + order * 28) : 0;
+      let { b, fg, fw } = this.look(st.m, d), sh = NO;
+      if (q) { if (h) { sh = GLOW; } else { b = 'transparent'; fg = w ? '#5d685f' : '#3f483f'; fw = 500; } }
+      cells.push({ n: d, x: r.c * CW, y, o, tf, dl, ad, b, fg, fw, sh, sel: d === st.sel ? 'sel' : '', now: st.m === 10 && d === 27 ? 'now' : '', gl: q ? d * 22 : 0, pick: () => this.selDay(d) });
+    }
+    const ov = st.yl === 'overview', DW = 308 / 31, cs = this.slot(st.m);
+    const ydays = [], ylabels = [], yhits = []; let yhit = 0, ycnt = 0, k0 = 0;
+    for (let m = 0; m < 12; m++) {
+      const inf = this.info(m), s = this.slot(m), dist = Math.abs(m % 3 - st.m % 3) + Math.abs(Math.floor(m / 3) - Math.floor(st.m / 3));
+      const self = m === st.m, enterDl = self ? 480 : 140 + dist * 60;
+      const away = 'translate(' + ((cs.x - s.x) * .35) + 'px,' + ((cs.y - s.y) * .35) + 'px) scale(.9)';
+      let mh = 0;
+      for (let d = 1; d <= inf.n; d++) {
+        k0++;
+        const k = inf.first + d - 1, w = this.has(m, d), fut = m > 10 || (m === 10 && d > 27), h = this.hit(m, d);
+        if (w) ycnt++; if (q && h) { yhit++; mh++; }
+        let b = w ? '#f2f3ef' : (ov ? '#252c26' : 'transparent'), c = w ? '#12150f' : (fut ? '#454e46' : '#a3ada5'), sh = NO;
+        if (q) { if (h) sh = '0 0 0 2px rgba(242,243,239,.10), 0 0 10px rgba(242,243,239,.45)'; else { b = ov ? '#1d231e' : 'transparent'; c = '#3a433b'; } }
+        ydays.push({ x: ov ? 58 + (d - 1) * DW : s.x + (k % 7) * 14.57, y: ov ? 190 + m * 36 : s.y + 18 + Math.floor(k / 7) * 14.3,
+          w: ov ? DW : 14.57, h: 14.3, s: ov ? 6 : 11, fs: ov ? 0 : 7.5, n: ov ? '' : d, b, c, sh, gl: q ? k0 * 4 : 0,
+          o: year ? 1 : 0, tf: year ? 'none' : (self ? 'none' : away), dl: year ? (st.ylMorph ? m * 22 + d * 2 : enterDl) : 0 });
+      }
+      ylabels.push({ t: MN[m].slice(0, 3).toUpperCase(), x: ov ? 24 : s.x + 3, y: ov ? 192 + m * 36 : s.y, o: year ? 1 : 0, c: q ? (mh ? '#f2f3ef' : '#3f483f') : (m === 10 ? '#f2f3ef' : '#7f8b81'), dl: year ? m * 22 : 0 });
+      yhits.push({ name: MN[m], x: ov ? 24 : s.x, y: ov ? 184 + m * 36 : s.y, w: ov ? 342 : 102, h: ov ? 30 : 104, pe: year ? 'auto' : 'none', pick: () => this.pickMonth(m) });
+    }
+    const bgTf = year ? (ov ? 'translate(34px,' + (10 + st.m * 36) + 'px) scale(.9,.1)' : 'translate(' + (cs.x - 24) + 'px,' + (cs.y + 18 - 180) + 'px) scale(' + (102 / 342) + ')') : 'translateY(' + (-selRow * 48 * p) + 'px)';
+    const nowP = this.pos(10, 27), nowRowY = (nowP.r + (selRow - nowP.r) * p) * 48;
+    let cnt = 0, mhit = 0; for (let d = 1; d <= n; d++) { if (this.has(st.m, d)) cnt++; if (q && this.hit(st.m, d)) mhit++; }
+    const WD = ['MO','DI','MI','DO','FR','SA','SO'], entries = [];
+    for (let d = n; d >= 1; d--) if (this.has(st.m, d) && this.hit(st.m, d)) entries.push({ d, wd: WD[this.pos(st.m, d).c], title: this.title(st.m, d), ex: 'Heute war einer dieser Tage, an denen alles etwas langsamer läuft. Ich habe lange am Fenster gesessen und zugesehen, wie der Nebel über den Wiesen liegt.', on: d === st.sel ? 'on' : '', pick: () => this.selDay(d) });
+    const away = st.m !== 10 || (this.collapsed() && st.sel && this.pos(10, st.sel).r !== nowP.r);
+    const later = st.m < 10 || (st.m === 10 && (st.sel || 27) < 27);
+    const shown = year ? (q ? yhit : ycnt) : (q ? mhit : cnt);
+    return {
+      cells, ydays, ylabels, yhits, bgTf, bgO: year ? 0 : 1, bgPe: year ? 'none' : 'auto',
+      bgCls: (year ? 'y' : '') + (st.snap ? ' snap' : '') + (st.live ? ' live' : ''),
+      layerCls: (st.mode ? st.mode + ' g' + st.gen + ' ' + (st.dir > 0 ? 'dr' : 'dl') : ''), hasGhost: !!st.ghost, ghost: st.ghost || [], gdx: st.gdx, ghCls: st.dir > 0 ? 'dr' : 'dl', flipCls: '',
+      pulse: { on: !!st.pulse && st.m === 10 && Date.now() - st.pulse < 1300, x: nowP.c * CW + (CW - 42) / 2, y: nowRowY + 3 }, nowRowYUnused: 0,
+      tName: year ? 'Das Jahr' : MN[st.m], ttCls: st.tOut ? 'out' : '', wdCls: year ? 'out' : '', mkCls: year && ov ? '' : 'out',
+      marks: [1, 8, 15, 22, 29].map((k) => ({ n: k, x: 58 + (k - 1) * DW + DW / 2 - 24 })),
+      sheetTop: year ? 728 : 488 - st.c, shCls: st.live ? 'live' : '',
+      digits: this.digits(shown), tot: year ? 365 : n, unit: q ? 'Treffer' : 'Tage', isYear: year, notYear: !year,
+      segM: ov ? '' : 'on', segO: ov ? 'on' : '', segk: ov ? { l: 79, w: 89 } : { l: 2, w: 77 },
+      hpCls: away && !q ? '' : 'off', hpRot: later ? 180 : 0,
+      listCls: (st.listOut || year) ? 'out' : '', entries, noHits: !!q && !entries.length && !year,
+      searchOpen: st.search, searchClosed: !st.search, sLabel: st.search ? 'Suche schließen' : 'Suchen',
+      sfW: st.search ? 274 : 0, sfLine: st.search ? '#3b4740' : 'transparent', setCls: st.search ? 'off' : '', q: st.q,
+      showChips: st.search && !q && !year,
+      sheetRef: this.sheetRef, inputRef: this.inputRef,
+      toggleYear: () => this.toggleYear(), today: () => this.today(), toggleSearch: () => this.toggleSearch(),
+      onQ: (e) => this.setQ(e.target.value),
+      qHafen: () => this.setQ('Hafen'), qDeich: () => this.setQ('Deich'), qTraining: () => this.setQ('Training'), qRegen: () => this.setQ('Regen'),
+      toMonths: () => this.setState({ yl: 'months', ylMorph: true }), toOverview: () => this.setState({ yl: 'overview', ylMorph: true }),
+      pDown: (e) => this.pDown(e), pMove: (e) => this.pMove(e), pUp: (e) => this.pUp(e)
+    };
+  }
+}
+</script>
+</body>
+</html>

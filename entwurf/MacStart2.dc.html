@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Mac aus einem Guss</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.cell{position:absolute;width:60.57px;height:44px;display:grid;place-items:center;border:0;background:transparent;padding:0;font-family:Manrope,sans-serif;cursor:pointer;transition:top .75s cubic-bezier(.32,.72,0,1),opacity .5s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.32,.72,0,1)}
+.cell>span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:14px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;transition:background-color .4s,color .4s}
+.snap .cell{transition:none !important}
+.cell>span{position:relative}
+.cell:active>span{transform:scale(.9);transition:transform .12s}
+.cell>span::before{content:"";position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 0 1px rgba(242,243,239,.92);opacity:0;transform:scale(.86);transition:opacity .18s cubic-bezier(.2,.7,.2,1),transform .45s cubic-bezier(.32,.72,0,1);pointer-events:none}
+.cell.sel>span::before{opacity:1;transform:none;transition:opacity .28s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.32,.72,0,1)}
+.cell>span::after{content:"";position:absolute;left:50%;top:calc(100% + 4px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#f2f3ef;opacity:0;transform:scale(0);pointer-events:none}
+.cell.now>span::after{opacity:1;transform:scale(1);transition:opacity .25s,transform .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes wR0{from{opacity:0;transform:translateX(16px);filter:blur(1.5px)}}@keyframes wR1{from{opacity:0;transform:translateX(16px);filter:blur(1.5px)}}
+@keyframes wL0{from{opacity:0;transform:translateX(-16px);filter:blur(1.5px)}}@keyframes wL1{from{opacity:0;transform:translateX(-16px);filter:blur(1.5px)}}
+@keyframes fR0{from{opacity:.25;transform:translateX(9px);filter:blur(1.6px)}}@keyframes fR1{from{opacity:.25;transform:translateX(9px);filter:blur(1.6px)}}
+@keyframes fL0{from{opacity:.25;transform:translateX(-9px);filter:blur(1.6px)}}@keyframes fL1{from{opacity:.25;transform:translateX(-9px);filter:blur(1.6px)}}
+@keyframes gR{to{opacity:0;transform:translateX(-12px);filter:blur(2px)}}@keyframes gL{to{opacity:0;transform:translateX(12px);filter:blur(2px)}}
+.wv.g0.dr .cell>span{animation:wR0 .6s cubic-bezier(.32,.72,0,1) backwards}.wv.g1.dr .cell>span{animation:wR1 .6s cubic-bezier(.32,.72,0,1) backwards}
+.wv.g0.dl .cell>span{animation:wL0 .6s cubic-bezier(.32,.72,0,1) backwards}.wv.g1.dl .cell>span{animation:wL1 .6s cubic-bezier(.32,.72,0,1) backwards}
+.fl.g0.dr .cell>span{animation:fR0 .15s cubic-bezier(.2,.7,.2,1)}.fl.g1.dr .cell>span{animation:fR1 .15s cubic-bezier(.2,.7,.2,1)}
+.fl.g0.dl .cell>span{animation:fL0 .15s cubic-bezier(.2,.7,.2,1)}.fl.g1.dl .cell>span{animation:fL1 .15s cubic-bezier(.2,.7,.2,1)}
+.gh.dr .cell>span{animation:gR .22s cubic-bezier(.4,0,1,1) forwards}.gh.dl .cell>span{animation:gL .22s cubic-bezier(.4,0,1,1) forwards}
+.gh .cell{transition:none}
+.grid{position:relative;transition:height .75s cubic-bezier(.32,.72,0,1)}
+.bgw{position:absolute;left:0;top:0;width:424px;height:264px;transition:transform .75s cubic-bezier(.32,.72,0,1)}
+.snap.bgw,.snap .bgw{transition:none}
+.pulse{position:absolute;width:40px;height:40px;border-radius:50%;box-shadow:0 0 0 1px #f2f3ef;pointer-events:none;animation:pl 1.2s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes pl{from{transform:scale(1);opacity:.9}to{transform:scale(2.2);opacity:0}}
+.ttm{display:inline-block;letter-spacing:-.015em;transition:opacity .35s,filter .35s,transform .45s cubic-bezier(.2,.7,.2,1)}
+.ttm.out{opacity:0;filter:blur(6px);transform:translateY(-8px)}
+.tab{border:0;background:transparent;font-family:Manrope,sans-serif;font-size:13px;color:#b1bdb3;padding:4px 0;cursor:pointer;transition:color .35s}.tab.on{color:#f2f3ef}
+.ul{position:absolute;top:27px;height:1px;background:#f2f3ef;transition:left .55s cubic-bezier(.32,.72,0,1),width .55s cubic-bezier(.32,.72,0,1)}
+.pill{display:inline-flex;height:32px;border-radius:8px;box-shadow:inset 0 0 0 1px #3b4740;overflow:hidden}
+.pill button{border:0;background:transparent;color:#b1bdb3;width:38px;display:grid;place-items:center;cursor:pointer;transition:color .3s,background-color .3s}
+.pill button:hover{color:#f2f3ef;background:rgba(242,243,239,.06)}
+.pill .ph{max-width:0;width:auto;overflow:hidden;white-space:nowrap;font-family:'Instrument Serif',serif;font-style:italic;font-size:17px;color:#f2f3ef;padding:0;opacity:0;box-shadow:inset 1px 0 0 #3b4740,inset -1px 0 0 #3b4740;transition:max-width .6s cubic-bezier(.32,.72,0,1),padding .6s cubic-bezier(.32,.72,0,1),opacity .4s}
+.pill .ph.on{max-width:90px;padding:0 14px;opacity:1}
+.card{display:grid;grid-template-columns:62px 1fr;width:100%;border:0;border-radius:10px;background:rgba(255,255,255,.5);text-align:left;padding:16px 20px;font-family:inherit;color:#26302b;cursor:pointer;transition:background-color .4s,color .4s}
+.card:hover{background:rgba(255,255,255,.7)}.card.on{background:#2f3431;color:#f2f3ef}
+.card .ex{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.list{scrollbar-width:none;transition:top .75s cubic-bezier(.32,.72,0,1)}.list::-webkit-scrollbar{display:none}
+.side{transition:height .75s cubic-bezier(.32,.72,0,1)}
+.rv{-webkit-mask-image:linear-gradient(#000 40%,transparent 60%);mask-image:linear-gradient(#000 40%,transparent 60%);-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-position:0 0;mask-position:0 0;transition:-webkit-mask-position 1.15s cubic-bezier(.4,0,.2,1),mask-position 1.15s cubic-bezier(.4,0,.2,1),opacity .17s}
+.rv.pre{-webkit-mask-position:0 100%;mask-position:0 100%;transition:none}
+.rv.fade{opacity:0}
+.dg{display:inline-block;height:1.05em;overflow:hidden;vertical-align:top}
+.dg b{display:block;font-weight:400;transition:transform .8s cubic-bezier(.32,.72,0,1)}
+.dg b span{display:block;height:1.05em;line-height:1.05em}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#e0ddd4;font-family:Manrope,system-ui,sans-serif;color:#26302b;overflow:hidden">
+  <div class="side" style="position:absolute;left:18px;top:18px;width:456px;height:{{sideH}}px;border-radius:14px;background:#12150f;color:#f2f3ef;box-sizing:border-box;padding:16px;overflow:hidden">
+    <div style="position:relative;display:flex;justify-content:space-between;align-items:center;height:30px">
+      <span style="display:flex;gap:18px"><button class="tab {{tW}}" onClick="{{toWeek}}">Woche</button><button class="tab {{tM}}" onClick="{{toMonth}}">Monat</button><button class="tab">Jahr</button></span>
+      <span class="ul" style="left:{{ul.l}}px;width:{{ul.w}}px"></span>
+      <span style="display:flex;gap:20px;color:#f2f3ef"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg></span>
+    </div>
+    <div style="margin-top:24px;font-family:'Instrument Serif',serif;line-height:1;display:flex;align-items:baseline;gap:12px;white-space:nowrap"><span class="ttm {{ttCls}}" style="font-size:56px">{{mName}}</span><span style="font-size:36px;font-style:italic;color:#7f8b81">2026</span></div>
+    <div style="height:1px;background:#2c342e;margin-top:16px"></div>
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;font-size:10px;letter-spacing:.18em;color:#7f8b81;font-weight:600;margin-top:12px"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span></div>
+    <div class="grid" style="height:{{gridH}}px;margin-top:4px;overflow:hidden">
+      <div class="bgw {{bgCls}} {{layerCls}}" style="transform:translateY({{bgY}}px)">
+        <sc-for list="{{cells}}" as="c" hint-placeholder-count="30">
+          <button class="cell {{c.sel}} {{c.now}}" onClick="{{c.pick}}" style="left:{{c.x}}px;top:{{c.y}}px;opacity:{{c.o}};transition-delay:{{c.dl}}ms"><span style="background:{{c.b}};color:{{c.fg}};font-weight:{{c.fw}};animation-delay:{{c.ad}}ms">{{c.n}}</span></button>
+        </sc-for>
+        <sc-if value="{{pulse.on}}" hint-placeholder-val="{{ false }}"><div class="pulse" style="left:{{pulse.x}}px;top:{{pulse.y}}px"></div></sc-if>
+      </div>
+      <sc-if value="{{hasGhost}}" hint-placeholder-val="{{ false }}">
+        <div class="gh {{ghCls}}" style="position:absolute;left:0;top:0;width:424px;height:264px;pointer-events:none">
+          <sc-for list="{{ghost}}" as="g" hint-placeholder-count="7"><span class="cell {{g.sel}} {{g.now}}" style="left:{{g.x}}px;top:{{g.y}}px"><span style="background:{{g.b}};color:{{g.fg}};font-weight:{{g.fw}};animation-delay:{{g.dl}}ms">{{g.n}}</span></span></sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+      <span style="display:flex;align-items:baseline;gap:9px"><span class="num" style="font-family:'Instrument Serif',serif;font-size:26px;line-height:1.05;display:inline-flex"><sc-for list="{{digits}}" as="g" hint-placeholder-count="2"><span class="dg"><b style="transform:translateY({{g.y}});transition-delay:{{g.dl}}ms"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></b></span></sc-for><span style="color:#7f8b81">/{{tot}}</span></span><span style="font-size:12px;color:#b1bdb3">Tage</span></span>
+      <span class="pill"><button onClick="{{prev}}" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button><button class="ph {{phCls}}" onClick="{{today}}">Heute</button><button onClick="{{next}}" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button></span>
+    </div>
+  </div>
+  <div class="list" style="position:absolute;left:18px;top:{{listTop}}px;width:456px;bottom:18px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
+    <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+      <button class="card {{e.on}}" onClick="{{e.pick}}">
+        <span style="display:flex;flex-direction:column"><span class="num" style="font-family:'Instrument Serif',serif;font-size:34px;line-height:.95">{{e.d}}</span><span style="font-size:9.5px;letter-spacing:.18em;font-weight:600;margin-top:7px;opacity:.7">{{e.wd}}</span></span>
+        <span style="min-width:0"><span style="display:block;font-family:'Instrument Serif',serif;font-size:22.5px;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{e.title}}</span><span class="ex" style="font-size:13.5px;line-height:1.5;opacity:.72;margin-top:5px">Heute war einer dieser Tage, an denen alles etwas langsamer läuft. Ich habe lange am Fenster gesessen.</span></span>
+      </button>
+    </sc-for>
+  </div>
+  <div style="position:absolute;left:492px;top:18px;right:18px;bottom:18px;border-radius:14px;background:#f6f5f1;box-shadow:0 0 0 1px rgba(38,48,43,.15),inset 0 1px 0 rgba(255,255,255,.7),0 20px 50px rgba(38,48,43,.08)">
+    <div class="rv {{rvCls}}" style="position:absolute;inset:0;padding:84px 72px 0;display:grid;grid-template-columns:112px 1fr;column-gap:44px">
+      <div style="border-right:1px solid #cfd0c8;height:250px">
+        <div class="num" style="font-family:'Instrument Serif',serif;font-size:68px;line-height:.9;letter-spacing:-.015em">{{ent.d}}</div>
+        <div style="font-size:11px;letter-spacing:.2em;font-weight:600;color:#506055;margin-top:14px">{{ent.wd}}</div>
+        <div class="num" style="font-size:13px;color:#7d897f;margin-top:8px;line-height:1.6;white-space:pre-line">{{ent.when}}</div>
+        <div style="width:28px;height:1px;background:#cfd0c8;margin:16px 0 12px"></div>
+        <div style="font-size:12px;color:#8d998f;line-height:1.8">Leer<br>4° · Nebel</div>
+      </div>
+      <div style="min-width:0">
+        <div style="font-family:'Instrument Serif',serif;font-size:50px;line-height:1.02;letter-spacing:-.018em">{{ent.title}}</div>
+        <div style="font-size:19px;line-height:1.75;color:#2b332e;margin-top:26px;white-space:pre-line;text-wrap:pretty;max-width:640px">{{ent.body}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { view: 'week', m: 10, sel: 26, shown: 26, gen: 0, mode: '', dir: 1, ghost: null, snap: false, tOut: false, pulse: 0, rv: '' }; }
+  MN(){ return ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']; }
+  T(){ return ['Morgens am Hafen','Lange geschlafen','Erste Kälte','Spaziergang am Deich','Training: neue Bestmarke','Ein ruhiger Sonntag','Kurs: n8n-Workflows','Regen über Leer','Abends am Hafen','Gegenwind am Deich','Kaffee am Fenster','Nebel über den Wiesen']; }
+  info(m){ return { first: (new Date(2026, m, 1).getDay() + 6) % 7, n: new Date(2026, m + 1, 0).getDate() }; }
+  has(m, d){ if (m > 10 || (m === 10 && d > 27)) return false; return ((d * 7 + m * 13) % 10) < 6; }
+  title(m, d){ const T = this.T(); return T[(d * 5 + m * 3) % T.length]; }
+  pos(m, d){ const k = this.info(m).first + d - 1; return { c: k % 7, r: Math.floor(k / 7) }; }
+  later(ms, fn){ return setTimeout(fn, ms); }
+  look(m, d){ const w = this.has(m, d), fut = m > 10 || (m === 10 && d > 27); return { b: w ? '#f2f3ef' : 'transparent', fg: w ? '#12150f' : (fut ? '#4a5449' : '#c9d0ca'), fw: w ? 600 : 500 }; }
+  week(){ return this.state.view === 'week'; }
+  open(d){
+    this.setState({ rv: 'fade' });
+    this.later(170, () => this.setState({ shown: d, rv: 'pre' }, () => requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ rv: '' })))));
+  }
+  snapshot(dir){
+    const st = this.state, { n } = this.info(st.m), CW = 424 / 7, wk = this.week(), selRow = st.sel ? this.pos(st.m, st.sel).r : 0, out = [];
+    for (let d = 1; d <= n; d++) {
+      const r = this.pos(st.m, d); if (wk && r.r !== selRow) continue;
+      const order = (dir > 0 ? r.c : 6 - r.c) + r.r * .35;
+      out.push({ n: d, x: r.c * CW, y: wk ? 0 : r.r * 44, ...this.look(st.m, d), sel: d === st.sel ? 'sel' : '', now: st.m === 10 && d === 27 ? 'now' : '', dl: Math.round(order * 14) });
+    }
+    return out;
+  }
+  go(next, dir, after){
+    const st = this.state, mc = next.m !== undefined && next.m !== st.m; this.busy = true;
+    this.setState({ ...next, ghost: this.snapshot(dir), gen: 1 - st.gen, dir, mode: 'wv', snap: true, tOut: mc },
+      () => requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ snap: false, tOut: false }))));
+    clearTimeout(this._g); this._g = this.later(720, () => { this.busy = false; this.setState({ ghost: null }); });
+    if (after) this.later(560, after);
+  }
+  flip(frames, dir, land){
+    const T = [110, 80, 62]; let t = 0; this.busy = true;
+    frames.forEach((f, i) => { t += T[i] || 50; this.later(t, () => this.setState({ ...f, gen: 1 - this.state.gen, dir, mode: 'fl', snap: true, ghost: null })); });
+    this.later(t + 40, () => { this.busy = false; land(); });
+  }
+  pick14(arr){ if (arr.length <= 14) return arr; const out = []; for (let i = 1; i <= 14; i++) { const v = arr[Math.round(i * (arr.length - 1) / 14)]; if (!out.includes(v)) out.push(v); } return out; }
+  weekDates(from, to){
+    const dir = to > from ? 1 : -1, out = [], mon = (x) => { const y = new Date(x); y.setDate(y.getDate() - (y.getDay() + 6) % 7); return y; };
+    let k = mon(from); const end = mon(to); k.setDate(k.getDate() + 7 * dir);
+    while (dir > 0 ? k < end : k > end) { out.push(new Date(k)); k.setDate(k.getDate() + 7 * dir); }
+    return out;
+  }
+  shift(dir){
+    const st = this.state; if (this.busy) return;
+    if (this.week()) { const b = new Date(2026, st.m, st.sel || 1); b.setDate(b.getDate() + 7 * dir); if (b.getFullYear() !== 2026) return; this.go({ m: b.getMonth(), sel: b.getDate() }, dir); }
+    else { const m = st.m + dir; if (m < 0 || m > 11) return; this.go({ m, sel: m === 10 ? 26 : 1 }, dir); }
+  }
+  today(){
+    const st = this.state; if (this.busy) return;
+    const T = new Date(2026, 10, 27), pulse = () => this.setState({ pulse: Date.now() });
+    const done = () => { pulse(); if (this.has(10, 27)) this.open(27); };
+    if (this.week()) {
+      const cur = new Date(2026, st.m, st.sel || 1), dir = T > cur ? 1 : -1, mid = this.weekDates(cur, T);
+      if (st.m === 10 && this.pos(10, st.sel || 27).r === this.pos(10, 27).r) { this.setState({ sel: 27 }); this.later(200, done); return; }
+      const land = () => this.go({ m: 10, sel: 27 }, dir, done);
+      if (mid.length < 2) { land(); return; }
+      this.flip(this.pick14(mid).map((d) => ({ m: d.getMonth(), sel: d.getDate() })), dir, land); return;
+    }
+    if (st.m === 10) { this.setState({ sel: 27 }); this.later(250, done); return; }
+    const dir = st.m < 10 ? 1 : -1, between = []; for (let k = st.m + dir; k !== 10; k += dir) between.push(k);
+    const land = () => this.go({ m: 10, sel: 27 }, dir, done);
+    if (between.length < 2) { land(); return; }
+    this.flip(this.pick14(between).map((k) => ({ m: k, sel: 1 })), dir, land);
+  }
+  selDay(d){
+    const st = this.state; if (this.busy) return;
+    if (this.has(st.m, d) && st.m === 10) this.open(d);
+    if (this.week() && st.sel && this.pos(st.m, d).r !== this.pos(st.m, st.sel).r) {
+      const from = new Date(2026, st.m, st.sel), to = new Date(2026, st.m, d), dir = to > from ? 1 : -1, mid = this.weekDates(from, to);
+      const land = () => this.go({ sel: d }, dir);
+      if (mid.length < 2) { land(); return; }
+      this.flip(mid.map((x) => ({ m: x.getMonth(), sel: x.getDate() })), dir, land); return;
+    }
+    this.setState({ sel: d });
+  }
+  renderVals(){
+    const st = this.state, MN = this.MN(), { n } = this.info(st.m), CW = 424 / 7, RH = 44, wk = this.week();
+    const selRow = st.sel ? this.pos(st.m, st.sel).r : 0, cells = [];
+    for (let d = 1; d <= n; d++) {
+      const r = this.pos(st.m, d), dist = Math.abs(r.r - selRow), hide = wk && r.r !== selRow;
+      const order = (st.dir > 0 ? r.c : 6 - r.c) + r.r * .35;
+      cells.push({ n: d, x: r.c * CW, y: hide ? selRow * RH : r.r * RH, o: hide ? 0 : 1, dl: st.snap ? 0 : (wk ? (5 - dist) * 28 : dist * 50), ad: st.mode === 'wv' ? Math.round(80 + order * 28) : 0,
+        ...this.look(st.m, d), sel: d === st.sel ? 'sel' : '', now: st.m === 10 && d === 27 ? 'now' : '', pick: () => this.selDay(d) });
+    }
+    let cnt = 0; for (let d = 1; d <= n; d++) if (this.has(st.m, d)) cnt++;
+    const WD = ['MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG','SONNTAG'], entries = [];
+    for (let d = 27; d >= 1; d--) if (this.has(10, d)) entries.push({ d, wd: WD[this.pos(10, d).c].slice(0, 2), title: this.title(10, d), on: st.m === 10 && d === st.sel ? 'on' : '', pick: () => { if (this.state.m !== 10) this.go({ m: 10, sel: d }, 1, () => this.open(d)); else this.selDay(d); } });
+    const sd = st.shown, nowP = this.pos(10, 27);
+    const ent = { d: sd, wd: WD[this.pos(10, sd).c], when: 'November\n2026 · 0' + (7 + sd % 3) + ':' + (10 + sd), title: this.title(10, sd),
+      body: 'Heute war einer dieser Tage, an denen alles etwas langsamer läuft. Ich habe lange am Fenster gesessen, Kaffee getrunken und zugesehen, wie der Nebel über den Wiesen liegt.\n\nSpäter noch ein Stück am Deich gelaufen. Die Luft roch nach Salz und nassem Gras, und für eine Stunde war mein Kopf ganz still.' };
+    const gridH = wk ? 44 : 264, sideH = 496 - (264 - gridH);
+    const away = st.m !== 10 || (wk && this.pos(10, st.sel || 27).r !== nowP.r);
+    return {
+      cells, entries, ent, mName: MN[st.m], ttCls: st.tOut ? 'out' : '', gridH, sideH, listTop: 18 + sideH + 10,
+      bgY: wk ? -selRow * RH : 0, bgCls: st.snap ? 'snap' : '', layerCls: st.mode ? st.mode + ' g' + st.gen + ' ' + (st.dir > 0 ? 'dr' : 'dl') : '',
+      hasGhost: !!st.ghost, ghost: st.ghost || [], ghCls: st.dir > 0 ? 'dr' : 'dl',
+      pulse: { on: !!st.pulse && st.m === 10 && Date.now() - st.pulse < 1300, x: nowP.c * CW + (CW - 40) / 2, y: nowP.r * RH + 2 },
+      digits: String(cnt).split('').map((ch, i, a) => ({ y: (-1.05 * Number(ch)) + 'em', dl: (a.length - 1 - i) * 70 })), tot: n,
+      phCls: away ? 'on' : '', rvCls: st.rv, tW: wk ? 'on' : '', tM: wk ? '' : 'on', ul: wk ? { l: 0, w: 47 } : { l: 65, w: 45 },
+      toWeek: () => this.setState({ view: 'week', mode: '' }), toMonth: () => this.setState({ view: 'month', mode: '' }),
+      prev: () => this.shift(-1), next: () => this.shift(1), today: () => this.today()
+    };
+  }
+}
+</script>
+</body>
+</html>

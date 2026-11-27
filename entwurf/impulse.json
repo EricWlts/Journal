@@ -1,0 +1,1782 @@
+[
+{
+"t": "Wann fühlst du dich ganz verwandelt, wie über Nacht?",
+"q": "nach Kafka · Die Verwandlung"
+},
+{
+"t": "Welcher Baum, welche Pflanze ist dir heute aufgefallen?",
+"q": "Naturimpuls"
+},
+{
+"t": "Was tust du, um Recht zu behalten, statt um glücklich zu sein?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Beschreibe dich so, wie du heute wirklich warst – nicht, wie du gern gewesen wärst.",
+"q": "nach Montaigne · Essais"
+},
+{
+"t": "Wem könntest du diese Woche eine kleine Freude machen?",
+"q": "Impuls"
+},
+{
+"t": "Wie hat sich der Wind heute angefühlt?",
+"q": "Naturimpuls"
+},
+{
+"t": "Was würdest du heute tun, wenn Geld keine Rolle spielte?",
+"q": "Impuls"
+},
+{
+"t": "Welche Idee hast du dir heute notiert – oder hättest du notieren sollen?",
+"q": "Schaffensimpuls"
+},
+{
+"t": "Was war heute dein schönster Bissen?",
+"q": "Sinnesimpuls"
+},
+{
+"t": "Wem möchtest du heute in Gedanken Frieden wünschen?",
+"q": "Metta · Meditation der liebenden Güte"
+},
+{
+"t": "Welches Hindernis könnte heute zur Gelegenheit werden?",
+"q": "nach Ryan Holiday · Dein Hindernis ist dein Weg"
+},
+{
+"t": "Wovon könntest du dich nähren, wenn du einsam bist?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Was möchtest du in dieser Jahreszeit noch erleben?",
+"q": "Jahreszeitenimpuls"
+},
+{
+"t": "Wenn du Holz hackst, hack Holz. Wobei warst du heute ganz bei der Sache?",
+"q": "Zen-Spruch"
+},
+{
+"t": "Wie hast du geschlafen – und was hast du geträumt?",
+"q": "Impuls"
+},
+{
+"t": "Wie würde eine liebevolle Morgenroutine für dich aussehen?",
+"q": "nach Hal Elrod · Miracle Morning"
+},
+{
+"t": "Was macht das Licht heute anders als vor einem Monat?",
+"q": "Naturimpuls"
+},
+{
+"t": "Was sagt das Wasser, wenn du ihm zuhörst – Meer, Fluss, Regen?",
+"q": "Naturimpuls"
+},
+{
+"t": "Schreib eine Liste von kleinen Dingen, die dich glücklich machen.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Geh in dich: Was musst du schreiben, auch wenn es niemand lesen wird?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Welche drei Wörter beschreiben diese Woche?",
+"q": "Impuls"
+},
+{
+"t": "Welche Bitte könntest du heute klar aussprechen?",
+"q": "nach Marshall Rosenberg · Gewaltfreie Kommunikation"
+},
+{
+"t": "Was hat heute gereicht?",
+"q": "Abendimpuls"
+},
+{
+"t": "Was ist heute die eine Sache, die den Tag gut macht, wenn sie gelingt?",
+"q": "Impuls"
+},
+{
+"t": "Was ist gerade dein mutigster nächster Schritt?",
+"q": "nach Brené Brown · Dare to Lead"
+},
+{
+"t": "Was soll in einem Jahr anders sein – und was genau gleich?",
+"q": "Jahresimpuls"
+},
+{
+"t": "Was hast du beobachtet – und was hast du daraus gemacht?",
+"q": "nach Marshall Rosenberg · Gewaltfreie Kommunikation"
+},
+{
+"t": "Schreib zehn Minuten über ein einziges Wort: Heimat.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Wer willst du sein? Welche Handlung heute wäre eine Stimme für diese Person?",
+"q": "nach James Clear · Die 1%-Methode"
+},
+{
+"t": "Wo hat dein Ego dir heute im Weg gestanden?",
+"q": "nach Ryan Holiday · Dein Ego ist dein Feind"
+},
+{
+"t": "Was würdest du tun, wenn niemand zuschaut?",
+"q": "Impuls"
+},
+{
+"t": "Wo hast du heute Zeit verloren, ohne es zu wollen?",
+"q": "nach Seneca · Von der Kürze des Lebens"
+},
+{
+"t": "Mit welcher Absicht beginnst du diesen Tag?",
+"q": "Morgenimpuls"
+},
+{
+"t": "Was steht zwischen dir und einem ruhigen Abend?",
+"q": "Abendimpuls"
+},
+{
+"t": "Welche drei Werte sollen dein Jahr leiten?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was hast du dir heute nicht zu sagen getraut?",
+"q": "nach Brené Brown · Verletzlichkeit macht stark"
+},
+{
+"t": "Was ist dir heilig – im ganz alltäglichen Sinn?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wann hat dich heute Ärger festgehalten wie eine glühende Kohle?",
+"q": "nach dem Buddha zugeschriebenen Bild"
+},
+{
+"t": "Welche Meinung über etwas macht dir gerade das Leben schwer – nicht die Sache selbst?",
+"q": "nach Epiktet · Handbüchlein der Moral"
+},
+{
+"t": "Was machst du gern, obwohl du nicht gut darin bist?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du heute getan, das niemandem schadet und jemandem nützt?",
+"q": "Rechtes Handeln · Achtfacher Pfad"
+},
+{
+"t": "Schreib zehn Minuten über ein einziges Wort: Stille.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Wohin würdest du morgen fahren, wenn du frei hättest?",
+"q": "Reiseimpuls"
+},
+{
+"t": "Wem vertraust du dich selbst an – und vertraust du dir?",
+"q": "nach Emerson · Selbstvertrauen"
+},
+{
+"t": "Wie fühlt sich dein Zuhause an, wenn du nach Hause kommst?",
+"q": "Ortsimpuls"
+},
+{
+"t": "Schreib über etwas, das du nur hier sagen kannst.",
+"q": "nach Natalie Goldberg · Schreiben in Cafés"
+},
+{
+"t": "Beschreibe die Dämmerung heute in drei Sätzen.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Was möchtest du so gut können, dass es leicht aussieht?",
+"q": "Schaffensimpuls"
+},
+{
+"t": "Wofür bist du verantwortlich, weil du es gezähmt hast?",
+"q": "nach Saint-Exupéry · Der kleine Prinz"
+},
+{
+"t": "Was ist in deinem Alltag so selbstverständlich geworden, dass du es nicht mehr siehst?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Welcher Vogel, welches Tier ist dir zuletzt begegnet?",
+"q": "Naturimpuls"
+},
+{
+"t": "Was hast du heute wirklich angesehen?",
+"q": "nach Mary Oliver"
+},
+{
+"t": "Welcher Ort hat dich verändert?",
+"q": "Reiseimpuls"
+},
+{
+"t": "Woran glaubst du, ohne es beweisen zu können?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Lies einen alten Eintrag. Was würdest du deinem damaligen Ich antworten?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Wo hast du dich heute verletzlich gezeigt – und was ist passiert?",
+"q": "nach Brené Brown · Verletzlichkeit macht stark"
+},
+{
+"t": "Mit wem würdest du gern einen ganzen Tag verbringen?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Welche Idee lässt dich gerade nicht los?",
+"q": "Impuls"
+},
+{
+"t": "Was nimmst du dir für die nächste Woche vor – nur eine Sache?",
+"q": "Wochenimpuls"
+},
+{
+"t": "Wovor läufst du gerade davon – und wohin würdest du gehen, wenn du stehen bleibst?",
+"q": "Impuls"
+},
+{
+"t": "Das Leben ist nicht kurz – wir machen es kurz. Wofür hast du heute wirklich gelebt?",
+"q": "nach Seneca · Von der Kürze des Lebens"
+},
+{
+"t": "Welcher Satz hat dich in letzter Zeit nicht losgelassen?",
+"q": "Impuls"
+},
+{
+"t": "Was nimmst du gerade über deine Füße, Hände und Schultern wahr?",
+"q": "Body-Scan · nach Jon Kabat-Zinn"
+},
+{
+"t": "Welche einfache Freude war heute größer als eine teure?",
+"q": "nach Epikur"
+},
+{
+"t": "Was ist gerade angenehm, was unangenehm, was neutral?",
+"q": "die drei Gefühlstöne · Satipaṭṭhāna"
+},
+{
+"t": "Was hat dir heute Halt gegeben?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Welche deiner Worte heute waren wahr, freundlich und hilfreich?",
+"q": "Rechte Rede · Achtfacher Pfad"
+},
+{
+"t": "Welche Erwartung an dich selbst darfst du gerade lockern?",
+"q": "Impuls"
+},
+{
+"t": "Was fließt gerade leicht in deinem Leben?",
+"q": "nach Zhuangzi"
+},
+{
+"t": "Welche Geschichte erzählst du dir über einen Menschen – und stimmt sie?",
+"q": "nach Byron Katie · The Work"
+},
+{
+"t": "Was hat dich heute an jemandem berührt?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du in einer Beziehung gelernt, das du niemandem erklären könntest?",
+"q": "Impuls"
+},
+{
+"t": "Wann hast du heute in die Tiefe gearbeitet, ohne Unterbrechung?",
+"q": "nach Cal Newport · Deep Work"
+},
+{
+"t": "Was ist gerade jetzt, in diesem Moment, in Ordnung?",
+"q": "nach Eckhart Tolle · Jetzt!"
+},
+{
+"t": "Was war heute leichter als gedacht?",
+"q": "Impuls"
+},
+{
+"t": "Welcher Moment heute war ein „moment of being“ – ganz wach, ganz da?",
+"q": "nach Virginia Woolf · Augenblicke des Daseins"
+},
+{
+"t": "Was hat das Wetter heute mit deiner Stimmung gemacht?",
+"q": "Impuls"
+},
+{
+"t": "Was ist die Mauer, auf die du nur die zwei schiefen Steine siehst?",
+"q": "nach Ajahn Brahm · Die Kuh, die weinte"
+},
+{
+"t": "Wo war heute Weichheit stärker als Härte?",
+"q": "nach Laotse · Tao te king"
+},
+{
+"t": "Welche drei guten Dinge sind heute passiert – und warum?",
+"q": "die Drei-gute-Dinge-Übung · Martin Seligman"
+},
+{
+"t": "Beschreibe einen Menschen, den du liebst, nur über seine Hände.",
+"q": "Impuls"
+},
+{
+"t": "Welches Buch, Lied oder Bild hat dich zuletzt berührt – und warum?",
+"q": "Impuls"
+},
+{
+"t": "Was berührt dich gerade, ohne dass du es erklären kannst?",
+"q": "nach Hartmut Rosa · Resonanz"
+},
+{
+"t": "Wie sah dein Leben vor fünf Jahren aus – was hättest du damals nicht geglaubt?",
+"q": "Erinnerungsimpuls"
+},
+{
+"t": "Wofür brennst du gerade, auch wenn es niemand bezahlt?",
+"q": "Schaffensimpuls"
+},
+{
+"t": "Wenn du wirklich zuhörst – was sagt dein Körper heute?",
+"q": "Achtsamkeitsübung"
+},
+{
+"t": "Wem kannst du heute ohne Grund danken?",
+"q": "Dankbarkeitsübung"
+},
+{
+"t": "Was ist heute anders als gestern?",
+"q": "Impuls"
+},
+{
+"t": "Was würdest du gern besser verstehen?",
+"q": "Impuls"
+},
+{
+"t": "Welche kleine Sache verdient heute eine Verbeugung?",
+"q": "nach dem Zen · Dankbarkeit"
+},
+{
+"t": "Welcher Ort gibt dir Ruhe – und wann warst du zuletzt dort?",
+"q": "Impuls"
+},
+{
+"t": "Was würde dich heute stolz machen, wenn du es schaffst?",
+"q": "Morgenimpuls"
+},
+{
+"t": "Was würde ein freundlicher Begleiter zu deinem heutigen Tag sagen?",
+"q": "Selbstmitgefühl"
+},
+{
+"t": "Schreib einen Brief an dich in einem Jahr.",
+"q": "Impuls"
+},
+{
+"t": "Was wäre gut genug – nicht perfekt, sondern gut genug?",
+"q": "nach Ajahn Brahm · Die Kuh, die weinte"
+},
+{
+"t": "Welche Landschaft ist in dir zu Hause?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was wächst gerade still, ohne dass man es sieht?",
+"q": "Naturimpuls"
+},
+{
+"t": "Wofür möchtest du dich bei jemandem bedanken? Schreib es ihm hier zuerst.",
+"q": "Impuls"
+},
+{
+"t": "Wofür bist du verantwortlich, auch wenn es niemand verlangt?",
+"q": "nach Hans Jonas · Das Prinzip Verantwortung"
+},
+{
+"t": "Wir sind, was wir denken. Welcher Gedanke formt dich heute?",
+"q": "nach dem Dhammapada"
+},
+{
+"t": "Welche Lebenskunst übst du gerade, ohne es zu merken?",
+"q": "nach Wilhelm Schmid · Mit sich selbst befreundet sein"
+},
+{
+"t": "Wünsch dir selbst etwas Gutes, in ganzen Sätzen. Wie fühlt sich das an?",
+"q": "Metta · Meditation der liebenden Güte"
+},
+{
+"t": "Was willst du heute bewusst langsam tun?",
+"q": "Impuls"
+},
+{
+"t": "Was bleibt, wenn du alles Müssen für einen Moment weglässt?",
+"q": "Meditationsimpuls"
+},
+{
+"t": "Wie würde dein Tag aussehen, wenn du ihn mit einem Bogen um die Eile gingest?",
+"q": "nach Ajahn Brahm"
+},
+{
+"t": "Wo spielst du noch, ganz ohne Zweck?",
+"q": "nach Schiller · Über die ästhetische Erziehung"
+},
+{
+"t": "Schritt, Atemzug, Besenstrich. Was kannst du heute Stück für Stück tun?",
+"q": "nach Michael Ende · Momo, Beppo Straßenkehrer"
+},
+{
+"t": "Was trägst du noch mit dir, obwohl du es längst abstellen könntest?",
+"q": "nach dem Zen-Gleichnis von den zwei Mönchen"
+},
+{
+"t": "Wofür bist du einem Menschen aus deiner Vergangenheit dankbar?",
+"q": "nach Marc Aurel · Buch I der Selbstbetrachtungen"
+},
+{
+"t": "Woran erinnert dich der Geschmack von etwas, das du heute gegessen hast?",
+"q": "nach Proust · die Madeleine"
+},
+{
+"t": "Wo hast du heute die Welt singen hören?",
+"q": "nach Eichendorff · Wünschelrute"
+},
+{
+"t": "Worauf freust du dich in den nächsten Tagen?",
+"q": "Impuls"
+},
+{
+"t": "Wovon nährt sich dein Geist gerade – Bildschirm, Gespräche, Gedanken?",
+"q": "nach Thich Nhat Hanh · die vier Nahrungen"
+},
+{
+"t": "Welche deiner Stärken hast du heute eingesetzt?",
+"q": "nach Martin Seligman · Der Glücks-Faktor"
+},
+{
+"t": "Schreib über einen Weg, den du oft gehst, als würdest du ihn zum ersten Mal sehen.",
+"q": "nach Proust · der Blick des Fremden"
+},
+{
+"t": "Welches Werk, welche Aufgabe macht dich gerade ganz?",
+"q": "nach Goethe"
+},
+{
+"t": "Wem hast du heute zugehört wie Momo – ganz, ohne zu bewerten?",
+"q": "nach Michael Ende · Momo"
+},
+{
+"t": "Was hast du heute verschenkt – Zeit, Aufmerksamkeit, ein Lächeln?",
+"q": "Impuls"
+},
+{
+"t": "Welche Gefühle hast du heute gefühlt? Versuche, drei genau zu benennen.",
+"q": "nach Marc Brackett · Permission to Feel"
+},
+{
+"t": "Was ist schwer gerade? Erkenne es an, lass es da sein, untersuche es freundlich.",
+"q": "RAIN · nach Tara Brach"
+},
+{
+"t": "Welcher Gedanke hat dich heute klüger gemacht?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wofür würdest du sagen: Verweile doch, du bist so schön?",
+"q": "nach Goethe · Faust"
+},
+{
+"t": "Welcher Moment heute war vollkommen, so wie er war?",
+"q": "nach dem Zen"
+},
+{
+"t": "Was hält dich lebendig?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wer ist dir ein Vorbild, an dem du dich messen möchtest?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Was war heute anders schön?",
+"q": "Alltagsimpuls"
+},
+{
+"t": "Was hat sich heute verändert, ohne dass du etwas dafür tun musstest?",
+"q": "nach der Lehre von der Vergänglichkeit"
+},
+{
+"t": "Was ist dein Lieblingsort in Leer – und warum?",
+"q": "Ortsimpuls"
+},
+{
+"t": "Was würde deinen Morgen schöner machen?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du heute angefangen, das du dir lange vorgenommen hattest?",
+"q": "nach Goethe · Faust, Vorspiel auf dem Theater"
+},
+{
+"t": "Was ist ein gutes Leben, wenn du es ohne Erfolg und Besitz beschreibst?",
+"q": "nach Aristoteles · Nikomachische Ethik"
+},
+{
+"t": "Was macht einen guten Sonntag aus?",
+"q": "Impuls"
+},
+{
+"t": "Stell dir vor, du hättest das, was du heute hast, verloren. Was würdest du vermissen?",
+"q": "die stoische Übung der Vorwegnahme · Seneca"
+},
+{
+"t": "Welche Gewohnheit formt dich gerade, ohne dass du es bemerkst?",
+"q": "nach Aristoteles · Nikomachische Ethik"
+},
+{
+"t": "Was hat diese Woche gekostet – und was hat sie gebracht?",
+"q": "Wochenrückblick"
+},
+{
+"t": "Was hat sich seit dem letzten Monat verändert?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Was hat heute gefehlt?",
+"q": "Abendimpuls"
+},
+{
+"t": "Was würdest du retten, wenn du nur drei Dinge mitnehmen könntest?",
+"q": "Alltagsimpuls"
+},
+{
+"t": "Was brauchst du gerade von anderen, ohne es zu sagen?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Welcher Nutzen liegt im scheinbar Nutzlosen?",
+"q": "nach Zhuangzi · der nutzlose Baum"
+},
+{
+"t": "Welche kleine Freude wiederholt sich jeden Tag, ohne dass du sie feierst?",
+"q": "Impuls"
+},
+{
+"t": "Welche Sorge darf heute Nacht hier auf dem Papier bleiben?",
+"q": "Impuls"
+},
+{
+"t": "Was wäre die kleinste Version deines Ziels, die du heute schaffen kannst?",
+"q": "nach BJ Fogg · Tiny Habits"
+},
+{
+"t": "Welcher Wunsch macht dich gerade unruhig?",
+"q": "nach den Vier Edlen Wahrheiten"
+},
+{
+"t": "Wann hast du dich heute am lebendigsten gefühlt?",
+"q": "Impuls"
+},
+{
+"t": "Was ist heute der nächste kleine Schritt – so klein, dass er fast lächerlich ist?",
+"q": "nach James Clear · Die 1%-Methode"
+},
+{
+"t": "Wann warst du heute wie Wasser – nachgiebig und doch beharrlich?",
+"q": "nach Laotse · Tao te king"
+},
+{
+"t": "Was hast du heute über die Welt gestaunt?",
+"q": "nach Albert Einstein · Wie ich die Welt sehe"
+},
+{
+"t": "Was verdient heute deine ungeteilte Aufmerksamkeit?",
+"q": "nach Simone Weil · Schwerkraft und Gnade"
+},
+{
+"t": "Wo hast du heute mehr gewollt, als du gebraucht hast?",
+"q": "nach den Vier Edlen Wahrheiten"
+},
+{
+"t": "Was wäre, wenn du heute nichts verbessern müsstest?",
+"q": "nach Shunryu Suzuki"
+},
+{
+"t": "Was würde dein achtzigjähriges Ich über den heutigen Tag sagen?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du heute verziehen – dir oder anderen?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Welches Bedürfnis steckte hinter deinem Ärger heute?",
+"q": "nach Marshall Rosenberg · Gewaltfreie Kommunikation"
+},
+{
+"t": "Was würdest du Besuchern in deiner Stadt zeigen?",
+"q": "Ortsimpuls"
+},
+{
+"t": "Betrachte deinen Tag von oben, wie aus großer Höhe. Was wird klein?",
+"q": "der Blick von oben · Marc Aurel"
+},
+{
+"t": "Was tust du, weil man es eben tut?",
+"q": "nach Heidegger · das Man"
+},
+{
+"t": "Was wäre heute ein freundlicher Umgang mit dir selbst?",
+"q": "Impuls"
+},
+{
+"t": "Was war das Mutigste, was du in letzter Zeit getan hast?",
+"q": "Impuls"
+},
+{
+"t": "Was würdest du weglassen, wenn du einfacher leben wolltest?",
+"q": "nach Thoreau · Walden"
+},
+{
+"t": "Was würde dein Tagebuch über dich sagen, wenn es sprechen könnte?",
+"q": "Schreibimpuls"
+},
+{
+"t": "Ein ungeprüftes Leben ist nicht lebenswert. Was prüfst du heute?",
+"q": "nach Sokrates · Platons Apologie"
+},
+{
+"t": "Wem würdest du von diesem Tag als Erstes erzählen?",
+"q": "Abendimpuls"
+},
+{
+"t": "Wo warst du heute ganz wach?",
+"q": "nach Thoreau · Walden"
+},
+{
+"t": "Wie geht es deinem Körper heute?",
+"q": "Impuls"
+},
+{
+"t": "Wer ist es, der gerade diese Frage liest?",
+"q": "nach dem Zen-Koan · Wer bin ich?"
+},
+{
+"t": "Was ist jetzt, in diesem Atemzug, schon da?",
+"q": "nach Thich Nhat Hanh · Das Wunder der Achtsamkeit"
+},
+{
+"t": "Wofür lohnt es sich gerade, Schweres zu tragen?",
+"q": "nach Viktor Frankl · … trotzdem Ja zum Leben sagen"
+},
+{
+"t": "Was hast du heute nicht fotografiert, aber gesehen?",
+"q": "Impuls"
+},
+{
+"t": "Leg eine Hand aufs Herz. Was brauchst du gerade?",
+"q": "nach Kristin Neff · Selbstmitgefühl"
+},
+{
+"t": "Was ist genug? Wer genug kennt, ist reich.",
+"q": "nach Laotse · Tao te king"
+},
+{
+"t": "Wem möchtest du öfter sagen, was er dir bedeutet?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Was hast du dieses Jahr gelernt, was kein Kurs dir beibringen konnte?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Was würde die Version von dir tun, die du in einem Jahr sein willst?",
+"q": "Zukunftsimpuls"
+},
+{
+"t": "Was willst du heute loslassen, bevor du schlafen gehst?",
+"q": "Impuls"
+},
+{
+"t": "Was ist dein Atem, wenn du ihn nicht steuerst?",
+"q": "Meditationsimpuls"
+},
+{
+"t": "Was ist dein Felsblock – und kannst du dir den Menschen dabei glücklich vorstellen?",
+"q": "nach Camus · Der Mythos des Sisyphos"
+},
+{
+"t": "Welchen Rat würdest du selbst gerade geben?",
+"q": "Impuls"
+},
+{
+"t": "Welche Dinge um dich erzählen Geschichten, wenn du sie fragst?",
+"q": "nach Orhan Pamuk · Museum der Unschuld"
+},
+{
+"t": "Wovor fürchtest du dich – und wie wahrscheinlich ist es wirklich?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Welche Geschichte erzählst du über dich, die nicht mehr stimmt?",
+"q": "nach Max Frisch"
+},
+{
+"t": "Wer kann warten, bis sich der Schlamm setzt und das Wasser klar wird?",
+"q": "nach Laotse · Tao te king"
+},
+{
+"t": "Wofür hast du heute zu wenig Zeit gehabt?",
+"q": "Impuls"
+},
+{
+"t": "Was willst du bauen, schreiben oder erschaffen, bevor das Jahr endet?",
+"q": "Impuls"
+},
+{
+"t": "Wovon hast du dich heute treiben lassen – und wohin?",
+"q": "nach Montaigne · Essais"
+},
+{
+"t": "Welche Sehnsucht hast du lange nicht mehr ausgesprochen?",
+"q": "Impuls"
+},
+{
+"t": "Was war der Wendepunkt dieses Jahres?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Wie riecht der Herbst in Ostfriesland?",
+"q": "Impuls"
+},
+{
+"t": "Was würdest du in einen Brief an jemanden schreiben, der nicht mehr da ist?",
+"q": "Schreibimpuls"
+},
+{
+"t": "Was machst du gern, was kannst du gut, was braucht die Welt?",
+"q": "nach dem Ikigai"
+},
+{
+"t": "Wo warst du heute still genug, um zu hören?",
+"q": "nach Ryan Holiday · Stillness is the Key"
+},
+{
+"t": "Was ist das Einfachste, das dich heute zufrieden gemacht hat?",
+"q": "nach dem Zen"
+},
+{
+"t": "Schreib auf, was dir gerade im Kopf herumgeht – ohne Ordnung.",
+"q": "nach dem freien Schreiben · Natalie Goldberg"
+},
+{
+"t": "Wo warst du heute streng mit dir? Was würdest du einem Freund sagen?",
+"q": "nach Kristin Neff · Selbstmitgefühl"
+},
+{
+"t": "Welcher Glaubenssatz hat dich heute begleitet?",
+"q": "nach Stefanie Stahl"
+},
+{
+"t": "Was hat sich in den letzten zwölf Monaten in dir verändert?",
+"q": "Impuls"
+},
+{
+"t": "Welche alltägliche Tätigkeit könntest du heute ganz bewusst tun?",
+"q": "nach Thich Nhat Hanh · Das Wunder der Achtsamkeit"
+},
+{
+"t": "Was hast du heute nur getan, weil du es immer so tust?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Wann hast du heute die Zeit vergessen?",
+"q": "nach Mihály Csíkszentmihályi · Flow"
+},
+{
+"t": "Schreib zehn Minuten über ein einziges Wort: Licht.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Wer hat dich zuletzt wirklich gesehen?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Wie schmeckt diese Jahreszeit für dich?",
+"q": "Jahreszeitenimpuls"
+},
+{
+"t": "Was ist eigentlich gerade dein größter Wunsch?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du heute gegessen, das du wirklich geschmeckt hast?",
+"q": "Impuls"
+},
+{
+"t": "Welches Geräusch hörst du, wenn du jetzt die Augen schließt?",
+"q": "Achtsamkeitsübung · Klänge"
+},
+{
+"t": "Wer andere kennt, ist klug. Was weißt du heute über dich?",
+"q": "nach Laotse · Tao te king"
+},
+{
+"t": "Was hast du gelernt, was man nicht lehren kann?",
+"q": "nach Hesse · Siddhartha"
+},
+{
+"t": "Was hast du als Kind geliebt und lange nicht mehr getan?",
+"q": "Erinnerungsimpuls"
+},
+{
+"t": "Welcher Gedanke kam heute immer wieder? Kannst du ihn freundlich ziehen lassen?",
+"q": "Achtsamkeitsübung · Gedanken als Wolken"
+},
+{
+"t": "Wir leiden öfter in der Vorstellung als in der Wirklichkeit. Stimmt das heute?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Was hast du heute gut gemacht – was versäumt, was anders gewollt?",
+"q": "die Abendrückschau · Seneca, Über den Zorn"
+},
+{
+"t": "Was hast du heute gelernt, auch wenn es klein war?",
+"q": "Impuls"
+},
+{
+"t": "Wo hat dich heute ein Zeitdieb besucht?",
+"q": "nach Michael Ende · Momo"
+},
+{
+"t": "Welche Gewohnheit möchtest du an eine bestehende anhängen?",
+"q": "nach James Clear · Die 1%-Methode"
+},
+{
+"t": "Was liegt in deiner Macht – und was nicht? Trenne es heute einmal sauber.",
+"q": "nach Epiktet · Handbüchlein der Moral"
+},
+{
+"t": "Was hast du heute bewusst nicht getan?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Woran hältst du gerade fest, das sich ohnehin verändern wird?",
+"q": "nach der Lehre von der Vergänglichkeit · anicca"
+},
+{
+"t": "Was spricht deine innere kritische Stimme – und wie würde eine freundliche antworten?",
+"q": "nach Kristin Neff · Selbstmitgefühl"
+},
+{
+"t": "Wo ist heute Stille in dir gewesen?",
+"q": "Meditationsimpuls"
+},
+{
+"t": "Wo hast du heute Unruhe nur beobachtet, statt ihr zu folgen?",
+"q": "nach Ajahn Chah · Ein stiller Waldteich"
+},
+{
+"t": "Wer hat dir dieses Jahr am meisten geholfen?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Wohin du auch gehst, da bist du. Was nimmst du überallhin mit?",
+"q": "nach Jon Kabat-Zinn · Wo immer du hingehst, da bist du"
+},
+{
+"t": "Was war heute das schönste Geräusch?",
+"q": "Sinnesimpuls"
+},
+{
+"t": "Welches Bild aus deinem Traum ist noch da?",
+"q": "Impuls"
+},
+{
+"t": "Welche Tür schließt du, wenn es ungemütlich wird?",
+"q": "nach Pema Chödrön"
+},
+{
+"t": "Welche Erinnerung ist heute plötzlich wieder aufgetaucht – und wodurch?",
+"q": "nach Proust · Auf der Suche nach der verlorenen Zeit"
+},
+{
+"t": "Welches Gespräch würdest du gern noch einmal führen?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Was hast du heute mit den Händen berührt, das dir gutgetan hat?",
+"q": "Sinnesimpuls"
+},
+{
+"t": "Wo bist du heute Experte gewesen, wo Anfänger?",
+"q": "nach Shunryu Suzuki · Zen-Geist, Anfänger-Geist"
+},
+{
+"t": "Was würde deinem Körper heute Abend guttun?",
+"q": "Körperimpuls"
+},
+{
+"t": "Was hält dich bei dir, wenn draußen alles laut ist?",
+"q": "nach Virginia Woolf"
+},
+{
+"t": "Das Hindernis wird zum Weg. Welches Hindernis zeigt dir gerade einen?",
+"q": "nach Marc Aurel · Selbstbetrachtungen"
+},
+{
+"t": "Welches Problem hat dich heute gepackt?",
+"q": "Schaffensimpuls"
+},
+{
+"t": "Denk an einen schwierigen Menschen. Was wünschst du ihm, wenn du ehrlich bist?",
+"q": "Metta · liebende Güte für schwierige Menschen"
+},
+{
+"t": "Wenn dieser Tag ein Kapitel wäre – wie hieße es?",
+"q": "Impuls"
+},
+{
+"t": "Lebe die Fragen jetzt. Welche lebst du gerade?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Was fragt das Leben dich gerade – statt du das Leben?",
+"q": "nach Viktor Frankl · … trotzdem Ja zum Leben sagen"
+},
+{
+"t": "Welcher Geruch lag heute in der Luft?",
+"q": "Sinnesimpuls"
+},
+{
+"t": "Was ist das Wesentliche, das für die Augen unsichtbar ist?",
+"q": "nach Saint-Exupéry · Der kleine Prinz"
+},
+{
+"t": "Wofür bist du dir selbst dankbar?",
+"q": "Impuls"
+},
+{
+"t": "Welche Aufgabe von heute hat dir eigentlich Freude gemacht?",
+"q": "Impuls"
+},
+{
+"t": "Was hat dein Körper heute geleistet?",
+"q": "Körperimpuls"
+},
+{
+"t": "Welche Haltung möchtest du heute einüben: Geduld, Mut, Freundlichkeit?",
+"q": "nach den stoischen Tugenden"
+},
+{
+"t": "Was willst du nächste Woche anders machen?",
+"q": "Impuls"
+},
+{
+"t": "Was willst du dir merken, wenn es dir einmal schlecht geht?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du heute gesehen, das du gern malen würdest?",
+"q": "Sinnesimpuls"
+},
+{
+"t": "Was würdest du tun, wenn du heute nur halb so viel schaffen müsstest?",
+"q": "Impuls"
+},
+{
+"t": "Wo lebst du gerade im Haben, wo im Sein?",
+"q": "nach Erich Fromm · Haben oder Sein"
+},
+{
+"t": "Wovon träumst du, dass du es bist – und was, wenn es umgekehrt wäre?",
+"q": "nach Zhuangzi · der Schmetterlingstraum"
+},
+{
+"t": "Wo hast du heute etwas angefangen, das vorher nicht da war?",
+"q": "nach Hannah Arendt · Vita activa"
+},
+{
+"t": "Was bedeutet Zuhause für dich?",
+"q": "Impuls"
+},
+{
+"t": "Was ist zwischen zwei Gedanken?",
+"q": "Zen-Übung"
+},
+{
+"t": "Was ist dir wichtiger geworden, seit du älter bist?",
+"q": "Impuls"
+},
+{
+"t": "Wofür möchtest du in Erinnerung bleiben?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was würde der beste Teil von dir heute tun?",
+"q": "nach Marc Aurel · Selbstbetrachtungen"
+},
+{
+"t": "Atme dreimal tief. Was nimmst du wahr – hören, riechen, spüren?",
+"q": "Achtsamkeitsübung"
+},
+{
+"t": "Was willst du im nächsten Jahr nicht mehr mitnehmen?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Was willst du in einem Jahr über diese Zeit erzählen können?",
+"q": "Impuls"
+},
+{
+"t": "Was würdest du am Ende deines Lebens bereuen, nicht getan zu haben?",
+"q": "nach Bronnie Ware · 5 Dinge, die Sterbende bereuen"
+},
+{
+"t": "Was möchtest du einmal selbst kochen, das du noch nie probiert hast?",
+"q": "Alltagsimpuls"
+},
+{
+"t": "Woran merkst du, dass du genug getan hast?",
+"q": "Impuls"
+},
+{
+"t": "Was soll dein erster Gedanke morgen früh sein?",
+"q": "Abendimpuls"
+},
+{
+"t": "Wo hast du heute den Weg des geringsten Widerstands genommen – zu Recht?",
+"q": "nach dem Daoismus"
+},
+{
+"t": "Wann hast du dich heute klug gefühlt?",
+"q": "Schaffensimpuls"
+},
+{
+"t": "Was macht für dich einen guten Menschen aus?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was würde radikale Annahme in deiner jetzigen Lage bedeuten?",
+"q": "nach Tara Brach · Mit dem Herzen eines Buddha"
+},
+{
+"t": "Wofür war dieses Jahr gut?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Wofür stehst du heute auf?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du heute von einem Buch, einem Gespräch, einem Menschen gelernt?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Was hat dir heute Energie gegeben – und was hat sie dir genommen?",
+"q": "Impuls"
+},
+{
+"t": "Was ist dein „Warum“ für das, was du gerade lernst?",
+"q": "nach Simon Sinek · Frag immer erst: warum"
+},
+{
+"t": "Was liebst du so sehr, dass du es täglich tun würdest?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Was hast du in letzter Zeit zum ersten Mal gemacht?",
+"q": "Impuls"
+},
+{
+"t": "Lieben ist eine Kunst. Was hast du heute darin geübt?",
+"q": "nach Erich Fromm · Die Kunst des Liebens"
+},
+{
+"t": "Welcher Mensch hat deinem Leben eine neue Richtung gegeben?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Was in deiner Wohnung macht dich glücklich, wenn du es ansiehst?",
+"q": "Impuls"
+},
+{
+"t": "Wie hast du dich heute bewegt – und wie hat es sich angefühlt?",
+"q": "Körperimpuls"
+},
+{
+"t": "Welcher Satz von heute soll in diesem Journal stehen?",
+"q": "Schreibimpuls"
+},
+{
+"t": "Was hat dich heute überrascht?",
+"q": "Impuls"
+},
+{
+"t": "Wer hat heute an dich gedacht – und an wen hast du gedacht?",
+"q": "Impuls"
+},
+{
+"t": "Welcher Gegenstand begleitet dich schon sehr lange?",
+"q": "Alltagsimpuls"
+},
+{
+"t": "Was hat dich heute neugierig gemacht?",
+"q": "Lernimpuls"
+},
+{
+"t": "Was hast du dir selbst versprochen und gehalten?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was weißt du eigentlich sicher?",
+"q": "nach Montaigne · „Que sais-je?“"
+},
+{
+"t": "Was möchtest du deinem jüngeren Ich sagen?",
+"q": "Impuls"
+},
+{
+"t": "Was bedeutet dir Ruhe – und wie oft gönnst du sie dir?",
+"q": "Impuls"
+},
+{
+"t": "Was kostet dich gerade mehr, als es dir gibt?",
+"q": "Impuls"
+},
+{
+"t": "Welches Gespräch hat dich heute weitergebracht?",
+"q": "Impuls"
+},
+{
+"t": "Was hast du von einem Freund gelernt, ohne dass er es weiß?",
+"q": "Beziehungsimpuls"
+},
+{
+"t": "Was hast du diese Woche für dich getan?",
+"q": "Wochenrückblick"
+},
+{
+"t": "Welcher Moment von heute soll bleiben?",
+"q": "Impuls"
+},
+{
+"t": "Beschreibe den Himmel, wie er heute war.",
+"q": "Impuls"
+},
+{
+"t": "Schreib drei Seiten, ohne nachzudenken. Alles, was kommt, darf aufs Papier.",
+"q": "Morgenseiten · nach Julia Cameron"
+},
+{
+"t": "Schreib zehn Minuten über ein einziges Wort: Zeit.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Was nimmst du mit in morgen?",
+"q": "Impuls"
+},
+{
+"t": "Welchen Teil des Tages hast du dir heute selbst gehört?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Was ist für dich Erfolg – in deinen eigenen Worten?",
+"q": "Impuls"
+},
+{
+"t": "Was hörst du gerade, wenn du still bist?",
+"q": "Impuls"
+},
+{
+"t": "Was ist in dir unruhig wie Wasser, das sich erst setzen muss?",
+"q": "nach dem Bild vom trüben Wasser · Laotse"
+},
+{
+"t": "Was würdest du einem Fremden über das Leben erzählen?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wie wäre es, heute einen Tee zu trinken und nur Tee zu trinken?",
+"q": "nach Thich Nhat Hanh"
+},
+{
+"t": "Zwischen Reiz und Reaktion liegt ein Raum. Wo hast du ihn heute genutzt?",
+"q": "nach Viktor Frankl"
+},
+{
+"t": "Wann hast du heute den Himmel angesehen?",
+"q": "Naturimpuls"
+},
+{
+"t": "Wofür hast du dich zuletzt eingesetzt?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was schätzt du an dem Menschen, der dir am nächsten ist?",
+"q": "Impuls"
+},
+{
+"t": "Wo wächst gerade das Rettende, während etwas schwer ist?",
+"q": "nach Hölderlin · Patmos"
+},
+{
+"t": "Was macht dich einzigartig, auch wenn es dir selbstverständlich ist?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was willst du mit deinem einen, wilden, kostbaren Leben anfangen?",
+"q": "nach Mary Oliver · The Summer Day"
+},
+{
+"t": "Was wäre, wenn du heute ruhig in einem Zimmer sitzen bliebest?",
+"q": "nach Pascal · Gedanken"
+},
+{
+"t": "Schreib eine Liste: Dinge, die du nie wieder machen willst.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Welches Gefühl willst du mit in den Schlaf nehmen?",
+"q": "Abendimpuls"
+},
+{
+"t": "Iss heute einen Bissen ganz langsam. Was schmeckst du?",
+"q": "die Rosinenübung · MBSR"
+},
+{
+"t": "Wo konntest du heute etwas so lassen, wie es ist?",
+"q": "Upekkhā · Gleichmut"
+},
+{
+"t": "Welche Frage trägst du gerade mit dir herum, ohne Antwort? Versuche, sie liebzuhaben.",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Was würdest du tun, wenn du einen Nachmittag lang nichts Nützliches tun dürftest?",
+"q": "Spielimpuls"
+},
+{
+"t": "Was brauchst du wirklich, um heute glücklich zu sein: Freunde, Freiheit, Nachdenken?",
+"q": "nach Epikur · Brief an Menoikeus"
+},
+{
+"t": "Ein Buch muss die Axt sein für das gefrorene Meer in uns. Welches war es zuletzt?",
+"q": "nach Kafka · Brief an Oskar Pollak"
+},
+{
+"t": "Welche Kleinigkeit ist dir heute aufgefallen wie ein Wunder?",
+"q": "nach Walt Whitman · Wunder"
+},
+{
+"t": "Welche Frage stellst du dir, wenn du Menschen begegnest: Was fehlt dir?",
+"q": "nach Simone Weil"
+},
+{
+"t": "Was würde Siddhartha am Fluss dir heute raten?",
+"q": "nach Hesse · Siddhartha"
+},
+{
+"t": "Wo spürst du deinen Atem gerade am deutlichsten?",
+"q": "Achtsamkeit des Atmens · Ānāpānasati"
+},
+{
+"t": "Wie sähe ein Tag aus, den du gern hundertmal erleben würdest?",
+"q": "nach Nietzsche · die ewige Wiederkunft"
+},
+{
+"t": "Was wäre, wenn das, was du suchst, schon hier ist?",
+"q": "nach dem Zen"
+},
+{
+"t": "Welchen Abschied, welchen Neuanfang trägst du gerade in dir?",
+"q": "nach Hesse · Stufen"
+},
+{
+"t": "Wie zeigst du Liebe – und wie möchtest du sie bekommen?",
+"q": "nach Gary Chapman · Die fünf Sprachen der Liebe"
+},
+{
+"t": "Was würdest du gern jemandem beibringen?",
+"q": "Lernimpuls"
+},
+{
+"t": "Wie hat dein inneres Kind heute gespielt – oder geweint?",
+"q": "nach Stefanie Stahl · Das Kind in dir muss Heimat finden"
+},
+{
+"t": "Was war das Schönste an deinem Weg heute?",
+"q": "Impuls"
+},
+{
+"t": "Was ist heute genug?",
+"q": "nach Seneca · Briefe an Lucilius"
+},
+{
+"t": "Was möchtest du heute nicht aufschieben?",
+"q": "Impuls"
+},
+{
+"t": "Lächle beim Einatmen. Was verändert sich?",
+"q": "nach Thich Nhat Hanh"
+},
+{
+"t": "Was siehst du, wenn du etwas Vertrautes mit Anfängeraugen betrachtest?",
+"q": "nach Shunryu Suzuki · Zen-Geist, Anfänger-Geist"
+},
+{
+"t": "Werde, der du bist. Was heißt das heute für dich?",
+"q": "nach Nietzsche · nach Pindar"
+},
+{
+"t": "Was weißt du, dass du nicht weißt?",
+"q": "nach Sokrates"
+},
+{
+"t": "Was hat der heutige Morgen dir gezeigt?",
+"q": "Naturimpuls"
+},
+{
+"t": "Welche Version von dir hast du hinter dir gelassen?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Lass dir alles geschehen: Schönheit und Schrecken. Was geschah heute?",
+"q": "nach Rilke · Stundenbuch"
+},
+{
+"t": "Was würdest du heute gern noch einmal erleben?",
+"q": "Abendimpuls"
+},
+{
+"t": "Welcher Tag dieses Monats war der hellste?",
+"q": "Rückblickimpuls"
+},
+{
+"t": "Wo kannst du heute mit Unsicherheit leben, statt sie zu lösen?",
+"q": "nach Pema Chödrön · Wenn alles zusammenbricht"
+},
+{
+"t": "Was ist von dem, was dich gerade ärgert, in einem Jahr noch wichtig?",
+"q": "nach Marc Aurel · Selbstbetrachtungen"
+},
+{
+"t": "Was lässt du bewusst unerledigt, damit Wichtigeres Platz hat?",
+"q": "nach Oliver Burkeman · 4000 Wochen"
+},
+{
+"t": "Welche Routine trägt dich durch schwere Tage?",
+"q": "Alltagsimpuls"
+},
+{
+"t": "Welche Geschichte in dir ist noch nicht zu Ende erzählt?",
+"q": "nach Michael Ende · Die unendliche Geschichte"
+},
+{
+"t": "Wenn deine Stimmung ein Wetter wäre – welches?",
+"q": "Stimmungsimpuls"
+},
+{
+"t": "Welche Angst ist eigentlich eine Möglichkeit?",
+"q": "nach Kierkegaard · Der Begriff Angst"
+},
+{
+"t": "Welche Grenze hast du heute gut gesetzt?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was würdest du deinem Ich in zehn Jahren gern mitgeben?",
+"q": "Impuls"
+},
+{
+"t": "Welchen Rat würdest du gerade gern bekommen?",
+"q": "Impuls"
+},
+{
+"t": "Was müsstest du loslassen, um dich gelassener zu fühlen?",
+"q": "nach Wilhelm Schmid · Gelassenheit"
+},
+{
+"t": "Welche Frage hast du heute gegoogelt – und warum?",
+"q": "Lernimpuls"
+},
+{
+"t": "Wann warst du heute im stillen Gespräch mit dir selbst?",
+"q": "nach Hannah Arendt · Vom Leben des Geistes"
+},
+{
+"t": "Welche Freundschaft in deinem Leben beruht auf dem Guten, nicht dem Nutzen?",
+"q": "nach Aristoteles · Nikomachische Ethik"
+},
+{
+"t": "Was hat dich heute ruhiger gemacht?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was war heute wichtig – und was nur dringend?",
+"q": "nach der Eisenhower-Methode"
+},
+{
+"t": "Was würde ein Weg ohne Ziel dir heute zeigen?",
+"q": "nach Thoreau · Vom Spazierengehen"
+},
+{
+"t": "Was wäre der erste Satz eines Romans über deine Woche?",
+"q": "Schreibimpuls"
+},
+{
+"t": "Wann warst du zuletzt draußen, ohne Ziel?",
+"q": "nach Thoreau · Vom Spazierengehen"
+},
+{
+"t": "Wann warst du zuletzt richtig stolz auf dich?",
+"q": "Impuls"
+},
+{
+"t": "Welche Frage beschäftigt dich gerade am meisten?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Lebst du gerade das Leben, das du willst, oder das, was andere erwarten?",
+"q": "nach Bronnie Ware"
+},
+{
+"t": "Was hast du heute gebaut, geschrieben oder gelöst?",
+"q": "Schaffensimpuls"
+},
+{
+"t": "Welches Gedicht passt zu deinem heutigen Tag?",
+"q": "Schreibimpuls"
+},
+{
+"t": "Was nährt dich, außer Essen?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wo hast du heute Resonanz gespürt – mit einem Menschen, einem Ort, einer Sache?",
+"q": "nach Hartmut Rosa · Resonanz"
+},
+{
+"t": "Was würdest du weglassen, wenn du digital minimalistisch lebtest?",
+"q": "nach Cal Newport · Digitaler Minimalismus"
+},
+{
+"t": "Welcher Moment dieser Woche soll bleiben?",
+"q": "Wochenrückblick"
+},
+{
+"t": "Was würdest du an diesem Tag nicht ändern, auch wenn du könntest?",
+"q": "Impuls"
+},
+{
+"t": "Beschreibe dein Zimmer, als hätte es ein Gedächtnis.",
+"q": "nach Virginia Woolf · Ein Zimmer für sich allein"
+},
+{
+"t": "Was hast du heute zum ersten Mal bemerkt?",
+"q": "Alltagsimpuls"
+},
+{
+"t": "Schreib zehn Minuten über ein einziges Wort: Mut.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Wo hast du dich heute selbst überrascht?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Welchen Raum lässt du dem anderen in deiner Liebe?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Nicht die Dinge beunruhigen uns, sondern unsere Urteile. Welches Urteil heute?",
+"q": "nach Epiktet · Handbüchlein der Moral"
+},
+{
+"t": "Wer hat dich zu dem gemacht, der du bist?",
+"q": "Impuls"
+},
+{
+"t": "Was siehst du, wenn du genau hinsiehst – wie ein Maler?",
+"q": "nach Rilke · Briefe über Cézanne"
+},
+{
+"t": "Wofür hast du heute „Ja“ gesagt, das eigentlich ein „Nein“ war?",
+"q": "nach Greg McKeown · Essentialismus"
+},
+{
+"t": "Was würdest du mit einem Wachstumsdenken heute anders sehen?",
+"q": "nach Carol Dweck · Selbstbild"
+},
+{
+"t": "Wo hast du heute auf die Meinung anderer gewartet, statt selbst zu urteilen?",
+"q": "nach Marc Aurel · Selbstbetrachtungen"
+},
+{
+"t": "Welche Farbe hatte dein Tag?",
+"q": "Impuls"
+},
+{
+"t": "Welche Rolle spielst du gerade – und spielst du sie gut?",
+"q": "nach Epiktet · Handbüchlein der Moral"
+},
+{
+"t": "Wo war mitten im Winter heute ein unbesiegbarer Sommer?",
+"q": "nach Camus · Heimkehr nach Tipasa"
+},
+{
+"t": "Wie viel Raum ist um das Gefühl herum, das du gerade hast?",
+"q": "nach Tara Brach"
+},
+{
+"t": "Wem verdankst du dein Essen heute – vom Feld bis zum Teller?",
+"q": "nach der Zen-Essensbetrachtung"
+},
+{
+"t": "Welcher Tag aus deiner Vergangenheit war richtig gut?",
+"q": "Erinnerungsimpuls"
+},
+{
+"t": "Wem begegnest du heute – und wie willst du dieser Person begegnen?",
+"q": "nach Marc Aurel · Selbstbetrachtungen"
+},
+{
+"t": "Was würde passieren, wenn du bei einem unangenehmen Gefühl einfach bleibst?",
+"q": "nach Pema Chödrön · Beginne, wo du bist"
+},
+{
+"t": "Was gibt dir einen Grund, morgens aufzustehen?",
+"q": "nach dem Ikigai"
+},
+{
+"t": "Worauf hast du lange hingearbeitet, das jetzt einfach ist?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Welche Erinnerung an deine Familie trägt dich?",
+"q": "Erinnerungsimpuls"
+},
+{
+"t": "Wie kannst du heute jemandem den Tag leichter machen?",
+"q": "Morgenimpuls"
+},
+{
+"t": "Wo hast du heute Nein gesagt – oder hättest es sagen wollen?",
+"q": "Impuls"
+},
+{
+"t": "Das Leben wird vorwärts gelebt und rückwärts verstanden. Was verstehst du jetzt?",
+"q": "nach Kierkegaard · Tagebücher"
+},
+{
+"t": "Schreib eine Liste: Dinge, die du öfter machen willst.",
+"q": "Schreibimpuls"
+},
+{
+"t": "Wem gegenüber hast du heute Mitgefühl gespürt?",
+"q": "Karuṇā · Mitgefühl"
+},
+{
+"t": "Welche Zeit, die du heute verloren glaubst, hast du eigentlich verschenkt?",
+"q": "nach Saint-Exupéry · Der kleine Prinz"
+},
+{
+"t": "Wenn das Leben 4000 Wochen hat – wofür willst du diese verwenden?",
+"q": "nach Oliver Burkeman · 4000 Wochen"
+},
+{
+"t": "Was hat dich heute zum Lachen gebracht?",
+"q": "Impuls"
+},
+{
+"t": "Worauf kannst du heute verzichten, ohne dass etwas fehlt?",
+"q": "nach der buddhistischen Einfachheit"
+},
+{
+"t": "Wo lebst du gerade gegen deine Werte?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Ist das wahr? Kannst du absolut sicher sein, dass es wahr ist?",
+"q": "nach Byron Katie · The Work"
+},
+{
+"t": "Was war heute dein schönster Gedanke?",
+"q": "Abendimpuls"
+},
+{
+"t": "Was soll heute Abend noch gut werden?",
+"q": "Abendimpuls"
+},
+{
+"t": "Welche Reise trägst du noch in dir?",
+"q": "Reiseimpuls"
+},
+{
+"t": "Was hast du heute getan, indem du nichts getan hast?",
+"q": "Wu wei · nach Laotse"
+},
+{
+"t": "Wie fühlt sich Ankommen an – hier, jetzt?",
+"q": "nach Thich Nhat Hanh · Gehmeditation"
+},
+{
+"t": "Was säst du heute in dir, das morgen wachsen wird?",
+"q": "nach Thich Nhat Hanh · Samen im Speicherbewusstsein"
+},
+{
+"t": "Schau eine Minute lang einen Gegenstand an. Was siehst du jetzt neu?",
+"q": "Übung zur Aufmerksamkeit"
+},
+{
+"t": "Was würdest du anders machen, wenn heute dein letzter Tag wäre?",
+"q": "nach Marc Aurel · Selbstbetrachtungen"
+},
+{
+"t": "Was ist schön an diesem Monat, was kein anderer Monat hat?",
+"q": "Impuls"
+},
+{
+"t": "Was lehrt dich gerade eine Schwierigkeit?",
+"q": "nach Pema Chödrön · Beginne, wo du bist"
+},
+{
+"t": "Welche Musik passt zu diesem Abend?",
+"q": "Sinnesimpuls"
+},
+{
+"t": "Welches Wort soll über deinem nächsten Jahr stehen?",
+"q": "Jahresimpuls"
+},
+{
+"t": "Welche Temperatur hat dein Gemüt gerade?",
+"q": "Stimmungsimpuls"
+},
+{
+"t": "Wie willst du dich heute Abend fühlen – und was braucht es dafür?",
+"q": "Impuls"
+},
+{
+"t": "Wohin geht es, wenn es nach innen geht?",
+"q": "nach Novalis · Blütenstaub"
+},
+{
+"t": "Welcher Geruch erinnert dich an deine Kindheit?",
+"q": "Impuls"
+},
+{
+"t": "Wann hast du dich zuletzt über das Glück eines anderen gefreut?",
+"q": "Muditā · Mitfreude"
+},
+{
+"t": "Welche Entscheidung schiebst du vor dir her? Was wäre der ehrliche erste Gedanke dazu?",
+"q": "Impuls"
+},
+{
+"t": "Was würdest du anfangen, wenn du wüsstest, dass es gelingt?",
+"q": "Impuls"
+},
+{
+"t": "Worauf hättest du Lust, wenn du keine Angst vor dem Scheitern hättest?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wofür bist du gerade dankbar – ganz konkret, nicht allgemein?",
+"q": "Impuls"
+},
+{
+"t": "Was ist dir heute gelungen, das niemand bemerkt hat?",
+"q": "Impuls"
+},
+{
+"t": "Das Herz hat seine Gründe. Welche kennt dein Verstand nicht?",
+"q": "nach Pascal · Gedanken"
+},
+{
+"t": "Wo hast du heute „noch nicht“ statt „nicht“ gedacht?",
+"q": "nach Carol Dweck · Selbstbild"
+},
+{
+"t": "Wann hast du zuletzt etwas nur aus Spaß gemacht?",
+"q": "Spielimpuls"
+},
+{
+"t": "Was hast du dir für den nächsten Urlaub vorgenommen?",
+"q": "Reiseimpuls"
+},
+{
+"t": "Wo schreibst du gerade an der Geschichte deines Lebens mit?",
+"q": "nach Max Frisch · Mein Name sei Gantenbein"
+},
+{
+"t": "Was hast du diese Woche verstanden, das dir vorher ein Rätsel war?",
+"q": "Lernimpuls"
+},
+{
+"t": "Welches Spiel, welche Geschichte hat dich zuletzt in eine andere Welt gezogen?",
+"q": "Spielimpuls"
+},
+{
+"t": "Welche Frage würdest du gern einem weisen Menschen stellen?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Wo gehst du gerade den Weg der Wünsche – und wohin führt er?",
+"q": "nach Michael Ende · Die unendliche Geschichte"
+},
+{
+"t": "Mit wem hast du zu lange keinen Kontakt gehabt?",
+"q": "nach Bronnie Ware · 5 Dinge, die Sterbende bereuen"
+},
+{
+"t": "Wann warst du heute müde – und hast du darauf gehört?",
+"q": "Körperimpuls"
+},
+{
+"t": "Was würde ein weiser Mensch an deiner Stelle heute lassen?",
+"q": "nach Epiktet · Gespräche"
+},
+{
+"t": "Was ist das Wesentliche, wenn du nur eine Sache tun könntest?",
+"q": "nach Greg McKeown · Essentialismus"
+},
+{
+"t": "Was ist das Beste, was dir diese Woche passiert ist?",
+"q": "Wochenrückblick"
+},
+{
+"t": "Was macht dich gelassen, wenn es um dich herum hektisch wird?",
+"q": "Reflexionsimpuls"
+},
+{
+"t": "Was hat dich heute geärgert – und was sagt das über das, was dir wichtig ist?",
+"q": "Impuls"
+},
+{
+"t": "Was vermisst du gerade?",
+"q": "Impuls"
+},
+{
+"t": "Wo willst du heute langsamer sein als sonst?",
+"q": "Morgenimpuls"
+},
+{
+"t": "Wo steckt in dir eine Menge, die sich widerspricht – und darf?",
+"q": "nach Walt Whitman · Gesang von mir selbst"
+},
+{
+"t": "Was wäre, wenn deine Traurigkeit gerade etwas Neues in dich einlässt?",
+"q": "nach Rilke · Briefe an einen jungen Dichter"
+},
+{
+"t": "Geh ein paar Schritte so langsam wie möglich. Was merkst du?",
+"q": "Gehmeditation"
+},
+{
+"t": "Was hast du von deinen Eltern übernommen, das du behalten willst?",
+"q": "Impuls"
+}
+]

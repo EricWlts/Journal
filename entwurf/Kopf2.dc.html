@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Jahreslinie und Mond</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+.d{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:500;margin:auto;font-variant-numeric:tabular-nums}
+.card{display:grid;grid-template-columns:58px 1fr;border-radius:12px;background:#e4e2db;padding:16px 18px 16px 22px}
+input[type=range]{width:100%;accent-color:#a35f3a}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#12150f;font-family:Manrope,system-ui,sans-serif;color:#f2f3ef">
+  <div style="position:absolute;top:22px;right:12px;display:flex">
+    <span style="width:44px;height:44px;display:grid;place-items:center"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+    <span style="width:44px;height:44px;display:grid;place-items:center"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg></span>
+  </div>
+  <div style="position:absolute;top:74px;left:24px;right:24px">
+    <div style="font-family:'Instrument Serif',serif;line-height:1;display:flex;align-items:baseline;gap:12px;white-space:nowrap"><span style="font-size:60px;letter-spacing:-.015em">November</span><span style="font-size:38px;font-style:italic;color:#7f8b81">2026</span></div>
+    <div style="position:relative;height:1px;background:#2c342e;margin-top:16px" title="Tag 331 von 365">
+      <div style="position:absolute;left:0;top:0;height:1px;width:90.7%;background:rgba(163,95,58,.7)"></div>
+      <div style="position:absolute;top:-3px;width:1px;height:7px;background:#a35f3a;left:90.7%"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;margin-top:16px">
+      <svg width="34" height="34" viewBox="-17 -17 34 34" aria-label="{{moonName}}" role="img">
+        <defs>
+          <radialGradient id="mlit" cx="38%" cy="36%" r="72%"><stop offset="0" stop-color="#f7f4ea"></stop><stop offset=".68" stop-color="#e2ddcc"></stop><stop offset="1" stop-color="#b8b3a2"></stop></radialGradient>
+          <filter id="msoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".7"></feGaussianBlur></filter>
+          <mask id="mmask"><rect x="-17" y="-17" width="34" height="34" fill="#000"></rect><path d="{{litPath}}" fill="#fff" filter="url(#msoft)"></path></mask>
+        </defs>
+        <circle r="15" fill="#1b201c"></circle>
+        <circle r="15" fill="#c9cdc4" opacity=".07"></circle>
+        <g mask="url(#mmask)">
+          <circle r="15" fill="url(#mlit)"></circle>
+          <g fill="#8b8676" opacity=".32"><ellipse cx="-5" cy="-5" rx="5" ry="4"></ellipse><ellipse cx="3" cy="-3.5" rx="3.4" ry="3"></ellipse><ellipse cx="5.5" cy="1.2" rx="4" ry="3.1"></ellipse><ellipse cx="10.5" cy="-2" rx="1.9" ry="2.4"></ellipse><ellipse cx="-7.5" cy="3.5" rx="4.4" ry="6.2"></ellipse><ellipse cx="1.5" cy="7.5" rx="3.2" ry="2"></ellipse></g>
+          <circle cx="-2" cy="10" r="1.1" fill="#fbf9f1" opacity=".55"></circle>
+        </g>
+        <circle r="15" fill="none" stroke="rgba(242,243,239,.14)" stroke-width=".8"></circle>
+      </svg>
+      <span style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;color:#e2e6df;line-height:1.1">{{moonName}}</span>
+        <span class="num" style="font-size:11.5px;color:#7f8b81">{{moonNext}}</span>
+      </span>
+      <span class="num" style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#9aa59c"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c9a06a" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 19h18M7 15a5 5 0 0 1 10 0M12 3v6M9 6l3-3 3 3"></path></svg>8:19</span>
+      <span class="num" style="display:flex;align-items:center;gap:6px;font-size:12px;color:#9aa59c"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7f8b81" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 19h18M7 15a5 5 0 0 1 10 0M12 9V3M9 6l3 3 3-3"></path></svg>16:18</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;color:#7f8b81;font-size:10px;letter-spacing:.18em;font-weight:600;margin-top:20px"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span></div>
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin-top:8px">
+      <span class="d">23</span><span class="d">24</span><span class="d" style="background:#f2f3ef;color:#12150f;font-weight:600">25</span><span class="d" style="background:#f2f3ef;color:#12150f;font-weight:600">26</span><span class="d" style="box-shadow:0 0 0 1px #f2f3ef">27</span><span class="d" style="color:#4a5449">28</span><span class="d" style="color:#4a5449">29</span>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;top:344px;background:#eeece6;border-radius:16px 16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.55);padding:12px 12px 0;color:#26302b;display:flex;flex-direction:column;gap:6px">
+    <div class="card"><span><span style="display:block;font-family:'Instrument Serif',serif;font-size:34px;line-height:1">26</span><span style="display:block;font-size:9.5px;letter-spacing:.18em;color:#506055;font-weight:600;margin-top:6px">DO</span></span><span style="font-family:'Instrument Serif',serif;font-size:22px">Lange geschlafen, und draußen lag der Nebel.</span></div>
+    <div class="card"><span><span style="display:block;font-family:'Instrument Serif',serif;font-size:34px;line-height:1">25</span><span style="display:block;font-size:9.5px;letter-spacing:.18em;color:#506055;font-weight:600;margin-top:6px">MI</span></span><span style="font-family:'Instrument Serif',serif;font-size:22px">Morgens am Hafen.</span></div>
+    <div style="padding:22px 12px 0">
+      <div style="font-size:9.5px;letter-spacing:.2em;font-weight:600;color:#506055">MOND DURCHSPIELEN (NUR VORSCHAU) · <span class="num">{{dayLabel}}</span></div>
+      <input type="range" min="0" max="29" step="1" value="{{off}}" onInput="{{onOff}}" aria-label="Tage weiter">
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { off: 0 }; }
+  age(k){ const jd = new Date(2026, 10, 27 + k, 21).getTime() / 864e5 + 2440587.5; const x = ((jd - 2451550.1) / 29.530588853) % 1; return x < 0 ? x + 1 : x; }
+  name(a){ return a < .03 || a > .97 ? 'Neumond' : a < .22 ? 'Zunehmende Sichel' : a < .28 ? 'Erstes Viertel' : a < .47 ? 'Zunehmender Mond' : a < .53 ? 'Vollmond' : a < .72 ? 'Abnehmender Mond' : a < .78 ? 'Letztes Viertel' : 'Abnehmende Sichel'; }
+  renderVals(){
+    const st = this.state, a = this.age(st.off), r = 15;
+    /* beleuchteter Teil wie am echten Himmel (Nordhalbkugel): zunehmend rechts, abnehmend links; weiche Schattengrenze */
+    const rx = Math.abs(Math.cos(2 * Math.PI * a)) * r, wax = a < .5, o = wax ? 1 : 0, i = wax ? (a < .25 ? 0 : 1) : (a > .75 ? 1 : 0);
+    const litPath = a < .012 || a > .988 ? 'M 0 0 Z' : 'M 0 ' + (-r) + ' A ' + r + ' ' + r + ' 0 0 ' + o + ' 0 ' + r + ' A ' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + i + ' 0 ' + (-r) + ' Z';
+    let toFull = 0; for (let k = 0; k < 31; k++) { const x = this.age(st.off + k), y = this.age(st.off + k + 1); if (x <= .5 && y > .5) { toFull = k; break; } }
+    let toNew = 0; for (let k = 0; k < 31; k++) { const x = this.age(st.off + k), y = this.age(st.off + k + 1); if (y < x) { toNew = k; break; } }
+    const nm = this.name(a);
+    const next = nm === 'Vollmond' ? 'Heute Nacht voll' : nm === 'Neumond' ? 'Heute Nacht dunkel' : (toFull <= toNew ? 'Vollmond in ' + (toFull + 1) + ' Tagen' : 'Neumond in ' + (toNew + 1) + ' Tagen');
+    const d = new Date(2026, 10, 27 + st.off);
+    return { litPath, moonName: nm, moonNext: next, off: st.off, dayLabel: d.getDate() + '.' + (d.getMonth() + 1) + '.', onOff: (e) => this.setState({ off: Number(e.target.value) }) };
+  }
+}
+</script>
+</body>
+</html>

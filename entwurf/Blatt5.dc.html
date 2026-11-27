@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Karte wird Blatt rund</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+.home{transition:transform .8s cubic-bezier(.32,.72,0,1),border-radius .8s,filter .8s;transform-origin:50% 0}
+.home.back{transform:translateY(10px) scale(.94);border-radius:16px;filter:brightness(.6) saturate(.85)}
+.home.drag{transition:none}
+.home.closing{transition-duration:.82s;transition-timing-function:cubic-bezier(.32,.72,0,1)}
+.card.hid{opacity:0}.card{transition:transform .5s cubic-bezier(.2,.7,.2,1)}.card:active{transform:scale(.985)}
+@keyframes land{0%{transform:scale(1.015);box-shadow:0 14px 34px rgba(18,21,15,.14)}100%{transform:none;box-shadow:0 0 0 rgba(0,0,0,0)}}
+.ov{--d:.8s;--e:cubic-bezier(.32,.72,0,1);transition:top var(--d) var(--e),left var(--d) var(--e),width var(--d) var(--e),height var(--d) var(--e),border-radius var(--d) var(--e),background-color var(--d),transform .55s cubic-bezier(.32,.72,0,1),box-shadow var(--d)}
+.ov.closing{--d:.82s;--e:cubic-bezier(.32,.72,0,1);transition:top var(--d) var(--e),left var(--d) var(--e),width var(--d) var(--e),height var(--d) var(--e),border-radius var(--d) var(--e),background-color var(--d),transform var(--d) var(--e),box-shadow var(--d)}
+.ov.drag{transition:none}
+.ov .mv{transition:transform var(--d) var(--e),opacity .5s}
+.ov.pre .num,.ov.closing .num{transform:translate(0,-16px) scale(.81)}
+.ov.pre .ttl,.ov.closing .ttl{transform:translate(56px,-90px) scale(.55)}
+.ov .mini{display:none}
+.ov.pre .meta,.ov.closing .meta{opacity:0;transition:opacity .2s}
+.ov .body{transition:opacity .6s .26s,transform .9s .2s cubic-bezier(.2,.7,.2,1)}
+.ov.pre .body{opacity:0;transform:translateY(16px)}
+.ov.closing .body{opacity:0;transform:translateY(6px);transition:opacity .18s,transform .3s}
+.bk{transition:opacity .45s .45s,transform .6s .45s cubic-bezier(.32,.72,0,1),filter .45s .45s}
+.bk.hide{opacity:0;transform:scale(.86);filter:blur(4px);pointer-events:none;transition:opacity .22s,transform .3s cubic-bezier(.4,0,1,1),filter .22s}
+.ov .ex{opacity:0;transition:opacity .25s}
+.ov.closing .ex{opacity:1;transition:opacity .45s .5s}
+.ov.pre .ex{opacity:1}
+.ov .exT{opacity:0}.ov.closing .exT,.ov.pre .exT{opacity:1;transition:opacity .4s .45s}
+.ov .body{-webkit-mask-image:linear-gradient(#000 45%,transparent 55%);mask-image:linear-gradient(#000 45%,transparent 55%);-webkit-mask-size:100% 260%;mask-size:100% 260%;-webkit-mask-position:0 0;mask-position:0 0;transition:opacity .4s .2s,transform .9s .2s cubic-bezier(.2,.7,.2,1),-webkit-mask-position 1.5s .25s cubic-bezier(.4,0,.2,1),mask-position 1.5s .25s cubic-bezier(.4,0,.2,1)}
+.ov.pre .body{-webkit-mask-position:0 100%;mask-position:0 100%}
+.rule{position:absolute;left:24px;right:24px;top:86px;height:1px;background:#d9dad2;transform-origin:0 50%;transition:transform 1.1s .35s cubic-bezier(.65,0,.18,1),opacity .4s}
+.ov.pre .rule,.ov.closing .rule{transform:scaleX(0);opacity:0;transition:transform .3s,opacity .2s}
+.rep{position:absolute;left:0;top:0;width:366px;height:104px;box-sizing:border-box;padding:16px 18px 0 22px;display:grid;grid-template-columns:58px 1fr;opacity:0;pointer-events:none;transition:opacity .22s}
+.ov.pre .rep{opacity:1;transition:none}
+.ov.closing .rep{opacity:1;transition:opacity .34s .44s}
+.ov.pre .mv{opacity:0 !important;transition:none}
+.ov .num,.ov .ttl{transition:transform var(--d) var(--e),opacity .3s .04s}
+.ov.closing .num,.ov.closing .ttl{opacity:0;transition:transform var(--d) var(--e),opacity .3s .46s}
+.grab{position:absolute;left:50%;top:8px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:#cfd0c8;transition:opacity .4s}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#000;font-family:Manrope,system-ui,sans-serif;color:#26302b;touch-action:none">
+  <div class="home {{homeCls}}" style="position:absolute;inset:0;background:#12150f;overflow:hidden;transform:{{homeTf}}">
+    <div style="position:absolute;top:22px;right:24px;display:flex;gap:26px;color:#f2f3ef">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+    </div>
+    <div style="position:absolute;top:58px;left:24px;font-family:'Instrument Serif',serif;color:#f2f3ef;line-height:1"><span style="font-size:58px">November</span> <span style="font-size:40px;font-style:italic;color:#8d998f">2026</span></div>
+    <div style="position:absolute;top:140px;left:24px;right:24px;height:1px;background:#3b4740"></div>
+    <div style="position:absolute;top:152px;left:24px;right:24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;color:#b1bdb3;font-size:11px;letter-spacing:.12em;font-weight:600"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span></div>
+    <div style="position:absolute;top:174px;left:24px;right:24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));justify-items:center;color:#f2f3ef;font-size:15px;font-weight:600">
+      <span style="width:34px;height:34px;display:grid;place-items:center">23</span><span style="width:34px;height:34px;display:grid;place-items:center">24</span>
+      <span style="width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#f2f3ef;color:#12150f">25</span>
+      <span style="width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#f2f3ef;color:#12150f">26</span>
+      <span style="width:34px;height:34px;display:grid;place-items:center;border-radius:50%;box-shadow:0 0 0 1px #f2f3ef">27</span>
+      <span style="width:34px;height:34px;display:grid;place-items:center;color:#8d998f">28</span><span style="width:34px;height:34px;display:grid;place-items:center;color:#8d998f">29</span>
+    </div>
+    <div style="position:absolute;top:236px;left:0;right:0;bottom:0;background:#eeece6;border-radius:14px 14px 0 0"></div>
+    <sc-for list="{{cards}}" as="c" hint-placeholder-count="5">
+      <button class="card {{c.cls}}" onClick="{{c.open}}" style="position:absolute;left:12px;width:366px;height:104px;top:{{c.top}}px;border:0;border-radius:12px;background:#e4e2db;text-align:left;padding:16px 18px 0 22px;display:grid;grid-template-columns:58px 1fr;font-family:inherit;color:inherit;cursor:pointer">
+        <span style="display:flex;flex-direction:column"><span style="font-family:'Instrument Serif',serif;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em">{{c.d}}</span><span style="font-size:9.5px;letter-spacing:.18em;color:#506055;font-weight:600;margin-top:6px">{{c.wd}}</span><span style="font-size:11px;color:#7d897f;margin-top:3px;font-variant-numeric:tabular-nums">{{c.t}}</span></span>
+        <span style="min-width:0"><span style="display:block;font-family:'Instrument Serif',serif;font-size:22px;line-height:1.15;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{c.title}}</span><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:13px;line-height:1.5;color:#59625c;margin-top:6px;height:39px;overflow:hidden">{{c.ex}}</span></span>
+      </button>
+    </sc-for>
+    <div style="position:absolute;right:20px;bottom:28px;width:56px;height:56px;border-radius:50%;background:#12150f;color:#f2f3ef;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></div>
+  </div>
+  <sc-if value="{{showOv}}" hint-placeholder-val="{{ false }}">
+    <div class="ov {{ovCls}}" onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerCancel="{{up}}" style="position:absolute;overflow:hidden;top:{{ov.top}}px;left:{{ov.left}}px;width:{{ov.w}}px;height:{{ov.h}}px;border-radius:{{ov.r}};background:{{ov.bg}};transform:{{ov.tf}};transform-origin:50% 0;box-shadow:{{ov.sh}}">
+      <div class="grab" style="opacity:{{grabO}}"></div>
+      <div class="mv num" style="position:absolute;left:22px;top:32px;font-family:'Instrument Serif',serif;font-size:42px;line-height:1;transform-origin:0 0;font-variant-numeric:tabular-nums;letter-spacing:-.01em">{{cur.d}}</div>
+      <div class="rep">
+        <span style="display:flex;flex-direction:column"><span style="font-family:'Instrument Serif',serif;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em">{{cur.d}}</span><span style="font-size:9.5px;letter-spacing:.18em;color:#506055;font-weight:600;margin-top:6px">{{cur.wd}}</span><span style="font-size:11px;color:#7d897f;margin-top:3px;font-variant-numeric:tabular-nums">{{cur.t}}</span></span>
+        <span style="min-width:0"><span style="display:block;font-family:'Instrument Serif',serif;font-size:22px;line-height:1.15;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{cur.title}}</span><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:13px;line-height:1.5;color:#59625c;margin-top:6px;height:39px;overflow:hidden">{{cur.ex}}</span></span>
+      </div>
+      <div class="mv mini" style="position:absolute;left:22px;top:56px;font-size:10px;letter-spacing:.14em;color:#506055;font-weight:600;line-height:1.6">{{cur.wd}}<br><span style="letter-spacing:0;font-weight:500;font-size:11px">{{cur.t}}</span></div>
+      <div class="mv meta" style="position:absolute;left:80px;top:34px;line-height:1.35"><div style="font-size:10.5px;letter-spacing:.18em;color:#506055;font-weight:600">{{cur.wdl}}</div><div style="font-size:13px;color:#506055;margin-top:2px">November 2026 · {{cur.t}}</div></div>
+      <div class="rule"></div>
+      <div class="mv ttl" style="position:absolute;left:24px;top:104px;width:600px;font-family:'Instrument Serif',serif;font-size:40px;line-height:1.1;letter-spacing:-.015em;transform-origin:0 0;white-space:nowrap">{{cur.title}}</div>
+      <div class="mv body" style="position:absolute;left:24px;right:24px;top:168px;font-size:16px;line-height:1.75;color:#2b332e;white-space:pre-line;text-wrap:pretty;hanging-punctuation:first">{{cur.body}}</div>
+    </div>
+  </sc-if>
+  <button class="bk {{bkCls}}" onClick="{{close}}" aria-label="Zurück" style="position:absolute;right:20px;bottom:40px;width:56px;height:56px;border-radius:50%;border:0;background:#12150f;color:#f2f3ef;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.25)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></button>
+  <div style="position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:11px;color:#8d998f;pointer-events:none;opacity:{{hintO}};transition:opacity .6s">Blatt nach unten ziehen zum Schließen</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { open: -1, phase: 'closed', dy: 0, drag: false, landed: -1 }; }
+  data(){
+    const b = 'Heute war einer dieser Tage, an denen alles etwas langsamer läuft. Ich habe lange am Fenster gesessen, Kaffee getrunken und zugesehen, wie der Nebel über den Wiesen liegt.\n\nSpäter noch ein Stück am Deich gelaufen. Die Luft roch nach Salz und nassem Gras, und für eine Stunde war mein Kopf ganz still.\n\nAbends gekocht und früh ins Bett. Ein guter Tag, ohne dass etwas Besonderes passiert ist.';
+    return [
+      { d:'26', wd:'DO', wdl:'DONNERSTAG', t:'08:58', title:'Lange geschlafen', ex:'Heute war einer dieser Tage, an denen alles etwas langsamer läuft. Ich habe lange am Fenster gesessen.', body:b },
+      { d:'25', wd:'MI', wdl:'MITTWOCH', t:'07:38', title:'Morgens am Hafen', ex:'Die Boote lagen still, nur die Möwen waren schon wach. Ich habe mir vorgenommen, öfter so früh rauszugehen.', body:b },
+      { d:'22', wd:'SO', wdl:'SONNTAG', t:'08:34', title:'Kurs: n8n-Workflows', ex:'Endlich verstanden, wie die Knoten zusammenspielen. Der erste eigene Ablauf läuft.', body:b },
+      { d:'21', wd:'SA', wdl:'SAMSTAG', t:'07:14', title:'Erste Kälte', ex:'Raureif auf den Autos. Die Heizung zum ersten Mal richtig an, Tee statt Kaffee.', body:b },
+      { d:'20', wd:'FR', wdl:'FREITAG', t:'09:24', title:'Kleiner Durchbruch', ex:'Beim Training eine neue Bestmarke. Danach Pizza, ohne schlechtes Gewissen.', body:b }
+    ];
+  }
+  openCard(i){
+    if (this.state.phase !== 'closed') return;
+    this.setState({ open: i, phase: 'pre', dy: 0, landed: -1 }, () => requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ phase: 'open' }))));
+  }
+  close(){
+    if (this.state.phase !== 'open') return;
+    const i = this.state.open;
+    this.setState({ phase: 'closing', drag: false });
+    clearTimeout(this._t); this._t = setTimeout(() => this.setState({ phase: 'closed', open: -1, dy: 0 }), 840);
+  }
+  down(e){ if (this.state.phase !== 'open') return; this._y = e.clientY; this._t0 = performance.now(); this._last = [e.clientY, this._t0]; this._v = 0; e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId); this.setState({ drag: true }); }
+  move(e){
+    if (!this.state.drag) return;
+    const raw = e.clientY - this._y, dy = raw > 0 ? raw : raw / 6;
+    const now = performance.now(); this._v = (e.clientY - this._last[0]) / Math.max(1, now - this._last[1]); this._last = [e.clientY, now];
+    this.setState({ dy });
+  }
+  up(){
+    if (!this.state.drag) return;
+    if (this.state.dy > 120 || (this.state.dy > 30 && this._v > .6)) this.close();
+    else this.setState({ drag: false, dy: 0 });
+  }
+  renderVals(){
+    const D = this.data(), st = this.state, top = (i) => 248 + i * 110;
+    const cards = D.map((c, i) => ({ ...c, top: top(i), cls: (st.open === i && st.phase !== 'closed') ? 'hid' : '', open: () => this.openCard(i) }));
+    const atCard = st.phase === 'pre' || st.phase === 'closing';
+    const i = Math.max(0, st.open), dy = st.phase === 'open' ? st.dy : 0, k = Math.min(1, Math.max(0, dy) / 300);
+    const ov = atCard
+      ? { top: top(i), left: 12, w: 366, h: 104, r: '12px', bg: '#e4e2db', tf: 'none', sh: '0 0 0 rgba(0,0,0,0)' }
+      : { top: 14, left: 0, w: 390, h: 830, r: dy > 0 ? (16 + 10 * k) + 'px' : '16px 16px 0 0', bg: '#f6f5f1', tf: dy ? 'translateY(' + (dy * .62) + 'px) scale(' + (1 - k * .1) + ')' : 'none', sh: 'inset 0 1px 0 rgba(255,255,255,.7), 0 -10px 40px rgba(0,0,0,.2)' };
+    const cls = [st.phase === 'pre' ? 'pre' : '', st.phase === 'closing' ? 'closing' : '', st.drag ? 'drag' : ''].join(' ');
+    const back = st.phase === 'open';
+    return {
+      cards, ov, cur: D[i], showOv: st.phase !== 'closed', ovCls: cls,
+      homeCls: (back ? 'back' : '') + (st.phase === 'closing' ? ' closing' : '') + (st.drag ? ' drag' : ''),
+      homeTf: back && st.dy > 0 ? 'translateY(' + (10 - 10 * Math.min(1, st.dy / 300)) + 'px) scale(' + (.94 + .06 * Math.min(1, st.dy / 300)) + ')' : '',
+      bkCls: back && !(st.dy > 20) ? '' : 'hide', grabO: back ? 1 : 0, hintO: back && !st.dy ? 1 : 0,
+      close: () => this.close(), down: (e) => this.down(e), move: (e) => this.move(e), up: (e) => this.up(e)
+    };
+  }
+}
+</script>
+</body>
+</html>

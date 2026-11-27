@@ -59,6 +59,7 @@ Antworten und Texte in der App immer auf Deutsch.
 - Zugangsschlüssel (fine-grained PAT, nur journal-daten, Contents read/write) gibt Eric selbst in der App ein; er liegt nur in localStorage. Niemals einen Schlüssel im Chat annehmen oder verwenden – falls Eric einen schickt, zum Löschen und Neuerstellen raten.
 
 ## Offene Ideen
+- **Aktuell: PLAN.md** – Premium-Runde aus den Prototypen vom 27.11.2026 (Schritte 1–8, Vorlagen in `entwurf/`). Zuerst dort weitermachen.
 - **Später (Daten & Verlässlichkeit, mit Eric besprochen am 25.11.2026):** 1. Verschlüsselung vor dem Hochladen (eigenes Passwort, WebCrypto AES-GCM). 2. Kein Datenverlust bei Konflikten (beide Fassungen behalten/zusammenführen). 3. Papierkorb 30 Tage statt endgültig löschen. 4. Automatische Sicherung + Export (Markdown/PDF). 5. App-Sperre mit Code. 6. Automatische Playwright-Tests im Repo. 7. Fokusrahmen, VoiceOver-Beschriftungen, ⌘K. Vorrang hat erst Aussehen/Verhalten (Ziel 9/10).
 - Feinschliff nach Erics Tests auf dem iPhone.
 - Evtl. sanfte abendliche Erinnerung, ⌘K-Suche auf dem Mac, NumberFlow für die Zählung.

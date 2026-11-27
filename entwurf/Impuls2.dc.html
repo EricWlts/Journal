@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Tagesimpuls Feinschliff</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+.in{animation:in 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(10px);filter:blur(4px)}}
+.draw{stroke-dasharray:64;stroke-dashoffset:64;animation:draw 1.1s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.col{overflow:hidden;transition:max-height .8s cubic-bezier(.32,.72,0,1),opacity .45s,filter .45s,margin .8s cubic-bezier(.32,.72,0,1)}
+.col.off{max-height:0 !important;opacity:0;filter:blur(4px);margin-top:0 !important;margin-bottom:0 !important}
+.wq{display:inline-block;transition:opacity .55s,filter .55s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.out .wq{opacity:0;filter:blur(6px);transform:translateY(-6px);transition-duration:.3s}
+.pre .wq{opacity:0;filter:blur(6px);transform:translateY(8px);transition:none}
+.src{transition:opacity .5s .35s,filter .5s .35s}.out .src,.pre .src{opacity:0;filter:blur(4px);transition:opacity .2s,filter .2s}
+.pbox{height:98px;overflow:hidden;font-family:'Instrument Serif',serif;font-size:25px;line-height:1.28;letter-spacing:-.008em;text-wrap:balance;color:#1f2823;transition:height .9s cubic-bezier(.65,0,.18,1),font-size .9s cubic-bezier(.65,0,.18,1),color .9s}
+.wr .pbox{height:40px;font-size:15px;color:#8d998f}
+.rl{height:1px;background:#d9dad2;transform-origin:0 50%;transition:transform 1.2s cubic-bezier(.65,0,.18,1)}
+.out .rl,.pre .rl{transform:scaleX(0);transition:transform .35s cubic-bezier(.4,0,1,1)}
+.wr .rl{transform:scaleX(0)}
+.g{transition:max-height .9s cubic-bezier(.65,0,.18,1),opacity .5s,filter .5s;max-height:90px;overflow:hidden}
+.wr .g{max-height:0;opacity:0;filter:blur(4px)}
+.ta{border:0;outline:0;background:transparent;resize:none;font-family:Manrope,sans-serif;font-size:16px;line-height:1.75;color:#2b332e;width:100%;height:170px;padding:0;margin-top:18px}
+.ta::placeholder{color:#b1bdb3}
+.lnk{border:0;background:transparent;font-family:inherit;font-size:13px;color:#506055;cursor:pointer;padding:8px 0;display:inline-flex;gap:6px;align-items:center}
+.lnk svg{transition:transform .7s cubic-bezier(.32,.72,0,1)}.lnk:active svg{transform:rotate(-180deg)}
+.mem{transition:opacity .6s,transform .9s cubic-bezier(.65,0,.18,1),max-height .8s cubic-bezier(.32,.72,0,1);overflow:hidden}
+.wr .mem,.mem.off{opacity:0;transform:translateY(24px);pointer-events:none}
+.scrim{position:absolute;inset:0;background:rgba(10,12,9,.42);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);transition:opacity .5s;z-index:8}
+.scrim.off{opacity:0;pointer-events:none}
+.sht{position:absolute;left:0;right:0;bottom:0;background:#f6f5f1;border-radius:16px 16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);padding:10px 24px 36px;z-index:9;transition:transform .6s cubic-bezier(.32,.72,0,1)}
+.sht.off{transform:translateY(110%)}
+.row{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;padding:16px 0;font-family:Manrope,sans-serif;font-size:15px;color:#26302b;cursor:pointer;text-align:left;border-top:1px solid #e3e2dc}
+.sw{width:46px;height:28px;border-radius:14px;background:#cfd0c8;position:relative;flex:none;transition:background-color .4s}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .5s cubic-bezier(.3,1.3,.5,1)}
+.sw.on{background:#26302b}.sw.on::after{transform:translateX(18px)}
+.gear{border:0;background:transparent;width:44px;height:44px;display:grid;place-items:center;cursor:pointer;color:#506055}
+.gear svg{transition:transform .8s cubic-bezier(.32,.72,0,1)}.gear:active svg{transform:rotate(60deg)}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#12150f;font-family:Manrope,system-ui,sans-serif;color:#26302b">
+  <div class="{{wrCls}}" style="position:absolute;top:14px;left:0;right:0;bottom:0;background:#f6f5f1;border-radius:16px 16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);padding:30px 24px 0">
+    <button class="gear" onClick="{{openSet}}" aria-label="Einstellungen für das Schreiben" style="position:absolute;right:12px;top:22px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    <div class="in" style="display:flex;align-items:flex-end;gap:14px">
+      <span style="font-family:'Instrument Serif',serif;font-size:44px;line-height:.85;letter-spacing:-.01em;font-variant-numeric:tabular-nums">27</span>
+      <span style="line-height:1.35"><span style="display:block;font-size:10.5px;letter-spacing:.18em;color:#506055;font-weight:600">FREITAG</span><span style="display:block;font-size:13px;color:#7d897f;font-variant-numeric:tabular-nums">November 2026 · 11:46</span></span>
+    </div>
+    <div class="col {{metaCls}}" style="max-height:40px;margin-top:14px">
+      <div style="display:flex;gap:14px;font-size:12px;color:#8d998f;height:28px;align-items:center">
+        <span style="display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#506055" stroke-width="1.7" aria-hidden="true"><path class="draw" d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle class="draw" style="animation-delay:.5s" cx="12" cy="9.5" r="2.5"></circle></svg><span class="in" style="animation-delay:.55s">Leer</span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#506055" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path class="draw" style="animation-delay:.8s" d="M4 8h16"></path><path class="draw" style="animation-delay:.95s" d="M2 12h15"></path><path class="draw" style="animation-delay:1.1s" d="M6 16h14"></path></svg><span class="in" style="animation-delay:1.2s">4° · Nebel</span></span>
+      </div>
+    </div>
+    <div class="col {{impCls}}" style="max-height:260px;margin-top:28px">
+      <div class="g" style="font-size:9.5px;letter-spacing:.2em;font-weight:600;color:#506055;margin-bottom:12px">{{kicker}}</div>
+      <div class="{{phase}}">
+        <div class="pbox"><sc-for list="{{words}}" as="w" hint-placeholder-count="8"><span class="wq" style="transition-delay:{{w.dl}}ms">{{w.t}}</span> </sc-for></div>
+        <div class="src g" style="font-size:11px;letter-spacing:.04em;color:#7d897f;height:16px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:10px">{{src}}</div>
+        <div class="rl" style="margin-top:14px;transition-delay:{{rlDl}}ms"></div>
+      </div>
+      <div class="g" style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 12px">
+        <button class="lnk" onClick="{{next}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"></path></svg>Anderer Impuls</button>
+        <span style="font-family:'Instrument Serif',serif;font-style:italic;font-size:15px;color:#9aa59c;font-variant-numeric:tabular-nums">Nº {{dayNo}}</span>
+      </div>
+    </div>
+    <textarea class="ta" aria-label="Eintrag schreiben" placeholder="{{ph}}" value="{{text}}" onInput="{{onInput}}" style="margin-top:{{taM}}px;transition:margin .8s cubic-bezier(.32,.72,0,1)"></textarea>
+    <button class="mem {{memCls}}" onClick="{{toggleMem}}" style="position:absolute;left:12px;right:88px;bottom:30px;border:0;text-align:left;background:#eeece6;border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);padding:14px 16px;font-family:inherit;color:inherit;cursor:pointer;max-height:{{memH}}px">
+      <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:14px;color:#8d998f">Heute vor einem Jahr</div>
+      <div style="font-family:'Instrument Serif',serif;font-size:20px;line-height:1.2;margin-top:2px">Nebel am Ems-Sperrwerk</div>
+      <div style="font-size:13px;line-height:1.6;color:#4b544e;margin-top:10px">Mit dem Rad bis zum Sperrwerk. Man konnte keine zwanzig Meter weit sehen, und trotzdem war es einer der klarsten Tage seit Langem.</div>
+      <div style="font-size:11px;color:#8d998f;margin-top:8px">Leer · 6° · Nebel</div>
+    </button>
+  </div>
+  <div style="position:absolute;right:20px;bottom:40px;width:56px;height:56px;border-radius:50%;background:#12150f;color:#f2f3ef;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></div>
+  <div class="scrim {{setOff}}" onClick="{{closeSet}}"></div>
+  <div class="sht {{setOff}}">
+    <div style="width:36px;height:4px;border-radius:2px;background:#cfd0c8;margin:0 auto 18px"></div>
+    <div style="font-family:'Instrument Serif',serif;font-size:30px;margin-bottom:6px">Beim Schreiben</div>
+    <div style="font-size:13px;color:#8d998f;margin-bottom:14px">Was auf einem neuen Blatt erscheinen soll.</div>
+    <button class="row" onClick="{{tImp}}"><span><span style="display:block">Tagesimpuls</span><span style="display:block;font-size:12px;color:#8d998f;margin-top:2px">Jeden Tag eine neue Frage</span></span><span class="sw {{swImp}}"></span></button>
+    <button class="row" onClick="{{tMeta}}"><span><span style="display:block">Ort &amp; Wetter</span><span style="display:block;font-size:12px;color:#8d998f;margin-top:2px">Nur „Leer · 4° · Nebel“ wird gespeichert</span></span><span class="sw {{swMeta}}"></span></button>
+    <button class="row" onClick="{{tMem}}"><span><span style="display:block">Heute vor einem Jahr</span><span style="display:block;font-size:12px;color:#8d998f;margin-top:2px">Erinnerung unten auf dem Blatt</span></span><span class="sw {{swMem}}"></span></button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { i: -1, phase: 'in', text: '', mem: false, set: false, imp: true, meta: true, memOn: true }; }
+  list(){
+const P = [/* 445 Impulse: siehe entwurf/impulse.json ({t, q}) */];
+
+    return P;
+  }
+  doy(){ const d = new Date(), s = new Date(d.getFullYear(), 0, 1); return Math.floor((d - s) / 864e5) + 1; }
+  idx(){ return this.state.i < 0 ? (this.doy() - 1) % this.list().length : this.state.i; }
+  next(){
+    if (this.state.phase !== 'in') return;
+    const L = this.list().length, cur = this.idx(); let ni = cur; while (ni === cur) ni = Math.floor(Math.random() * L);
+    this.setState({ phase: 'out' });
+    setTimeout(() => this.setState({ i: ni, phase: 'pre' }, () => requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ phase: 'in' })))), 420);
+  }
+  renderVals(){
+    const st = this.state, c = this.list()[this.idx()], out = st.phase === 'out';
+    const words = c[0].split(' ').map((t, k) => ({ t, dl: out ? k * 18 : k * 45 }));
+    const d = new Date(), MN = ['JANUAR','FEBRUAR','MÄRZ','APRIL','MAI','JUNI','JULI','AUGUST','SEPTEMBER','OKTOBER','NOVEMBER','DEZEMBER'];
+    return {
+      words, phase: st.phase, rlDl: out ? 0 : words.length * 45 + 250, src: c[1], kicker: (st.i < 0 ? 'IMPULS DES TAGES · ' : 'IMPULS · ') + d.getDate() + '. ' + MN[d.getMonth()],
+      dayNo: this.idx() + 1, total: this.list().length,
+      text: st.text, wrCls: st.text.length ? 'wr' : '', ph: st.imp ? 'Oder einfach losschreiben …' : 'Was möchtest du festhalten?',
+      metaCls: st.meta ? '' : 'off', impCls: st.imp ? '' : 'off', taM: st.imp ? 18 : 28,
+      memCls: st.memOn ? '' : 'off', memH: st.mem ? 200 : 72,
+      setOff: st.set ? '' : 'off', swImp: st.imp ? 'on' : '', swMeta: st.meta ? 'on' : '', swMem: st.memOn ? 'on' : '',
+      openSet: () => this.setState({ set: true }), closeSet: () => this.setState({ set: false }),
+      tImp: () => this.setState({ imp: !st.imp }), tMeta: () => this.setState({ meta: !st.meta }), tMem: () => this.setState({ memOn: !st.memOn }),
+      toggleMem: () => this.setState({ mem: !st.mem }),
+      next: () => this.next(), onInput: (e) => this.setState({ text: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>
