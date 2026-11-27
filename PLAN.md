@@ -49,7 +49,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Schließen:** Das Menü verschwindet zuerst (0,18 s). Vorschau und Hintergrund laufen mit derselben Kurve und Dauer zurück, die Kartenkopie blendet im Flug ein, die echte Karte ist im selben Bild da. Kein Blinken.
 - Das bestehende Wisch-zum-Löschen darf nicht kollidieren: Langes Drücken nur ohne Bewegung (< 8 px).
 
-### ◐ 4a · Monat als Startseite (iPhone) — `entwurf/Start4.dc.html`
+### ☑ 4a · Monat als Startseite (iPhone) — `entwurf/Start4.dc.html`
 - **Startseite:** Der dunkle Kopf zeigt den ganzen Monat. Scrollen der Liste klappt den Monat 1:1 mit dem Finger zur Woche des gewählten Tages ein: Reihen laufen zusammen und blenden aus, erst dann scrollt die Liste. Beim Loslassen gleitet es ganz auf oder zu (Schwung zählt). Ganz oben nach oben scrollen klappt es wieder auf.
 - **Wechsel wie am Mac** (`sideMove`/`weekMove`):
   - Der alte Inhalt wird als Geist kopiert und gleitet 12 px weg (0,22 s, blur 2px, gestaffelt 14 ms).
@@ -62,12 +62,12 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Zählwerk:** „x/y Tage“ rollt Ziffer für Ziffer (gibt es schon: `setCount`).
 - **Mac** (`entwurf/MacStart2.dc.html`): dieselbe Welle, dasselbe Daumenkino und dieselbe Ring-Logik in der Seitenleiste. Bestehendes, das schon stimmt, bleibt.
 
-### ◐ 4b · Jahr (iPhone + Mac) — `Start4`
+### ☑ 4b · Jahr (iPhone + Mac) — `Start4`
 - Ein Tipp auf den großen Monatstitel zoomt den Monat an seinen Platz im Jahr. Der Titel wird zu „Das Jahr *2026*“. Die anderen Monate kommen von ihm aus nach außen.
 - Umschalter „Monate | Übersicht“ (Übersicht = heutige Siebenerblöcke, eine Zeile pro Monat). Beim Umschalten wandert jeder Tag einzeln an seinen neuen Platz (0,9 s `--sheet`, gestaffelt nach Monat).
 - Ein Tipp auf einen Monat zoomt hinein.
 
-### ☐ 4c · Suche lässt Tage leuchten — `Start4`
+### ☑ 4c · Suche lässt Tage leuchten — `Start4`
 - Bei der Suche (iPhone und Mac) leuchten in Monat, Woche und **beiden** Jahresansichten nur passende Tage auf, nacheinander in Datumsreihenfolge, mit einem weichen Lichtschein (`0 0 0 4px rgba(242,243,239,.10), 0 0 22px rgba(242,243,239,.38)`). Alles andere tritt zurück.
 - Im Jahr bleiben nur Monatsnamen mit Treffern hell. Zählwerk zeigt „x Treffer“.
 - Am iPhone Vorschläge als Chips (die häufigsten Wörter aus den Titeln).
