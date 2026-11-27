@@ -18,7 +18,7 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
 <link rel="icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#eeece6; --stone:#e3e2dc; --ink:#26302b; --ink2:#4a554e; --muted:#5d6a62; --olive:#506055; --line:#cfd0c8;
@@ -984,6 +984,91 @@ html.night ::selection{background:rgba(194,122,82,.22)}
 .ebody,.row .ex,.otd .ti,p{text-wrap:pretty}
 .row .ti{letter-spacing:-.015em}
 
+/* Schritt 6 · Das Blatt „Schlicht“: kein Titelfeld – die erste Zeile ist der Titel; Buchsatz in Newsreader */
+.etitle{display:none !important}
+.ebody{font-family:'Newsreader', Georgia, serif;font-optical-sizing:auto;font-size:17px;line-height:1.6;color:#2b2722;font-kerning:normal;font-variant-numeric:oldstyle-nums proportional-nums;hyphens:auto;-webkit-hyphens:auto;margin-top:22px}
+html.night .ebody{color:#d3d9d1}
+.ebody > div + div{margin-top:1.05em}
+.ebody > div.bl,.ebody > div.bl + div{margin-top:0} /* Leerzeile im Text: wirkt wie ein Absatz, nicht doppelt */
+.ebody:empty::before{font-family:var(--serif);font-style:italic;font-size:1.2em;color:var(--dimtext)}
+/* Initiale: nur zum Lesen – beim Bearbeiten steht der Buchstabe normal, damit die Schreibmarke immer stimmt */
+.ebody:not(:focus) > div:first-child::first-letter{float:left;font-family:var(--serif);font-size:78px;line-height:.78;margin:.07em .1em -.06em -.02em;color:var(--copper);font-variant-numeric:normal;letter-spacing:0}
+.erule{display:none}
+.emeta{display:none}
+.emeta .sb{display:inline-flex;align-items:center;gap:6px;color:var(--dim)}
+.emeta .sb svg{flex:none}
+.emetap:not(:empty){display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px;font-size:12.5px;color:var(--dimtext);font-variant-numeric:tabular-nums}
+@media (min-width:960px){
+  .ebody{font-size:20.5px;line-height:1.6;margin:0}
+  .ebody:not(:focus) > div:first-child::first-letter{font-size:96px;margin:.08em .1em -.06em -.02em}
+  .emetap{display:none !important}
+  .entry .erule{display:block;width:28px;height:1px;background:var(--copper);margin:18px 0 12px}
+  .entry .emeta:not(:empty){display:flex;flex-direction:column;font-size:12.5px;line-height:1.7;color:var(--dimtext);font-variant-numeric:tabular-nums}
+  .entry .emeta .sb{gap:7px}
+}
+@media (min-width:1500px){ .ebody{font-size:21.5px} }
+@media (min-width:1800px){ .ebody{font-size:22.5px} }
+
+/* Schritt 5 · Tagesimpuls (nur auf neuen, leeren Blättern) */
+.eimp{margin-top:26px;overflow:hidden}
+.eimp[hidden]{display:none}
+.eimp .ig{overflow:hidden;max-height:90px;transition:max-height var(--t4) var(--sheet), opacity var(--t3) var(--ease), filter var(--t3) var(--ease), margin var(--t4) var(--sheet)}
+.egreet{display:none}
+.ik{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;font-size:9.5px;font-weight:600;letter-spacing:.2em;color:var(--olive);text-transform:uppercase}
+.ino{font-family:var(--serif);font-style:italic;font-weight:400;font-size:15px;letter-spacing:0;text-transform:none;color:var(--dimtext);font-variant-numeric:tabular-nums}
+.pbox{height:98px;overflow:hidden;font-family:var(--serif);font-size:25px;line-height:1.28;letter-spacing:-.008em;text-wrap:balance;color:var(--ink);
+  transition:height var(--t4) var(--sheet), font-size var(--t4) var(--sheet), color var(--t4) var(--ease)}
+.pbox.sm{font-size:21.5px}
+.pbox.xs{font-size:18.5px}
+.wq{display:inline-block;transition:opacity var(--t3) var(--ease), filter var(--t3) var(--ease), transform var(--t4) var(--ease)}
+.iph.out .wq{opacity:0;filter:blur(6px);transform:translateY(-6px);transition-duration:var(--t2)}
+.iph.pre .wq{opacity:0;filter:blur(6px);transform:translateY(8px);transition:none}
+.isrc{font-size:11px;letter-spacing:.04em;color:var(--dimtext);height:16px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:10px;transition:opacity var(--t3) var(--ease) .35s, filter var(--t3) var(--ease) .35s, max-height var(--t4) var(--sheet)}
+.iph:is(.out,.pre) .isrc{opacity:0;filter:blur(4px);transition:opacity .2s var(--ease), filter .2s var(--ease)}
+.irl{height:1px;margin-top:14px;background:var(--line);transform-origin:0 50%;transition:transform var(--t4) var(--sheet)}
+.iph:is(.out,.pre) .irl{transform:scaleX(0);transition:transform var(--t2) var(--ease)}
+.ibar{display:flex;align-items:center;margin:4px 0 0}
+.ilnk{display:inline-flex;align-items:center;gap:6px;padding:8px 0;font-size:13px;color:var(--olive)}
+.ilnk svg{transition:transform var(--t3) var(--sheet)} .ilnk:active svg{transform:rotate(-180deg)}
+/* beim Tippen: der Impuls wird klein über dem Text und bleibt */
+.eimp.wr .ig{max-height:0;opacity:0;filter:blur(4px);margin-top:0;margin-bottom:0;transition:max-height var(--t4) var(--sheet), opacity var(--t2) var(--ease), filter var(--t2) var(--ease), margin var(--t4) var(--sheet)}
+.eimp.wr .pbox{height:40px;font-size:15px;color:var(--dimtext)}
+.eimp.wr .irl{transform:scaleX(0)}
+.eimp.wr + .ebody{margin-top:14px}
+@media (min-width:960px){
+  .eimp{grid-column:2;margin:-4px 0 30px}
+  .eimp.wr{margin-bottom:18px}
+  .eimp.wr + .ebody{margin-top:0}
+  .egreet{display:block;font-family:var(--serif);font-size:34px;line-height:1.15;letter-spacing:-.015em;color:var(--ink);margin-bottom:22px}
+  .pbox{height:118px;font-size:30px}
+  .pbox.sm{font-size:26px}
+  .pbox.xs{font-size:22px}
+  .eimp.wr .pbox{height:44px;font-size:16px}
+}
+/* Heute vor einem Jahr: Karte unten auf dem leeren Blatt, Antippen klappt sie auf */
+.emem{position:absolute;z-index:2;left:12px;right:88px;bottom:calc(var(--safe-b) + 30px);display:block;text-align:left;background:var(--paper);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);padding:14px 16px;color:var(--ink);
+  max-height:76px;overflow:hidden;transition:opacity var(--t3) var(--ease), transform var(--t4) var(--sheet), max-height var(--t4) var(--sheet)}
+.emem[hidden]{display:none}
+.emem.open{max-height:240px}
+.emem.off{opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet), max-height var(--t4) var(--sheet)}
+.emem .mk{display:block;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--dimtext)}
+.emem .mt2{display:block;font-family:var(--serif);font-size:20px;line-height:1.2;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emem .mx{display:block;font-size:13px;line-height:1.6;color:var(--ink2);margin-top:10px;text-wrap:pretty;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.emem .mw{display:block;font-size:11px;color:var(--dimtext);margin-top:8px;font-variant-numeric:tabular-nums}
+.emem .mw:empty{display:none}
+html.night .emem{box-shadow:0 0 0 1px var(--hair)}
+@media (min-width:960px){ .emem{right:auto;width:460px;bottom:40px} }
+/* Einstellungen › Beim Schreiben: Federschalter */
+.wsets{border-bottom:1px solid var(--line)}
+.wrow{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:14px 0;border-top:1px solid var(--line);text-align:left;color:var(--ink)}
+.wrow .wl{display:block;font-size:15px}
+.wrow .ws{display:block;font-size:12px;color:var(--dimtext);margin-top:2px}
+.fsw{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;transition:background-color var(--t3) var(--ease)}
+.fsw::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform var(--t3) cubic-bezier(.3,1.3,.5,1)}
+.wrow[aria-checked="true"] .fsw{background:var(--ink)}
+.wrow[aria-checked="true"] .fsw::after{transform:translateX(18px)}
+html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
+
 /* Karte wird Blatt (iPhone): die angetippte Karte wächst zum Blatt und kehrt beim Schließen genau dorthin zurück */
 .etov{display:none}
 @media (max-width:959px){
@@ -1020,7 +1105,11 @@ html.night ::selection{background:rgba(194,122,82,.22)}
   #entry.fx.pre #eDn,#entry.fx.pre .etov{opacity:0;transition:none}
   #entry.fx.closing #eDn,#entry.fx.closing .etov{opacity:0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .46s}
   #entry.fx.ovon .etov{display:block;position:absolute;margin:0;font-family:var(--serif);font-weight:400;color:var(--ink);pointer-events:none;z-index:1;overflow-wrap:break-word;text-wrap:balance}
-  #entry.fx.ovon #eTitle{opacity:0}
+  #entry.fx.ovon:not(.pre):not(.closing):not(.drag) .etov{animation:ovOpen var(--t4) var(--ease) both}
+  #entry.fx.ovon.closing:not(.ml) .etov{animation:ovClose var(--t4) var(--ease) both}
+  #entry.fx.drag .etov{opacity:0}
+  @keyframes ovOpen{0%{opacity:0}18%{opacity:1}50%{opacity:1}100%{opacity:0}}
+  @keyframes ovClose{0%{opacity:0}22%{opacity:1}56%{opacity:1}100%{opacity:0}}
   /* Datum und Mülleimer blenden verzögert ein, beim Zurück schnell aus */
   #entry.fx :is(.edate .wd,.edate .dtm,.eact){transition:opacity var(--t3) var(--ease) .35s}
   #entry.fx:is(.pre,.closing) :is(.edate .wd,.edate .dtm,.eact){opacity:0;transition:opacity .2s var(--ease)}
@@ -1154,15 +1243,23 @@ html.night ::selection{background:rgba(194,122,82,.22)}
   <section class="view is-off" id="entry" aria-label="Eintrag">
     <div class="entry" id="entryInner">
       <div class="enav">
-        <div class="edate"><span class="wd" id="eWd"></span><span class="dn" id="eDn" aria-hidden="true"></span><span class="dt" id="eDt"></span><span class="dtm" id="eDtm" aria-hidden="true"></span><span class="savedot" id="saveDot" aria-hidden="true"></span></div>
+        <div class="edate"><span class="wd" id="eWd"></span><span class="dn" id="eDn" aria-hidden="true"></span><span class="dt" id="eDt"></span><span class="dtm" id="eDtm" aria-hidden="true"></span><span class="savedot" id="saveDot" aria-hidden="true"></span><span class="erule" aria-hidden="true"></span><span class="emeta" id="eMeta"></span></div>
         <div class="eact"><button class="trash" data-act="trashcur" id="trashBtn" aria-label="Eintrag löschen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 6.5h15M9.5 6.5V4.75h5V6.5M6.5 6.5l.85 12.2a1.5 1.5 0 0 0 1.5 1.4h6.3a1.5 1.5 0 0 0 1.5-1.4l.85-12.2M10 10.5v6M14 10.5v6"/></svg></button>
         <button class="done" data-act="done" id="doneBtn" aria-label="Fertig"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button></div>
       </div>
-      <div class="etitle" id="eTitle" contenteditable="plaintext-only" role="textbox" aria-label="Titel" data-ph="Titel" spellcheck="true"></div>
-      <div class="ebody" id="eBody" contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="Text" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
+      <div class="emeta emetap" id="eMetaP" aria-hidden="true"></div>
+      <div class="etitle" id="eTitle" hidden></div>
+      <div class="eimp" id="eImp" hidden>
+        <div class="egreet ig" id="eGreet"></div>
+        <div class="ik ig"><span id="eImpK"></span><span class="ino" id="eImpNo"></span></div>
+        <div class="iph" id="eImpPh"><div class="pbox" id="eImpT"></div><div class="isrc ig" id="eImpS"></div><div class="irl"></div></div>
+        <div class="ibar ig"><button class="ilnk" data-act="impnext"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>Anderer Impuls</button></div>
+      </div>
+      <div class="ebody" id="eBody" contenteditable="true" lang="de" role="textbox" aria-multiline="true" aria-label="Eintrag – die erste Zeile ist der Titel" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
       <div class="ephotos" id="ePhotos"></div>
     </div>
     <div class="etov" id="etOv" aria-hidden="true"></div>
+    <button class="emem" id="eMem" data-act="memtoggle" hidden><span class="mk">Heute vor einem Jahr</span><span class="mt2" id="eMemT"></span><span class="mx" id="eMemX"></span><span class="mw" id="eMemW"></span></button>
     <button class="floatbtn" data-act="entryback" id="entryBtn" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 
@@ -1204,6 +1301,15 @@ html.night ::selection{background:rgba(194,122,82,.22)}
         <label class="field"><span>Zugangsschlüssel</span><input id="syncToken" type="password" placeholder="github_pat_…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
         <div class="btns"><button class="btn" data-act="syncsave">Verbinden</button><button class="btn ghost" data-act="syncnow">Jetzt abgleichen</button></div>
         <div class="note" id="noteSync" aria-live="polite"></div>
+      </div>
+      <div class="sect">
+        <h2>Beim Schreiben</h2>
+        <p>Was auf einem neuen, leeren Blatt erscheinen soll.</p>
+        <div class="wsets">
+          <button class="wrow" data-act="wset" data-k="imp" role="switch"><span><span class="wl">Tagesimpuls</span><span class="ws">Jeden Tag eine neue Frage</span></span><span class="fsw"></span></button>
+          <button class="wrow" data-act="wset" data-k="meta" role="switch"><span><span class="wl">Ort &amp; Wetter</span><span class="ws">Nur „Leer · 4° Nebel“ wird gespeichert, keine Koordinaten</span></span><span class="fsw"></span></button>
+          <button class="wrow" data-act="wset" data-k="mem" role="switch"><span><span class="wl">Heute vor einem Jahr</span><span class="ws">Erinnerung unten auf dem Blatt</span></span><span class="fsw"></span></button>
+        </div>
       </div>
       <div class="sect">
         <h2>Licht</h2>
@@ -2144,8 +2250,8 @@ async function renderEntry(dir) {
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + (isDesktop() ? '\n' : ' ') + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); // Mac: Randspalte, bewusst zwei Zeilen
   syncTrash(); saveMark(null);
-  $('eTitle').textContent = e.title || '';
-  $('eBody').textContent = e.text || '';
+  setBody(fullOf(e));
+  writeAids();
   const ph = $('ePhotos'); ph.innerHTML = '';
   for (const pid of (e.photos || [])) {
     let url = photoURLs.get(pid);
@@ -2160,6 +2266,93 @@ async function renderEntry(dir) {
     if (S.side.mode === 'week' && weekOf(d0) !== S.side.w) flipTo({ w: weekOf(d0) }); // andere Woche gewählt: ab 3 Wochen Daumenkino, sonst eine Welle
     else if (S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m) && dir) sideJump({ y: d0.getFullYear(), m: d0.getMonth() }); }
 }
+/* ---------- Blatt „Schlicht“: ein Feld, die erste Zeile ist der Titel (Datenmodell bleibt title + text) ---------- */
+const fullOf = (e) => (e.title || '') && (e.text || '') ? e.title + '\n' + e.text : (e.title || e.text || '');
+function setBody(full) { // jede Zeile ein eigener Absatz (div) – so bekommen Absätze ihren Abstand
+  const b = $('eBody'); b.textContent = ''; if (!full) return;
+  for (const ln of full.split('\n')) { const d = document.createElement('div'); if (ln) d.textContent = ln; else { d.appendChild(document.createElement('br')); d.className = 'bl'; } b.appendChild(d); }
+}
+function bodyText(b) { // Text aus dem Feld lesen – unabhängig davon, wie der Browser Zeilen anlegt (div, br oder \n)
+  const lines = []; let cur = null;
+  const flush = () => { if (cur !== null) { lines.push(cur); cur = null; } };
+  const walk = (n) => { for (const c of n.childNodes) {
+    if (c.nodeType === 3) cur = (cur || '') + c.data;
+    else if (c.nodeName === 'BR') { if (cur === null) cur = ''; flush(); }
+    else if (c.nodeType === 1) { if (/^(DIV|P|LI|H\d|BLOCKQUOTE|PRE|SECTION)$/.test(c.nodeName)) { flush(); walk(c); flush(); } else walk(c); }
+  } };
+  walk(b); flush();
+  return lines.join('\n').replace(/\u00a0/g, ' ').replace(/\u200b/g, '');
+}
+function tidyBody(b) { // erste Zeile in einen eigenen Absatz holen, sobald die Schreibmarke woanders steht; Leerzeilen markieren
+  const f = b.firstChild, sel = getSelection(), an = sel.rangeCount ? sel.anchorNode : null;
+  if (f && f.nodeType === 3 && b.childNodes.length > 1 && !(an && f.contains(an))) {
+    const d = document.createElement('div'); b.insertBefore(d, f);
+    while (d.nextSibling && !(d.nextSibling.nodeType === 1 && /^(DIV|P)$/.test(d.nextSibling.nodeName))) { const n = d.nextSibling; d.appendChild(n); if (n.nodeName === 'BR') break; }
+  }
+  for (const c of b.children) c.classList.toggle('bl', !c.textContent.replace(/[​\s]/g, '') && !c.querySelector('img'));
+}
+
+/* ---------- Beim Schreiben: Tagesimpuls, Begrüßung, Ort & Wetter, Heute vor einem Jahr ---------- */
+const WS = (() => { const d = { imp: true, meta: true, mem: true }; try { return Object.assign(d, JSON.parse(localStorage.getItem('journal.write') || '{}')); } catch (e) { return d; } })();
+function markW() { document.querySelectorAll('.wrow[data-k]').forEach((r) => r.setAttribute('aria-checked', WS[r.dataset.k] ? 'true' : 'false')); }
+function toggleW(k) { WS[k] = !WS[k]; try { localStorage.setItem('journal.write', JSON.stringify(WS)); } catch (e) {} markW(); }
+let IMP = null;
+function loadImp() { if (IMP || loadImp.p) return; loadImp.p = fetch('impulse.json').then((r) => r.json()).then((j) => { if (Array.isArray(j) && j.length) { IMP = j; writeAids(); } }).catch(() => { loadImp.p = null; }); }
+const AID = { e: null, i: -1, mem: false }; // das neue Blatt, für das Impuls und Erinnerung gelten; i < 0 = Impuls des Tages
+const doyOf = (k) => { const d = parseKey(k); return Math.round((d - new Date(d.getFullYear(), 0, 1)) / 864e5) + 1; };
+const typo = (t) => String(t || '').replace(/"([^"]*)"/g, '„$1“').replace(/ - /g, ' – ').replace(/\.\.\./g, '…');
+function greetText() { const h = new Date().getHours(); return (h >= 5 && h < 11 ? 'Guten Morgen' : h >= 11 && h < 17 ? 'Guten Tag' : 'Guten Abend') + ', Eric.'; }
+const impIdx = () => AID.i >= 0 ? AID.i : (doyOf(S.cur.date) - 1) % IMP.length;
+function paintImp() { // Wörter bauen sich gestaffelt auf, danach zieht sich die Haarlinie neu auf
+  const e = S.cur, i = impIdx(), c = IMP[i], d = parseKey(e.date), ph = $('eImpPh'), pb = $('eImpT');
+  $('eImpK').textContent = (AID.i < 0 ? 'Impuls des Tages · ' : 'Impuls · ') + d.getDate() + '. ' + MONTHS[d.getMonth()];
+  $('eImpNo').textContent = 'Nº ' + (i + 1);
+  const ws = typo(c.t).split(' ');
+  ph.classList.add('pre'); ph.classList.remove('out');
+  pb.innerHTML = ws.map((w, k) => '<span class="wq" style="transition-delay:' + (k * 45) + 'ms">' + esc(w) + '</span>').join(' ');
+  $('eImpS').textContent = typo(c.q);
+  ph.querySelector('.irl').style.transitionDelay = (ws.length * 45 + 250) + 'ms';
+  fitImp();
+  $('eImp').dataset.for = e.created + '|' + i;
+  void ph.offsetWidth; ph.classList.remove('pre');
+}
+function fitImp() { // immer drei Zeilen: lange Impulse eine oder zwei Stufen kleiner
+  const pb = $('eImpT'); if ($('eImp').classList.contains('wr')) return;
+  pb.style.transition = 'none'; pb.classList.remove('sm', 'xs'); if (pb.scrollHeight > pb.clientHeight + 1) { pb.classList.add('sm'); if (pb.scrollHeight > pb.clientHeight + 1) { pb.classList.remove('sm'); pb.classList.add('xs'); } }
+  void pb.offsetWidth; pb.style.transition = '';
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$('eImp').hidden) fitImp(); });
+function impNext() { // anderer Impuls: Wörter verschwimmen raus, die neuen bauen sich auf – mehrfaches Tippen ist erlaubt
+  if (!IMP || !S.cur) return; const ph = $('eImpPh'), cur = impIdx(); let ni = cur;
+  while (ni === cur) ni = Math.floor(Math.random() * IMP.length);
+  AID.i = ni; clearTimeout(impNext.t);
+  const ws = ph.querySelectorAll('.wq'); ws.forEach((w, k) => { w.style.transitionDelay = (k * 18) + 'ms'; });
+  ph.querySelector('.irl').style.transitionDelay = '0ms'; ph.classList.remove('pre'); ph.classList.add('out');
+  impNext.t = setTimeout(paintImp, 300 + ws.length * 18);
+}
+function yearAgo(k) { const d = parseKey(k); const y = new Date(d.getFullYear() - 1, d.getMonth(), d.getDate()); if (y.getMonth() !== d.getMonth()) return null; const L = S.byDate.get(keyOf(y)); return L && L.length ? L[L.length - 1] : null; }
+const SUNI = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 14a5 5 0 0 1 10 0"/></svg>';
+function metaHTML(e) { return (e.wx ? '<span>' + esc(e.wx) + '</span>' : '') + (e.sun ? '<span class="sb">' + SUNI + esc(e.sun) + '</span>' : ''); }
+function writeAids() {
+  const e = S.cur; if (!e) return;
+  if (AID.e !== e && !e.id && !hasContent(e)) { AID.e = e; AID.i = -1; AID.mem = false; $('eImp').dataset.for = ''; } // neues, leeres Blatt
+  const fresh = AID.e === e, empty = !hasContent(e);
+  const mh = metaHTML(e); if ($('eMeta').innerHTML !== mh) { $('eMeta').innerHTML = mh; $('eMetaP').innerHTML = mh; }
+  const box = $('eImp'), want = fresh && WS.imp;
+  if (want && !IMP) loadImp();
+  box.hidden = !(want && IMP); box.classList.toggle('wr', !empty);
+  if (!box.hidden) { const g = greetText(); if ($('eGreet').textContent !== g) $('eGreet').textContent = g; if (box.dataset.for !== e.created + '|' + impIdx()) paintImp(); }
+  $('eBody').dataset.ph = !box.hidden ? 'Oder einfach losschreiben …' : 'Was möchtest du festhalten?';
+  const m = $('eMem'), last = fresh && WS.mem ? yearAgo(e.date) : null;
+  m.hidden = !last;
+  if (last) {
+    if (m.dataset.id !== last.id) { m.dataset.id = last.id; $('eMemT').textContent = titleOf(last); $('eMemX').textContent = (last.text || '').replace(/\s+/g, ' ').trim(); $('eMemW').textContent = last.wx || ''; }
+    m.classList.toggle('off', !empty); m.classList.toggle('open', AID.mem && empty);
+    if (isDesktop()) { const b = $('eBody').getBoundingClientRect(), r = $('entry').getBoundingClientRect(); m.style.left = Math.round(b.left - r.left) + 'px'; } else m.style.left = '';
+  }
+}
+const writeAidsSoon = writeAids;
+
 function draftFor(k) {
   const now = new Date(); const d = parseKey(k);
   if (k !== keyOf(now)) d.setHours(20, 0, 0, 0); else d.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()); // sekundengenau: mehrere Einträge am Tag bleiben richtig sortiert
@@ -2175,10 +2368,10 @@ function saveMark(st) {
 }
 function onEdit() {
   const e = S.cur; if (!e) return;
-  e.title = $('eTitle').textContent.replace(/\n+/g, ' ');
-  e.text = $('eBody').innerText.replace(/ /g, ' ');
-  if (!$('eBody').textContent) $('eBody').innerHTML = '';
-  if (!$('eTitle').textContent) $('eTitle').innerHTML = '';
+  const b = $('eBody'), full = bodyText(b), nl = full.indexOf('\n');
+  e.title = nl < 0 ? full : full.slice(0, nl); e.text = nl < 0 ? '' : full.slice(nl + 1); // erste Zeile = Titel, der Rest = Text
+  if (!full.trim() && nl < 0) b.innerHTML = ''; else tidyBody(b);
+  writeAidsSoon();
   if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); }
   syncTrash();
   if (e.id) saveMark('pending');
@@ -2216,9 +2409,9 @@ function openDay(k) {
 }
 function newEntry() { // Plus / ⌘N: immer ein neues, leeres Blatt für heute – mehrere Einträge am Tag sind erlaubt
   const k = keyOf(today()), top = S.stack[S.stack.length - 1];
-  if (top === 'entry' && S.cur && !S.cur.id && S.cur.date === k) { focusEnd($('eTitle')); return; } // steht schon ein leeres Blatt offen
+  if (top === 'entry' && S.cur && !S.cur.id && S.cur.date === k) { focusEnd($('eBody')); return; } // steht schon ein leeres Blatt offen
   saveCur(); S.navList = null;
-  const open = () => { go('entry'); openEntry(draftFor(k)); focusEnd($('eTitle')); };
+  const open = () => { go('entry'); openEntry(draftFor(k)); focusEnd($('eBody')); };
   if (isDesktop() && top === 'entry') deskFade(open, 'new' + Date.now()); else open();
 }
 function navNeighbour(dir) { // innerhalb der Suchtreffer (neueste zuerst)
@@ -2362,17 +2555,19 @@ function sfRep(ent, card) { // exakte Kopie der Karte im Blatt
   c.classList.remove('swiping', 'is-open', 'snap', 'is-current'); c.tabIndex = -1; rep.appendChild(c); ent.appendChild(rep); return rep;
 }
 function sfPrep(ent, card) { // Zielwerte für Tageszahl und Titel (Karte ⇄ Blatt) als CSS-Variablen
-  const dn = $('eDn'), et = $('eTitle'), ov = $('etOv'), tcs = getComputedStyle(et), px = (el) => parseFloat(getComputedStyle(el).fontSize);
+  const dn = $('eDn'), px = (el) => parseFloat(getComputedStyle(el).fontSize);
   const n = card.querySelector('.n'), ti = card.querySelector('.ti');
-  const fn = sfRel(dn, ent), ft = sfRel(et, ent), pad = parseFloat(tcs.paddingTop) || 0;
-  const cn = sfRel(n.offsetParent ? n : card.querySelector('.d'), card), ct = sfRel(ti, card);
+  const fn = sfRel(dn, ent), cn = sfRel(n.offsetParent ? n : card.querySelector('.d'), card), ct = sfRel(ti, card);
   ent.style.setProperty('--ntf', 'translate(' + (cn.x - fn.x) + 'px,' + (cn.y - fn.y) + 'px) scale(' + (px(n) / px(dn)) + ')');
-  const has = !!et.textContent.trim(); ent.classList.toggle('ovon', has);
-  if (has) {
-    ov.textContent = et.textContent; ov.style.cssText = 'left:' + ft.x + 'px;top:' + (ft.y + pad) + 'px;width:' + et.offsetWidth + 'px;font-size:' + tcs.fontSize + ';line-height:' + tcs.lineHeight + ';letter-spacing:' + tcs.letterSpacing;
-    ent.classList.toggle('ml', ov.offsetHeight > parseFloat(tcs.lineHeight) * 1.5);
-    ent.style.setProperty('--ttf', 'translate(' + (ct.x - ft.x) + 'px,' + (ct.y - ft.y - pad) + 'px) scale(' + (px(ti) / px(et)) + ')');
-  }
+  const o = sfOv(ent);
+  if (o) { ent.classList.toggle('ml', o.ov.offsetHeight > o.lh * 1.5); ent.style.setProperty('--ttf', 'translate(' + (ct.x - o.x) + 'px,' + (ct.y - o.y) + 'px) scale(' + (px(ti) / o.fs) + ')'); }
+}
+function sfOv(ent) { // Titel der Karte fliegt zur ersten Zeile des Blatts (die ist jetzt der Titel) und blendet dort aus
+  const b = $('eBody'), ov = $('etOv'), t = S.cur ? (S.cur.title || '').trim() : '', has = !!t; ent.classList.toggle('ovon', has);
+  if (!has) return null;
+  const f = sfRel(b, ent), fs = parseFloat(getComputedStyle(b).fontSize) * 1.2, lh = Math.round(fs * 1.15);
+  ov.textContent = t; ov.style.cssText = 'left:' + f.x + 'px;top:' + f.y + 'px;width:' + b.offsetWidth + 'px;font-size:' + fs + 'px;line-height:' + lh + 'px;letter-spacing:-.01em';
+  return { ov, x: f.x, y: f.y, fs, lh };
 }
 function sfClear(ent) {
   ent.classList.remove('fx', 'nt', 'pre', 'closing', 'down', 'drag', 'far', 'ovon', 'ml');
@@ -2452,8 +2647,7 @@ function sfDragStart(ent, under) { // Runterziehen: Blatt folgt dem Finger, Star
   if (SF.closing || SF.running || !sfMotion()) return false;
   SF.drag = true; SF.on = true; $('app').classList.add('sfx', 'card');
   ent.style.setProperty('--fw', $('app').clientWidth + 'px'); ent.classList.add('fx', 'drag');
-  const et = $('eTitle'), ov = $('etOv'), tcs = getComputedStyle(et), has = !!et.textContent.trim(); ent.classList.toggle('ovon', has);
-  if (has) { const ft = sfRel(et, ent); ov.textContent = et.textContent; ov.style.cssText = 'left:' + ft.x + 'px;top:' + (ft.y + (parseFloat(tcs.paddingTop) || 0)) + 'px;width:' + et.offsetWidth + 'px;font-size:' + tcs.fontSize + ';line-height:' + tcs.lineHeight + ';letter-spacing:' + tcs.letterSpacing; }
+  sfOv(ent);
   under.classList.add('dragging'); return true;
 }
 function sfDragFrame(ent, under, dy) {
@@ -2499,6 +2693,9 @@ document.addEventListener('click', (ev) => {
     if (b.closest('#caltrack') && S.cal.sel !== k) selectCalDay(k); else deskFade(() => openDay(k), (S.byDate.get(k) || [{}])[0].id || 'draft' + k);
   }
   else if (a === 'setlight') { S.light = b.dataset.light; try { localStorage.setItem('journal.light', S.light); } catch (e) {} applyLight(); }
+  else if (a === 'impnext') impNext();
+  else if (a === 'memtoggle') { AID.mem = !AID.mem; writeAids(); }
+  else if (a === 'wset') toggleW(b.dataset.k);
   else if (a === 'setfx') { S.fx = b.dataset.fx; try { localStorage.setItem('journal.fx', S.fx); } catch (e) {} markFx(); }
   else if (a === 'trashcur') { if (S.cur && S.cur.id && hasContent(S.cur)) askDelete(S.cur.id); else syncTrash(); }
   else if (a === 'ctxopen') { const id = S.ctxId; hideCtx(); if (id) { S.navList = null; openEntryById(id); } }
@@ -2603,6 +2800,7 @@ applyLight(); setInterval(applyLight, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) applyLight(); });
 function markFx() { document.querySelectorAll('.fxseg button').forEach((x) => x.setAttribute('aria-checked', x.dataset.fx === S.fx)); }
 try { S.fx = localStorage.getItem('journal.fx') || 'fade'; } catch (e) { S.fx = 'fade'; }
+markW(); loadImp();
 markFx();
 function hideCtx() { const c = $('ctxmenu'); c.classList.remove('show'); S.ctxId = null; setTimeout(() => { if (!c.classList.contains('show')) c.hidden = true; }, 180); }
 document.addEventListener('contextmenu', (e) => { // Mac: Rechtsklick auf einen Eintrag
@@ -2705,12 +2903,14 @@ $('list').addEventListener('scroll', () => { if (S.ctxId) hideCtx(); }, { passiv
 $('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
 for (const v of ['home', 'search']) $(v).addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
 function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
-$('eTitle').addEventListener('input', onEdit);
 $('eBody').addEventListener('input', onEdit);
-$('eTitle').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); focusEnd($('eBody')); } });
-for (const id of ['eTitle', 'eBody']) $(id).addEventListener('paste', (e) => { // plain text only (fallback for browsers without plaintext-only)
+$('eBody').addEventListener('paste', (e) => { // nur reiner Text
   e.preventDefault(); const txt = (e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText', false, txt);
 });
+$('eBody').addEventListener('drop', (e) => { const txt = e.dataTransfer && e.dataTransfer.getData('text/plain'); e.preventDefault(); if (txt) document.execCommand('insertText', false, txt); });
+$('eBody').addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && /^[biu]$/i.test(e.key)) e.preventDefault(); }); // keine Formatierung – nur Text
+$('eBody').addEventListener('beforeinput', (e) => { if (/^format/.test(e.inputType)) e.preventDefault(); });
+$('eBody').addEventListener('blur', () => { const b = $('eBody'); if (b.firstChild && b.firstChild.nodeType === 3) setBody(bodyText(b)); }); // ordnen, sobald nicht mehr geschrieben wird (Initiale braucht eine erste Zeile)
 $('q').addEventListener('input', renderSearch);
 $('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); renderSearch(); $('q').blur(); } }); // Enter schließt die Tastatur
 document.addEventListener('visibilitychange', () => { if (document.hidden) saveCur(); else { renderHome(); Sync.soon(200); } });

@@ -72,7 +72,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - Im Jahr bleiben nur Monatsnamen mit Treffern hell. Zählwerk zeigt „x Treffer“.
 - Am iPhone Vorschläge als Chips (die häufigsten Wörter aus den Titeln).
 
-### ☐ 5 · Tagesimpuls — `entwurf/Impuls2.dc.html`, `entwurf/impulse.json`
+### ☑ 5 · Tagesimpuls — `entwurf/Impuls2.dc.html`, `entwurf/impulse.json`
 - **Auswahl:** Impuls des Tages = `impulse[(Tag im Jahr − 1) % 445]`. „Anderer Impuls“ zeigt einen zufälligen.
 - **Darstellung:**
   - Feste Höhe für 3 Zeilen, nichts darunter springt.
@@ -84,7 +84,7 @@ Ersetzt das heutige Hereingleiten des Eintrags von unten.
 - **Heute vor einem Jahr:** Karte unten auf dem leeren Blatt, nur wenn es einen Eintrag gibt. Antippen klappt sie auf.
 - **Einstellungen › Beim Schreiben:** Schalter für Tagesimpuls, Ort & Wetter, Heute vor einem Jahr (Federschalter wie im Entwurf).
 
-### ☐ 6 · Das Blatt „Schlicht“ (Mac + iPhone) — `entwurf/Schrift6.dc.html`
+### ☑ 6 · Das Blatt „Schlicht“ (Mac + iPhone) — `entwurf/Schrift6.dc.html`
 - **Kein Titelfeld mehr:** Die erste Zeile bis zum ersten Enter **ist** der Titel. Datenmodell: `title` = erste Zeile, `text` = der Rest. Beim Laden alter Einträge `title + "\n" + text` in einem Feld zeigen. So bleibt der Abgleich kompatibel.
 - **Fließtext:** Newsreader (Google Fonts, `opsz`). Mac 20,5px/1,6, iPhone 17px/1,6. Farbe `#2b2722`, `oldstyle-nums`, `hyphens:auto`, `lang="de"`.
 - **Absätze:** mit Leerzeile (`margin-top:1.05em`), keine Einzüge, keine Kapitälchen.
