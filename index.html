@@ -28,6 +28,9 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
   --safe-t:env(safe-area-inset-top, 0px); --safe-b:env(safe-area-inset-bottom, 0px);
   --ease:cubic-bezier(0.2, 0.7, 0.2, 1);
   --sheet:cubic-bezier(0.32, 0.72, 0, 1); /* iOS-artige Kurve, wie bei Vaul */
+  --t1:.16s; --t2:.28s; --t3:.55s; --t4:.82s; /* Bewegungssystem: nur diese Dauern */
+  --dimtext:#6f7a71; /* grauer Hilfstext auf Papier (4,5:1); --dim bleibt für Symbole und dunklen Kopf */
+  --copper:#a35f3a;
   --side:492px; --sheetbg:#f6f5f1; --card:rgba(38,48,43,.05); --cardh:rgba(38,48,43,.085); --cardp:rgba(38,48,43,.12);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -60,7 +63,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 
 /* shared type */
 .title{margin:8px 0 0;height:64px;display:flex;align-items:baseline;gap:12px;font-family:var(--serif);font-weight:400;white-space:nowrap}
-.title .t{font-size:64px;line-height:64px;letter-spacing:-.03em}
+.title .t{font-size:64px;line-height:64px;letter-spacing:-.015em}
 .title .y{font-size:44px;line-height:1;font-style:italic;color:var(--dim)}
 .kicker{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
 .iconbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%}
@@ -453,7 +456,7 @@ html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gef�
 .otd .none{font-size:14px;line-height:1.55;color:var(--muted)}
 .otd .kicker{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .otd .go{display:flex;align-items:center;gap:4px;letter-spacing:.12em;color:var(--ink)}
-.otd.is-prev .ti.muted{color:var(--dim)}
+.otd.is-prev .ti.muted{color:var(--dimtext)}
 #otd.swap{animation:softin .4s var(--ease)}
 
 /* entry */
@@ -468,8 +471,8 @@ html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gef�
 @media (max-width:959px){ /* iPhone: kompakte Fassung der Mac-Randspalte – große Tageszahl, daneben Wochentag und Monat · Uhrzeit */
   .enav{height:60px}
   .edate{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;row-gap:3px;align-items:end}
-  .edate .dn{display:block;grid-column:1;grid-row:1 / span 2;align-self:center;font-family:var(--serif);font-size:42px;line-height:.9;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:lining-nums}
-  .edate .wd{grid-column:2;grid-row:1;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--olive)}
+  .edate .dn{display:block;grid-column:1;grid-row:1 / span 2;align-self:center;font-family:var(--serif);font-size:42px;line-height:.9;letter-spacing:-.015em;color:var(--ink);font-variant-numeric:lining-nums}
+  .edate .wd{grid-column:2;grid-row:1;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
   .edate .dt{display:none}
   .edate .dtm{display:block;grid-column:2;grid-row:2;align-self:start;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
   .edate .savedot{grid-column:2;grid-row:1;position:static;justify-self:start;align-self:center;margin-left:0;transform-origin:left center}
@@ -492,18 +495,18 @@ html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gef�
 #entry.is-typing .done{opacity:1;transform:none;pointer-events:auto}
 .done span{width:36px;height:36px;border-radius:50%;background:var(--night);color:var(--linen);display:flex;align-items:center;justify-content:center;transition:transform .12s var(--ease)}
 .done:active span{transform:scale(.9)}
-.etitle{margin-top:8px;min-height:64px;padding-top:14px;font-family:var(--serif);font-weight:400;font-size:44px;line-height:1.05;letter-spacing:-.02em;outline:none;overflow-wrap:break-word}
-.etitle:empty::before{content:attr(data-ph);color:var(--dim)}
+.etitle{caret-color:var(--copper);margin-top:8px;min-height:64px;padding-top:14px;font-family:var(--serif);font-weight:400;font-size:44px;line-height:1.05;letter-spacing:-.015em;outline:none;overflow-wrap:break-word}
+.etitle:empty::before{content:attr(data-ph);color:var(--dimtext)}
 .eline{height:1px;background:var(--line);margin-top:16px}
-.ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--olive)}
-.ebody:empty::before{content:attr(data-ph);color:var(--dim)}
+.ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--copper)}
+.ebody:empty::before{content:attr(data-ph);color:var(--dimtext)}
 @media (max-width:959px){
   /* Suche: dunkler Kopf mit großem Suchfeld, Treffer als Blatt darunter – wie Startseite und Kalender */
   #search{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
   #search .page.wide{padding:0;min-height:100%;display:flex;flex-direction:column}
   #search .searchbox{display:block;position:relative;height:auto;margin:0;border:0;background:var(--night);padding:calc(var(--safe-t) + 54px) 24px 40px}
-  #search .searchbox::before{content:'Suche';position:absolute;left:24px;top:calc(var(--safe-t) + 18px);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
-  #search .searchbox input{display:block;width:100%;height:52px;font-size:36px;color:var(--linen);border-bottom:1px solid var(--nline);caret-color:var(--mist)}
+  #search .searchbox::before{content:'Suche';position:absolute;left:24px;top:calc(var(--safe-t) + 18px);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--mist)}
+  #search .searchbox input{display:block;width:100%;height:52px;font-size:36px;color:var(--linen);border-bottom:1px solid var(--nline);caret-color:var(--copper)}
   #search .searchbox input::placeholder{color:#58645b}
   #results{flex:1;position:relative;margin:-20px 0 0;padding:20px 12px calc(var(--safe-b) + 110px);background:var(--paper);border-radius:14px 14px 0 0}
   #results:empty::before{content:'Titel und Text werden durchsucht.';display:block;padding:8px 12px;font-size:14px;color:var(--muted)}
@@ -539,7 +542,7 @@ html[data-light="abend"]{--paper:#ede8df;--sheetbg:#f5f1e9}
 html[data-light="spaet"]{--paper:#e8e2d7;--sheetbg:#f0eadf;--stone:#ddd8cd}
 .app,.view,#entry,#home,.list{transition-property:background-color;transition-duration:1.2s}
 /* Nacht: dieselbe Palette, umgekehrt – der dunkle Kopf bleibt der dunkelste Ton */
-html.night{--card:rgba(242,243,239,.045);--cardh:rgba(242,243,239,.075);--cardp:rgba(242,243,239,.1);--paper:#181c17;--sheetbg:#1e231d;--stone:#252b24;--ink:#e4e7df;--ink2:#c3cac4;--muted:#9aa59c;--olive:#a3b4a7;--line:#2f3631;--empty:#353b36;--night:#0b0d0a}
+html.night{--dimtext:#8d998f;--copper:#c27a52;--card:rgba(242,243,239,.045);--cardh:rgba(242,243,239,.075);--cardp:rgba(242,243,239,.1);--paper:#181c17;--sheetbg:#1e231d;--stone:#252b24;--ink:#e4e7df;--ink2:#c3cac4;--muted:#9aa59c;--olive:#a3b4a7;--line:#2f3631;--empty:#353b36;--night:#0b0d0a}
 html.night .row.is-current,html.night :is(#list,#results) .row.is-current{background:#2b322c}
 html.night .light .is-entry .dot{color:var(--night)}
 html.night :is(.btn:not(.ghost),.fxseg button[aria-checked="true"],.done span,.floatbtn,.toast){background:var(--linen);color:var(--night)}
@@ -551,7 +554,7 @@ html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 6
 .entry.in-l{animation:inl .42s var(--sheet)} .entry.in-r{animation:inr .42s var(--sheet)}
 
 /* settings & search */
-.ptitle{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:64px;line-height:64px;letter-spacing:-.03em}
+.ptitle{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:64px;line-height:64px;letter-spacing:-.015em}
 .sect{margin-top:16px;border-top:1px solid var(--line);padding-top:20px}
 .sect h2{margin:0 0 8px;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.1}
 .sect p{margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--ink2)}
@@ -567,7 +570,7 @@ html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 6
 .note{margin-top:12px;font-size:14px;line-height:1.55;color:var(--muted);min-height:1em}
 .searchbox{margin-top:0;display:flex;align-items:center;gap:10px;height:52px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .searchbox input{flex:1;border:0;background:transparent;font:400 28px/1 var(--serif);color:var(--ink);outline:none;min-width:0}
-.searchbox input::placeholder{color:var(--dim)}
+.searchbox input::placeholder{color:var(--dimtext)}
 .ptr{position:fixed;left:50%;top:calc(var(--safe-t) + 14px);z-index:30;width:30px;height:30px;margin-left:-15px;opacity:0;pointer-events:none;
   transform:translateY(-14px);transition:opacity .3s var(--ease), transform .4s var(--sheet)}
 .ptr.pulling{transition:none}
@@ -603,10 +606,10 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   html.night .app.a4 #entry.view{box-shadow:0 0 0 1px rgba(242,243,239,.09), 0 70px 160px -50px #000, 0 24px 50px -28px rgba(0,0,0,.8)}
 }
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.field span{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
+.field span{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
 .field input{height:48px;border:0;border-bottom:1px solid var(--line);background:transparent;font:400 17px var(--sans);color:var(--ink);outline:none;border-radius:0;padding:0}
 .field input:focus{border-bottom-color:var(--ink)}
-.field input::placeholder{color:var(--dim)}
+.field input::placeholder{color:var(--dimtext)}
 .searchbox:focus-within{outline:none}
 .searchbox input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
 .toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 90px);transform:translate(-50%,10px);opacity:0;background:var(--night);color:var(--linen);
@@ -741,14 +744,14 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   .app.a4 .entry .eact{opacity:0;pointer-events:none} /* beim Schreiben in der Mitte: nur Papier und Text */ /* beim Schreiben nur Text – der Mülleimer kommt, wenn die Maus übers Blatt fährt */ /* fest in der oberen rechten Blattecke, unabhängig vom Text */ /* Mülleimer endet genau am rechten Rand des Satzspiegels */
   .entry .edate{grid-column:1;grid-row:1 / span 2;align-self:start;position:static;flex-direction:column;align-items:flex-start;gap:0;
     padding:4px 24px 6px 0;border-right:1px solid var(--line);text-align:left}
-  .entry .edate .dn{display:block;order:-1;font-family:var(--serif);font-size:68px;line-height:.86;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:lining-nums}
-  .entry .edate .wd{margin-top:14px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--olive)}
+  .entry .edate .dn{display:block;order:-1;font-family:var(--serif);font-size:68px;line-height:.86;letter-spacing:-.015em;color:var(--ink);font-variant-numeric:lining-nums}
+  .entry .edate .wd{margin-top:14px;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
   .entry .edate .dt{display:none}
   .entry .edate .dtm{display:block;margin-top:6px;font-size:13px;font-weight:500;line-height:1.55;letter-spacing:.03em;color:var(--muted);white-space:pre-line}
   .entry .savedot{position:absolute;left:auto;right:68px;top:41px;bottom:auto;margin:0}
   .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
   #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
-  .entry .title,.etitle{grid-column:2;font-style:normal;font-size:50px;line-height:58px;letter-spacing:-.03em;margin:-6px 0 0;max-width:none;text-align:left;padding-top:0;min-height:58px;display:block}
+  .entry .title,.etitle{grid-column:2;font-style:normal;font-size:50px;line-height:58px;letter-spacing:-.015em;margin:-6px 0 0;max-width:none;text-align:left;padding-top:0;min-height:58px;display:block}
   .ebody{grid-column:2;margin:26px 0 0;max-width:none}
   .entry .ephotos{grid-column:2;max-width:none}
   .page .title{margin:0;padding-top:8px;height:72px}
@@ -829,6 +832,16 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
 .light .todaypulse,.page .todaypulse{box-shadow:0 0 0 1px var(--ink)}
 .dark .todaypulse{box-shadow:0 0 0 1px var(--linen)}
 @media (min-width:960px){ .calpill,.totop{display:none} }
+
+/* Grundlagen: Typografie, Schreibmarke, Textmarkierung */
+.searchbox input,.dsearch input,.field input{caret-color:var(--copper)}
+::selection{background:rgba(163,95,58,.22)}
+html.night ::selection{background:rgba(194,122,82,.22)}
+.tm,.row .wd,.edate,.row .mt,.otd .go,.stats .count,.count{font-variant-numeric:tabular-nums}
+.ebody{font-variant-numeric:oldstyle-nums}
+.title,.etitle,.stickytitle,.row .ti,.entry .title,h1,h2,h3{text-wrap:balance}
+.ebody,.row .ex,.otd .ti,p{text-wrap:pretty}
+.row .ti{letter-spacing:-.015em}
 </style>
 </head>
 <body>
