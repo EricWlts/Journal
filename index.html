@@ -341,34 +341,34 @@ html.night .scrub i{color:#6f7a71}
 .list{padding-left:12px;padding-right:12px;padding-top:10px}
 #results{margin:0 -12px}
 :is(#list,#results) .sep{padding-left:12px;padding-right:12px}
-:is(#list,#results) .row{position:relative;overflow:hidden;padding:15px 12px 16px;border-bottom:0;border-radius:10px;gap:16px;margin-bottom:6px;background:var(--card);
+:is(#list,#results,.rep) .row{position:relative;overflow:hidden;padding:15px 12px 16px;border-bottom:0;border-radius:10px;gap:16px;margin-bottom:6px;background:var(--card);
     transition:background-color .38s var(--ease), color .38s var(--ease)}
-:is(#list,#results) .row::before{display:none}
+:is(#list,#results,.rep) .row::before{display:none}
 :is(#list,#results) .mgroup > .row:first-child::before,:is(#list,#results) .sep + .row::before{opacity:0}
-:is(#list,#results) .row.is-current{margin:0 0 6px;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:10px}
-:is(#list,#results) .row.is-current::before,:is(#list,#results) .row.is-current + .row::before{opacity:0}
-:is(#list,#results) .row.is-current .n,:is(#list,#results) .row.is-current .ti{color:var(--linen)}
-:is(#list,#results) .row.is-current .wd,:is(#list,#results) .row.is-current .ex,:is(#list,#results) .row.is-current .mt{color:var(--mist)}
-:is(#list,#results) .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
-:is(#list,#results) .row .ph{display:flex;align-items:center;gap:3px}
-:is(#list,#results) .row .ex{-webkit-line-clamp:2}
+:is(#list,#results,.rep) .row.is-current{margin:0 0 6px;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:10px}
+:is(#list,#results,.rep) .row.is-current::before,:is(#list,#results,.rep) .row.is-current + .row::before{opacity:0}
+:is(#list,#results,.rep) .row.is-current .n,:is(#list,#results,.rep) .row.is-current .ti{color:var(--linen)}
+:is(#list,#results,.rep) .row.is-current .wd,:is(#list,#results,.rep) .row.is-current .ex,:is(#list,#results,.rep) .row.is-current .mt{color:var(--mist)}
+:is(#list,#results,.rep) .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+:is(#list,#results,.rep) .row .ph{display:flex;align-items:center;gap:3px}
+:is(#list,#results,.rep) .row .ex{-webkit-line-clamp:2}
 /* Titel immer einzeilig – alle Karten im selben Rhythmus */
-:is(#list,#results) .row .ti{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#list,#results,.rep) .row .ti{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* mehrere Einträge am selben Tag: Datum nur bei der ersten Karte, danach nur die Uhrzeit; Karten eines Tages rücken zusammen, zwischen Tagen etwas mehr Luft */
-:is(#list,#results) .row.cont{margin-top:-3px}
-:is(#list,#results) .row.newday{margin-top:6px}
-:is(#list,#results) .row.cont .n,:is(#list,#results) .row.cont .wd{display:none}
-:is(#list,#results) .row.cont .tm{margin-top:5px}
-:is(#list,#results) .row .d{width:40px}
-:is(#list,#results) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
-:is(#list,#results) .row.is-current .tm{color:var(--mist)}
+:is(#list,#results,.rep) .row.cont{margin-top:-3px}
+:is(#list,#results,.rep) .row.newday{margin-top:6px}
+:is(#list,#results,.rep) .row.cont .n,:is(#list,#results,.rep) .row.cont .wd{display:none}
+:is(#list,#results,.rep) .row.cont .tm{margin-top:5px}
+:is(#list,#results,.rep) .row .d{width:40px}
+:is(#list,#results,.rep) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
+:is(#list,#results,.rep) .row.is-current .tm{color:var(--mist)}
 /* hell: der gewählte Eintrag ist leiser – er liegt wie das offene Blatt hell auf, mit feinem Tinten-Rand (Nacht bleibt dunkel) */
-html:not(.night) :is(#list,#results) .row.is-current{background:#3a3e3b} /* gefüllt wie vorher, eine Spur heller als die Tinte */
+html:not(.night) :is(#list,#results,.rep) .row.is-current{background:#3a3e3b} /* gefüllt wie vorher, eine Spur heller als die Tinte */
 @media (hover:hover) and (pointer:fine){
-    :is(#list,#results) .row:not(.is-current):hover{background:var(--cardh)}
-    :is(#list,#results) .row:not(.is-current):hover::before,:is(#list,#results) .row:not(.is-current):hover + .row::before{opacity:0}
+    :is(#list,#results,.rep) .row:not(.is-current):hover{background:var(--cardh)}
+    :is(#list,#results,.rep) .row:not(.is-current):hover::before,:is(#list,#results,.rep) .row:not(.is-current):hover + .row::before{opacity:0}
 }
-:is(#list,#results) .row:not(.is-current):active{background:var(--cardp);transition-duration:0s}
+:is(#list,#results,.rep) .row:not(.is-current):active{background:var(--cardp);transition-duration:0s}
 
 /* iPhone: Eintrag nach links wischen = Löschen anbieten */
 .row{position:relative;--sx:0px}
@@ -543,7 +543,7 @@ html[data-light="spaet"]{--paper:#e8e2d7;--sheetbg:#f0eadf;--stone:#ddd8cd}
 .app,.view,#entry,#home,.list{transition-property:background-color;transition-duration:1.2s}
 /* Nacht: dieselbe Palette, umgekehrt – der dunkle Kopf bleibt der dunkelste Ton */
 html.night{--dimtext:#8d998f;--copper:#c27a52;--card:rgba(242,243,239,.045);--cardh:rgba(242,243,239,.075);--cardp:rgba(242,243,239,.1);--paper:#181c17;--sheetbg:#1e231d;--stone:#252b24;--ink:#e4e7df;--ink2:#c3cac4;--muted:#9aa59c;--olive:#a3b4a7;--line:#2f3631;--empty:#353b36;--night:#0b0d0a}
-html.night .row.is-current,html.night :is(#list,#results) .row.is-current{background:#2b322c}
+html.night .row.is-current,html.night :is(#list,#results,.rep) .row.is-current{background:#2b322c}
 html.night .light .is-entry .dot{color:var(--night)}
 html.night :is(.btn:not(.ghost),.fxseg button[aria-checked="true"],.done span,.floatbtn,.toast){background:var(--linen);color:var(--night)}
 html.night .yd.f{background:#4a514b}
@@ -842,6 +842,61 @@ html.night ::selection{background:rgba(194,122,82,.22)}
 .title,.etitle,.stickytitle,.row .ti,.entry .title,h1,h2,h3{text-wrap:balance}
 .ebody,.row .ex,.otd .ti,p{text-wrap:pretty}
 .row .ti{letter-spacing:-.015em}
+
+/* Karte wird Blatt (iPhone): die angetippte Karte wächst zum Blatt und kehrt beim Schließen genau dorthin zurück */
+.etov{display:none}
+@media (max-width:959px){
+  #entry{border-radius:16px 16px 0 0}
+  #entry.is-top{box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
+  html.night #entry.is-top{box-shadow:inset 0 1px 0 rgba(242,243,239,.06), 0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
+  .view.is-under.under-sheet{filter:brightness(.6) saturate(.85);--dim:0;border-radius:16px}
+  .enav::after{content:'';position:absolute;left:24px;right:24px;bottom:0;height:1px;background:var(--line);transform-origin:0 50%;transition:transform var(--t4) var(--sheet) .3s, opacity var(--t2) var(--ease) .3s}
+  .rep .row{margin:0 !important;width:100%;height:100%;background:transparent !important;transition:none;content-visibility:visible;pointer-events:none}
+  .rep{position:absolute;left:0;top:0;z-index:2;pointer-events:none}
+  #entry:not(.fx) .rep{display:none}
+}
+@media (max-width:959px) and (prefers-reduced-motion:no-preference){
+  /* Rückfall ohne Karte (Plus, Kalendertag): Blatt gleitet von unten herein */
+  #entry.is-top:not(.fx){transition:transform var(--t3) var(--sheet), background-color 1.2s var(--ease)}
+  .app.sfx :is(#home,#calendar,#search,#settings):is(.is-top,.is-under):not(.dragging){transition:transform var(--t3) var(--sheet), border-radius var(--t3) var(--sheet), filter var(--t3) var(--sheet), background-color 1.2s, visibility 0s}
+  .app.sfx.card :is(#home,#calendar,#search,#settings):is(.is-top,.is-under):not(.dragging){transition-duration:var(--t4),var(--t4),var(--t4),1.2s,0s}
+  /* Blatt in Bewegung (.fx): Geometrie läuft von Karte zu Blatt, .pre = Karte, .closing = zurück zur Karte */
+  #entry.fx{z-index:4;transform:none;visibility:visible;overflow:hidden;
+    transition:top var(--t4) var(--sheet), left var(--t4) var(--sheet), right var(--t4) var(--sheet), bottom var(--t4) var(--sheet), border-radius var(--t4) var(--sheet), background-color var(--t4) var(--ease), box-shadow var(--t4) var(--sheet), transform var(--t3) var(--sheet)}
+  #entry.fx.closing{transition:top var(--t4) var(--sheet), left var(--t4) var(--sheet), right var(--t4) var(--sheet), bottom var(--t4) var(--sheet), border-radius var(--t4) var(--sheet), background-color var(--t4) var(--ease), box-shadow var(--t4) var(--sheet), transform var(--t4) var(--sheet)}
+  #entry.fx.nt,#entry.fx.nt *{transition:none !important}
+  #entry.fx.drag{transition:none;transform-origin:50% 0}
+  #entry.fx.down{transform:translate3d(0,100%,0);transition:transform var(--t3) var(--sheet)}
+  #entry.fx #entryInner{width:var(--fw)}
+  #entry.fx .enav{background:transparent}
+  #entry.fx .enav::after,#entry.fx.pre .enav::after{transition:transform var(--t4) var(--sheet) .3s, opacity var(--t2) var(--ease) .3s}
+  #entry.fx:is(.pre,.closing) .enav::after{transform:scaleX(0);opacity:0;transition:transform var(--t2) var(--sheet), opacity var(--t1) var(--ease)}
+  /* Tageszahl und Titel gleiten zwischen Karte und Blatt */
+  #entry.fx #eDn,#entry.fx .etov{transform-origin:0 0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .04s}
+  #entry.fx:is(.pre,.closing) #eDn,#entry.fx:is(.pre,.closing) .etov{transform:var(--ntf,none)}
+  #entry.fx:is(.pre,.closing) .etov{transform:var(--ttf,none)}
+  #entry.fx.closing.ml .etov{transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .05s}
+  #entry.fx.pre #eDn,#entry.fx.pre .etov{opacity:0;transition:none}
+  #entry.fx.closing #eDn,#entry.fx.closing .etov{opacity:0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .46s}
+  #entry.fx.ovon .etov{display:block;position:absolute;margin:0;font-family:var(--serif);font-weight:400;color:var(--ink);pointer-events:none;z-index:1;overflow-wrap:break-word;text-wrap:balance}
+  #entry.fx.ovon #eTitle{opacity:0}
+  /* Datum und Mülleimer blenden verzögert ein, beim Zurück schnell aus */
+  #entry.fx :is(.edate .wd,.edate .dtm,.eact){transition:opacity var(--t3) var(--ease) .35s}
+  #entry.fx:is(.pre,.closing) :is(.edate .wd,.edate .dtm,.eact){opacity:0;transition:opacity .2s var(--ease)}
+  /* Zurück-Knopf: bleibt am Platz, verschwindet dort */
+  #entry.fx #entryBtn{transition:opacity var(--t3) var(--ease) .3s, transform var(--t3) var(--sheet) .3s, filter var(--t3) var(--ease) .3s}
+  #entry.fx:is(.pre,.closing,.far,.down) #entryBtn{opacity:0;transform:scale(.86);filter:blur(4px);pointer-events:none;transition:opacity .22s var(--ease), transform var(--t2) cubic-bezier(.4,0,1,1), filter .22s var(--ease)}
+  /* exakte Kopie der Karte */
+  .rep{opacity:0;transition:opacity .22s var(--ease)}
+  #entry.fx.pre .rep{opacity:1;transition:none}
+  #entry.fx.closing .rep{opacity:1;transition:opacity .34s var(--ease) .44s}
+  /* Text wird von oben nach unten freigelegt (Maskenkante wie revealDown am Mac) */
+  #entry.rv :is(#eBody,#ePhotos){-webkit-mask-image:linear-gradient(#000 45%,transparent 55%);mask-image:linear-gradient(#000 45%,transparent 55%);-webkit-mask-size:100% 260%;mask-size:100% 260%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:0 0;mask-position:0 0;
+    transition:opacity var(--t3) var(--ease) .2s, transform var(--t4) var(--sheet) .2s, -webkit-mask-position 1.15s cubic-bezier(.4,0,.2,1) .25s, mask-position 1.15s cubic-bezier(.4,0,.2,1) .25s}
+  #entry.rv.rvpre :is(#eBody,#ePhotos){opacity:0;transform:translateY(16px);-webkit-mask-position:0 100%;mask-position:0 100%;transition:none}
+  #entry.fx.closing :is(#eBody,#ePhotos){opacity:0;transform:translateY(6px);transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)}
+  #entry.fx:not(.rv) :is(#eBody,#ePhotos){transition:opacity var(--t3) var(--ease) .1s}
+}
 </style>
 </head>
 <body>
@@ -919,6 +974,7 @@ html.night ::selection{background:rgba(194,122,82,.22)}
       <div class="ebody" id="eBody" contenteditable="plaintext-only" role="textbox" aria-multiline="true" aria-label="Text" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
       <div class="ephotos" id="ePhotos"></div>
     </div>
+    <div class="etov" id="etOv" aria-hidden="true"></div>
     <button class="floatbtn" data-act="entryback" id="entryBtn" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
 
@@ -1722,6 +1778,8 @@ const VIEWS = ['home', 'calendar', 'entry', 'search', 'settings'];
 function minStack() { return isDesktop() ? 2 : 1; }
 function applyStack() {
   const top = S.stack[S.stack.length - 1];
+  if (top !== 'entry' && SF.on && !SF.closing) sfReset();
+  if (!isDesktop()) { const ap = $('app'); clearTimeout(SF.at); if (top === 'entry') ap.classList.add('sfx'); else SF.at = setTimeout(() => { if (S.stack[S.stack.length - 1] !== 'entry' && !SF.on) ap.classList.remove('sfx', 'card'); }, 1100); }
   for (const v of VIEWS) {
     const el = $(v); const i = S.stack.lastIndexOf(v);
     el.classList.remove('is-top', 'is-under', 'is-off', 'dragging'); el.style.transform = '';
@@ -1761,11 +1819,142 @@ function back() {
     }, 300);
     return;
   }
+  if (S.stack[S.stack.length - 1] === 'entry' && SF.on && !SF.closing) sfReset(); // Bewegung abbrechen, Blatt schließt dann wie früher
   const leaving = S.stack.pop();
   if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(); }
   applyStack();
   if (leaving === 'entry' || S.homeDirty) { renderHome(); if (S.stack.includes('calendar')) renderCalendar(); }
 
+}
+
+/* ---------- iPhone: Karte wird Blatt ----------
+   Die angetippte Karte wächst zum Blatt (Tageszahl und Titel gleiten an ihren Platz, Text wird von oben freigelegt),
+   beim Schließen läuft alles mit derselben Kurve zurück zur Karte. Bleibt keine Karte im Bild, gleitet das Blatt nach unten. */
+const SF = { on: false, running: false, closing: false, drag: false, row: null, t: 0, rvt: 0, at: 0 };
+const sfMotion = () => !isDesktop() && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SF_PROPS = ['top', 'left', 'right', 'bottom', 'borderRadius', 'backgroundColor', 'boxShadow', 'transform'];
+function sfRel(el, root) { let x = 0, y = 0, n = el; while (n && n !== root) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x, y }; }
+function sfBg(card) { // deckende Farbe der Karte (Kartenton über dem Papier)
+  const num = (v) => (v.match(/[\d.]+/g) || []).map(Number);
+  const f = num(getComputedStyle(document.documentElement).getPropertyValue('--card')); let b = [0, 0, 0, 1], n = card.parentElement;
+  while (n) { const c = num(getComputedStyle(n).backgroundColor); if (c.length >= 3 && (c.length < 4 || c[3] > 0.01)) { b = c; break; } n = n.parentElement; }
+  const a = f.length > 3 ? f[3] : 1; return 'rgb(' + [0, 1, 2].map((i) => Math.round((f[i] || 0) * a + b[i] * (1 - a))).join(',') + ')';
+}
+function sfRep(ent, card) { // exakte Kopie der Karte im Blatt
+  const old = ent.querySelector('.rep'); if (old) old.remove();
+  const rep = document.createElement('div'); rep.className = 'rep'; rep.setAttribute('aria-hidden', 'true');
+  rep.style.width = card.offsetWidth + 'px'; rep.style.height = card.offsetHeight + 'px';
+  const c = card.cloneNode(true); for (const a of ['data-act', 'data-id', 'data-date', 'style']) c.removeAttribute(a);
+  c.classList.remove('swiping', 'is-open', 'snap', 'is-current'); c.tabIndex = -1; rep.appendChild(c); ent.appendChild(rep); return rep;
+}
+function sfPrep(ent, card) { // Zielwerte für Tageszahl und Titel (Karte ⇄ Blatt) als CSS-Variablen
+  const dn = $('eDn'), et = $('eTitle'), ov = $('etOv'), tcs = getComputedStyle(et), px = (el) => parseFloat(getComputedStyle(el).fontSize);
+  const n = card.querySelector('.n'), ti = card.querySelector('.ti');
+  const fn = sfRel(dn, ent), ft = sfRel(et, ent), pad = parseFloat(tcs.paddingTop) || 0;
+  const cn = sfRel(n.offsetParent ? n : card.querySelector('.d'), card), ct = sfRel(ti, card);
+  ent.style.setProperty('--ntf', 'translate(' + (cn.x - fn.x) + 'px,' + (cn.y - fn.y) + 'px) scale(' + (px(n) / px(dn)) + ')');
+  const has = !!et.textContent.trim(); ent.classList.toggle('ovon', has);
+  if (has) {
+    ov.textContent = et.textContent; ov.style.cssText = 'left:' + ft.x + 'px;top:' + (ft.y + pad) + 'px;width:' + et.offsetWidth + 'px;font-size:' + tcs.fontSize + ';line-height:' + tcs.lineHeight + ';letter-spacing:' + tcs.letterSpacing;
+    ent.classList.toggle('ml', ov.offsetHeight > parseFloat(tcs.lineHeight) * 1.5);
+    ent.style.setProperty('--ttf', 'translate(' + (ct.x - ft.x) + 'px,' + (ct.y - ft.y - pad) + 'px) scale(' + (px(ti) / px(et)) + ')');
+  }
+}
+function sfClear(ent) {
+  ent.classList.remove('fx', 'nt', 'pre', 'closing', 'down', 'drag', 'far', 'ovon', 'ml');
+  for (const p of SF_PROPS) ent.style[p] = '';
+  for (const v of ['--fw', '--ntf', '--ttf']) ent.style.removeProperty(v);
+  const rep = ent.querySelector('.rep'); if (rep) rep.remove();
+}
+function sfEnd() { // Ende der Bewegung: alles im selben Bild zurücksetzen – die echte Karte ist wieder da, ohne Übergang
+  const ent = $('entry'); clearTimeout(SF.t);
+  ent.style.transition = 'none'; sfClear(ent);
+  if (SF.row) { SF.row.style.visibility = ''; SF.row = null; }
+  void ent.offsetWidth; ent.style.transition = '';
+  SF.on = SF.running = SF.closing = SF.drag = false;
+}
+function sfReset() { // sofort in den Ruhezustand (z. B. wenn der Eintrag anders geschlossen wird); das Blatt gleitet dann wie früher nach unten
+  if (!SF.on && !$('entry').classList.contains('fx')) return;
+  const ent = $('entry'); clearTimeout(SF.t); clearTimeout(SF.rvt); ent.classList.remove('rv', 'rvpre');
+  sfClear(ent); if (SF.row) { SF.row.style.visibility = ''; SF.row = null; }
+  const u = $(S.stack[S.stack.length - 2] || 'home'); if (u) { u.classList.remove('dragging'); u.style.removeProperty('filter'); }
+  SF.on = SF.running = SF.closing = SF.drag = false;
+}
+function sfSettle() { SF.running = false; if (SF.row) { SF.row.style.visibility = ''; SF.row = null; } if (!SF.closing && SF.on) sfEnd(); }
+function sfOpen(row, id) { // true, wenn die Karte zum Blatt wächst
+  if (!sfMotion()) return false;
+  const e = S.entries.find((x) => x.id === id); if (!e) return false;
+  const ent = $('entry'), app = $('app'), W = app.clientWidth, H = app.clientHeight, r = row.getBoundingClientRect();
+  if (r.bottom < 60 || r.top > H - 20 || !r.width) return false;
+  SF.on = true; SF.running = true; SF.closing = false; clearTimeout(SF.t); clearTimeout(SF.rvt);
+  ent.style.setProperty('--fw', W + 'px'); ent.classList.add('fx', 'nt', 'rv', 'rvpre'); app.classList.add('sfx', 'card');
+  go('entry'); openEntry(e);
+  sfRep(ent, row); sfPrep(ent, row);
+  Object.assign(ent.style, { top: r.top + 'px', left: r.left + 'px', right: (W - r.right) + 'px', bottom: (H - r.bottom) + 'px', borderRadius: getComputedStyle(row).borderTopLeftRadius, backgroundColor: sfBg(row), boxShadow: 'none' });
+  ent.classList.add('pre'); row.style.visibility = 'hidden'; SF.row = row;
+  void ent.offsetWidth; // Karte steht – ab hier läuft die Bewegung
+  ent.classList.remove('nt', 'pre', 'rvpre'); for (const p of SF_PROPS) ent.style[p] = '';
+  SF.t = setTimeout(sfSettle, 880); SF.rvt = setTimeout(() => ent.classList.remove('rv'), 1750);
+  return true;
+}
+function sfClose() { // Zurück-Knopf oder Runterziehen: zur Karte des Eintrags, sonst nach unten
+  const ent = $('entry'), app = $('app'), W = app.clientWidth, H = app.clientHeight, e = S.cur;
+  if (SF.closing || isDesktop() || S.stack[S.stack.length - 1] !== 'entry') return;
+  if (typing()) document.activeElement.blur();
+  if (!sfMotion()) { back(); return; }
+  SF.closing = true; SF.on = true; SF.running = false; clearTimeout(SF.t); clearTimeout(SF.rvt);
+  const settled = !ent.classList.contains('fx'), under = $(S.stack[S.stack.length - 2]);
+  ent.classList.remove('rv', 'rvpre'); app.classList.add('sfx', 'card');
+  if (settled) { ent.style.setProperty('--fw', W + 'px'); ent.classList.add('fx', 'nt', 'ovon'); $('etOv').style.cssText = ''; }
+  under.style.removeProperty('filter');
+  const tf = ent.style.transform; // Zieh-Versatz: applyStack löscht ihn, hier festhalten
+  back();
+  if (tf) { ent.style.transform = tf; void ent.offsetWidth; }
+  if (SF.row) { SF.row.style.visibility = ''; SF.row = null; }
+  const view = $(S.stack[S.stack.length - 1]);
+  let card = e && e.id ? view.querySelector(':is(#list,#results) .row[data-id="' + CSS.escape(e.id) + '"]') : null, fr = null;
+  if (card) {
+    const p = sfRel(card, view); fr = { left: p.x, top: p.y - view.scrollTop, width: card.offsetWidth, height: card.offsetHeight };
+    if (!(fr.top + fr.height > 120 && fr.top < H - 24 && fr.width > 0)) card = null;
+  }
+  if (!card) { ent.classList.remove('nt', 'ovon', 'drag', 'far'); ent.classList.add('down'); app.classList.remove('card'); ent.style.transform = ''; SF.t = setTimeout(sfEnd, 600); return; }
+  sfRep(ent, card); sfPrep(ent, card);
+  const bg = sfBg(card), rad = getComputedStyle(card).borderTopLeftRadius; card.style.visibility = 'hidden'; SF.row = card;
+  if (settled) void ent.offsetWidth;
+  ent.classList.remove('nt', 'drag', 'far'); ent.classList.add('closing');
+  Object.assign(ent.style, { top: fr.top + 'px', left: fr.left + 'px', right: (W - fr.left - fr.width) + 'px', bottom: (H - fr.top - fr.height) + 'px', borderRadius: rad, backgroundColor: bg, boxShadow: 'none', transform: '' });
+  SF.t = setTimeout(sfEnd, 860);
+}
+function sfReopen() { // mitten im Schließen wieder getippt: das Blatt kehrt von der aktuellen Stelle um
+  const ent = $('entry'); if (!SF.closing) return;
+  clearTimeout(SF.t); SF.closing = false; SF.running = true;
+  S.stack.push('entry'); applyStack();
+  ent.classList.remove('closing', 'down'); for (const p of SF_PROPS) ent.style[p] = '';
+  SF.t = setTimeout(sfSettle, 880);
+}
+$('entry').addEventListener('mousedown', (ev) => { if (SF.closing) ev.preventDefault(); }, true); // kein Fokus (Tastatur), wenn das Blatt nur umkehren soll
+$('entry').addEventListener('click', (ev) => { if (SF.closing) { ev.preventDefault(); ev.stopPropagation(); sfReopen(); } }, true);
+function sfDragStart(ent, under) { // Runterziehen: Blatt folgt dem Finger, Startseite kommt nach vorn
+  if (SF.closing || SF.running || !sfMotion()) return false;
+  SF.drag = true; SF.on = true; $('app').classList.add('sfx', 'card');
+  ent.style.setProperty('--fw', $('app').clientWidth + 'px'); ent.classList.add('fx', 'drag');
+  const et = $('eTitle'), ov = $('etOv'), tcs = getComputedStyle(et), has = !!et.textContent.trim(); ent.classList.toggle('ovon', has);
+  if (has) { const ft = sfRel(et, ent); ov.textContent = et.textContent; ov.style.cssText = 'left:' + ft.x + 'px;top:' + (ft.y + (parseFloat(tcs.paddingTop) || 0)) + 'px;width:' + et.offsetWidth + 'px;font-size:' + tcs.fontSize + ';line-height:' + tcs.lineHeight + ';letter-spacing:' + tcs.letterSpacing; }
+  under.classList.add('dragging'); return true;
+}
+function sfDragFrame(ent, under, dy) {
+  const d = Math.max(0, dy), k = Math.min(1, d / 300);
+  ent.style.transform = 'translate3d(0,' + (d * 0.62).toFixed(1) + 'px,0) scale(' + (1 - k * 0.1).toFixed(4) + ')';
+  ent.style.borderRadius = (16 + 10 * k).toFixed(1) + 'px'; ent.classList.toggle('far', d > 20);
+  under.style.transform = 'translate3d(0,' + (10 * (1 - k)).toFixed(1) + 'px,0) scale(' + (0.94 + 0.06 * k).toFixed(4) + ')';
+  under.style.filter = 'brightness(' + (0.6 + 0.4 * k).toFixed(3) + ') saturate(' + (0.85 + 0.15 * k).toFixed(3) + ')';
+}
+function sfDragEnd(ent, under, commit) {
+  SF.drag = false;
+  if (commit) { sfClose(); return; }
+  ent.classList.remove('drag', 'far'); under.classList.remove('dragging');
+  ent.style.transform = ''; ent.style.borderRadius = ''; under.style.transform = ''; under.style.filter = '';
+  clearTimeout(SF.t); SF.t = setTimeout(sfEnd, 900);
 }
 
 /* ---------- actions ---------- */
@@ -1803,11 +1992,13 @@ document.addEventListener('click', (ev) => {
   else if (a === 'open') {
     S.navList = b.closest('#results') ? (S.searchHits || null) : (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id;
     const from = isDesktop() && S.stack[S.stack.length - 1] === 'entry' && !(S.cur && S.cur.id === id) ? b.querySelector('.ti') : null;
+    if (!isDesktop() && b.matches('#list .row, #results .row')) { if (SF.on) sfEnd(); if (sfOpen(b, id)) return; }
     deskFade(() => openEntryById(id), id);
   }
   else if (a === 'today') newEntry();
   else if (a === 'entryback') {
     if (typing()) { document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
+    else if (!isDesktop() && S.stack[S.stack.length - 1] === 'entry') sfClose();
     else back();
   }
   else if (a === 'done') { if (document.activeElement) document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
@@ -1846,7 +2037,7 @@ async function deleteEntry(id) {
   let closedSheet = false;
   if (S.cur === e && !isDesktop() && S.stack[S.stack.length - 1] === 'entry') { // iPhone: erst zurück dorthin, wo man war (Liste bleibt an ihrer Stelle), dann faltet sich die Karte dort zusammen
     if (document.activeElement) document.activeElement.blur();
-    clearTimeout(saveTimer); e._savedSig = sigOf(e); S.cur = null; closedSheet = true;
+    clearTimeout(saveTimer); e._savedSig = sigOf(e); S.cur = null; closedSheet = true; sfReset();
     S.stack.pop(); applyStack(); if (S.homeDirty) renderHome(); if (S.stack.includes('calendar')) renderCalendar(); if (S.stack.includes('search')) renderSearch();
     await new Promise((r) => setTimeout(r, 480));
   }
@@ -2268,6 +2459,8 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       track.style.transform = 'translate3d(' + trackX(track, dx) + 'px,0,0)';
       const f = Math.max(0, 1 - Math.abs(dx) / (W * 0.45));
       fadeWith(track.id === 'caltrack' ? [$('calStats'), $('calTitle')] : [$('weekStat')], f);
+    } else if (mode === 'pull' && SF.drag) {
+      sfDragFrame(topEl, underEl, dy);
     } else if (mode === 'pull') {
       const y = dy < 0 ? rubber(dy, 20) : dy; const p = Math.max(0, Math.min(1, y / H));
       topEl.style.transform = 'translate3d(0,' + y + 'px,0)';
@@ -2293,7 +2486,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
     if (!isDesktop() && sx < 32 && S.stack.length > minStack() && top !== 'entry') cand = 'edge'; // Eintrag: zurück nach unten, nicht zur Seite
     else if (top === 'calendar' && e.target.closest('#calarea')) { cand = 'track'; track = $('caltrack'); }
     else if (top === 'home' && e.target.closest('#weekwrap')) { cand = 'track'; track = $('weektrack'); }
-    else if (top === 'entry' && !typing()) cand = 'entry';
+    else if (top === 'entry' && !typing() && !SF.running && !SF.closing) cand = 'entry';
     else if (top === 'search' || top === 'settings') cand = 'pull';
   }, { passive: true });
   app.addEventListener('touchmove', (e) => {
@@ -2313,7 +2506,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
         mode = 'pull'; cand = null;
         if (typing()) document.activeElement.blur();
         topEl = $(S.stack[S.stack.length - 1]); underEl = $(S.stack[S.stack.length - 2]);
-        topEl.classList.add('dragging', 'sheeting'); underEl.classList.add('dragging', 'sheet-under'); underEl.style.transform = 'translate3d(0,10px,0) scale(.94)';
+        if (!(topEl.id === 'entry' && sfDragStart(topEl, underEl))) { topEl.classList.add('dragging', 'sheeting'); underEl.classList.add('dragging', 'sheet-under'); underEl.style.transform = 'translate3d(0,10px,0) scale(.94)'; }
       } else { cand = null; rowEl = null; return; }
     }
     e.preventDefault();
@@ -2341,6 +2534,8 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       const t = topEl, u = underEl;
       if (commit) { back(); } else { t.style.transform = ''; u.style.transform = ''; }
       setTimeout(() => { t.style.transition = ''; u.style.transition = ''; }, ms + 20);
+    } else if (m === 'pull' && SF.drag) {
+      sfDragEnd(topEl, underEl, dy > 120 || (dy > 30 && vy > 0.6));
     } else if (m === 'pull') {
       topEl.classList.remove('dragging'); void topEl.offsetWidth;
       const t = topEl, u = underEl;
