@@ -463,7 +463,7 @@ html.night .scrub i{color:#6f7a71}
 .row .ti{font-family:var(--serif);font-size:23px;line-height:1.1;overflow-wrap:break-word}
 .row .ex{font-size:14px;line-height:1.5;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .row.is-current{background:var(--stone);margin:0 -12px;padding-left:12px;padding-right:12px;width:calc(100% + 24px);border-radius:3px}
-.emptylist{padding:40px 0;color:var(--muted);font-size:15px;line-height:1.6}
+.emptylist{padding:40px 0;margin:0;font:italic 400 22px/1.35 var(--serif);color:var(--dimtext);text-wrap:balance} /* Regel 7: ein Satz in kursiver Serif */
 .fabwrap{position:sticky;bottom:0;z-index:4;display:flex;justify-content:center;padding:28px 24px calc(var(--safe-b) + 20px);
   background:linear-gradient(to bottom, rgba(238,236,230,0) 0%, var(--paper) 40%);pointer-events:none}
 .fab{pointer-events:auto;display:flex;align-items:center;gap:10px;height:52px;padding:0 28px;border-radius:4px;background:var(--night);color:var(--linen);
@@ -586,7 +586,7 @@ html:not(.night) :is(#list,#results,.rep) .row.is-current{background:#3a3e3b} /*
 .otd{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;text-align:left;width:100%}
 .otd .ti{font-family:var(--serif);font-size:26px;line-height:1.1}
 .otd .ex{font-size:14px;line-height:1.55;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.otd .none{font-size:14px;line-height:1.55;color:var(--muted)}
+.otd .none{font:italic 400 19px/1.35 var(--serif);color:var(--dimtext);text-wrap:balance}
 .otd .kicker{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .otd .go{display:flex;align-items:center;gap:4px;letter-spacing:.12em;color:var(--ink)}
 .otd.is-prev .ti.muted{color:var(--dimtext)}
@@ -1190,9 +1190,25 @@ html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
   .lp-pv.rm{opacity:0;transition:opacity var(--t1) var(--ease)} .lp-pv.rm.in{opacity:1}
   .lp-menu,.lp-menu.off{transition:opacity var(--t1) var(--ease);transform:none}
 }
+
+.hap{position:fixed;left:-60px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+/* Regel 3 (iPhone): Einstellungen wachsen aus dem Regler-Symbol und kehren dorthin zurück; reine Übergänge, also jederzeit umkehrbar (Regel 2) */
+@media (max-width:959px){
+  #settings{transform-origin:var(--ox,90%) var(--oy,48px)}
+  #settings.is-off{transform:scale(.12);opacity:0;border-radius:40px;transition:transform .39s var(--sheet), opacity .2s var(--ease) .1s, border-radius .39s var(--sheet), visibility 0s linear .39s}
+  #settings.is-top:not(.dragging){transition:transform var(--t3) var(--sheet), opacity var(--t1) var(--ease), border-radius var(--t3) var(--sheet)}
+  #home.is-under:has(~ #settings.is-top){transform:scale(.96);border-radius:14px;transform-origin:50% 0}
+}
+/* prefers-reduced-motion (PLAN 8): alle Bewegungen werden zu kurzen Überblendungen */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;scroll-behavior:auto !important}
+  *:not(.dragging),*:not(.dragging)::before,*:not(.dragging)::after{transition-duration:var(--t1) !important;transition-delay:0s !important}
+  #settings.is-off{transform:none}
+}
 </style>
 </head>
 <body>
+<label class="hap" id="hapL" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
 <div class="statusfill" aria-hidden="true"></div>
 <div class="app" id="app">
 
@@ -1521,7 +1537,7 @@ function renderHome() {
     if (last) html += '</div>';
     listHTML = html;
   } else if (!S.entries.length) {
-    listHTML = '<p class="emptylist">Noch keine Einträge. Schreib heute den ersten, oder hol dir deine Einträge aus Day One über die Einstellungen.</p>';
+    listHTML = '<p class="emptylist">Noch leer – schreib heute den ersten Eintrag oder hol dir deine alten aus Day One.</p>';
   } else {
     let html = '', lastMonth = '', pv = null;
     const curMonth = t.getFullYear() + '-' + pad(t.getMonth() + 1);
@@ -1703,7 +1719,7 @@ function hmSelect(k) { // Auswahl ohne Neuaufbau: der Ring (eigene Ebene) blende
 function hmPick(k) { // Tipp auf einen Tag: auswählen; ist er schon gewählt, öffnet das zweite Tippen den Tag
   if (trackBusy) return;
   if (S.hm.sel === k) { deskFade(() => openDay(k), (S.byDate.get(k) || [{}])[0].id || 'draft' + k); return; }
-  hmSelect(k); hmPill();
+  hmSelect(k); hmPill(); haptic();
 }
 function weekMove(dir, after) { hmMove(dir, after, hmCollapsed()); }
 function hmFollow(k) { // zurück aus einem Eintrag: die Auswahl geht auf dessen Tag – eingeklappt (andere Woche) mit Daumenkino/Welle, aufgeklappt im Monat
@@ -2351,6 +2367,9 @@ function impNext() { // anderer Impuls: Wörter verschwimmen raus, die neuen bau
 function yearAgo(k) { const d = parseKey(k); const y = new Date(d.getFullYear() - 1, d.getMonth(), d.getDate()); if (y.getMonth() !== d.getMonth()) return null; const L = S.byDate.get(keyOf(y)); return L && L.length ? L[L.length - 1] : null; }
 const SUNI = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 14a5 5 0 0 1 10 0"/></svg>';
 function metaHTML(e) { return (e.wx ? '<span>' + esc(e.wx) + '</span>' : '') + (e.sun ? '<span class="sb">' + SUNI + esc(e.sun) + '</span>' : ''); }
+/* Haptik iPhone (iOS 18+, Regel 4): ein versteckter Schalter <input switch> gibt beim Umschalten ein leises Tippen. Scheitert leise. */
+function haptic() { try { if (isDesktop() || !matchMedia('(pointer:coarse)').matches) return; const l = $('hapL'); if (l) l.click(); } catch (e) {} }
+$('hapL').addEventListener('click', (e) => e.stopPropagation());
 /* PLAN 7 · Jahreslinie, Mond, Ort & Wetter. Gespeichert wird nur „Leer · 4° Nebel“ und die Sonnenzeiten im neuen Eintrag – nie Koordinaten. */
 const SKY = { lat: null, lon: null, wx: '', wxAt: 0, day: '', sig: '' };
 const pad2 = (n) => (n < 10 ? '0' : '') + n;
@@ -2777,7 +2796,7 @@ document.addEventListener('click', (ev) => {
   const a = b.dataset.act;
   if (a === 'search') { deskSearch(!S.dsearch); }
   else if (a === 'qchip') { $('dq').value = b.dataset.w; S.qKeep = false; dqRun(); $('dq').blur(); }
-  else if (a === 'settings') { if (S.stack[S.stack.length - 1] === 'settings') back(); else { renderAbout(); go('settings'); } } // zweiter Klick schließt
+  else if (a === 'settings') { if (S.stack[S.stack.length - 1] === 'settings') back(); else { const r = b.getBoundingClientRect(), v = $('settings'); v.style.setProperty('--ox', Math.round(r.left + r.width / 2) + 'px'); v.style.setProperty('--oy', Math.round(r.top + r.height / 2) + 'px'); renderAbout(); go('settings'); } } // zweiter Klick schließt
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); S.cal.sel = null; renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; S.cal.sel = null; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
   else if (a === 'pickmonth') { morphSwap($('caltrack'), false, () => { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }); softIn($('calTitle'), $('calStats')); }
@@ -2823,7 +2842,7 @@ document.addEventListener('click', (ev) => {
     else if (!isDesktop() && S.stack[S.stack.length - 1] === 'entry') sfClose();
     else back();
   }
-  else if (a === 'done') { if (document.activeElement) document.activeElement.blur(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
+  else if (a === 'done') { if (document.activeElement) document.activeElement.blur(); if (S.cur && hasContent(S.cur)) haptic(); saveCur(); if (isDesktop()) { renderHome(); toast('Gespeichert'); } }
   else if (a === 'back') back();
   else if (a === 'syncsave') Sync.connect($('syncRepo').value, $('syncToken').value);
   else if (a === 'syncnow') Sync.run(true);
@@ -2859,6 +2878,7 @@ function askDelete(id) {
 function closeConfirm() { const c = $('confirm'); c.classList.remove('show'); S.pendingDel = null; setTimeout(() => { if (!c.classList.contains('show')) c.hidden = true; }, 480); }
 async function deleteEntry(id) {
   const e = S.entries.find((x) => x.id === id); if (!e) return;
+  haptic();
   const nb = S.cur === e ? (adjacentOf(-1) || adjacentOf(1)) : null;
   let closedSheet = false;
   if (S.cur === e && !isDesktop() && S.stack[S.stack.length - 1] === 'entry') { // iPhone: erst zurück dorthin, wo man war (Liste bleibt an ihrer Stelle), dann faltet sich die Karte dort zusammen
