@@ -74,7 +74,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 #home{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
 .hero{background:var(--night);color:var(--linen);padding:calc(var(--safe-t) + 8px) 24px 20px}
 #home > .hero:first-of-type{padding-bottom:0}
-.herorest{padding-top:0;padding-bottom:8px}
+.herorest{padding-top:0;padding-bottom:8px;display:flow-root}
 .stickytitle{position:sticky;top:var(--safe-t);z-index:6;background:var(--night);color:var(--linen);padding:0 24px}
 .stickytitle .title{margin:0;padding-top:8px;height:72px;position:relative;z-index:1;clip-path:inset(-40px -40px -14px -40px)} /* Rollen endet an der Kante der dunklen Fläche – Unterlängen bleiben sichtbar */
 .stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:28px;opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
@@ -82,6 +82,7 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
              radial-gradient(circle at 100% 100%, transparent 13.5px, var(--night) 14px) left bottom / 14px 14px no-repeat,
              radial-gradient(circle at 0 100%, transparent 13.5px, var(--night) 14px) right bottom / 14px 14px no-repeat} /* die Liste läuft mit runden Ecken unter dem Kopf durch – wie ein Blatt */
 .stickytitle.stuck::after{opacity:1}
+@media (max-width:959px){.stickytitle::after{display:none}}
 .stickysearch{position:absolute;right:14px;top:8px;color:var(--linen);opacity:0;transform:translateY(-12px);pointer-events:none;
   transition:opacity .3s var(--ease), transform .45s var(--sheet)}
 .stickytitle.stuck .stickysearch{opacity:1;transform:none;pointer-events:auto}
@@ -103,7 +104,37 @@ button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--
 .twbtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
 .todayline.dir-r .ar-l,.todayline.dir-l .ar-r{opacity:0}
 .twbtn:active .tw,.twbtn:active .ar{opacity:.6}
-.weekwrap{margin:0 -24px -12px;padding:16px 0 12px;overflow:hidden;touch-action:pan-y} /* 6px unten Luft, damit der Ring um heute nicht abgeschnitten wird */
+/* iPhone-Startseite (PLAN 4a): Monat im dunklen Kopf. Der Monatsblock (.weekwrap, 6 Zeilen à 48px) bleibt beim Scrollen mit dem Finger 1:1 gekoppelt:
+   er hängt oben fest (sticky, top negativ), die Zeilen laufen über --p (0 offen … 1 eingeklappt, aus der Scrollposition) zur Woche des gewählten Tages zusammen. */
+.mwd{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px));z-index:6;height:44px;background:var(--night);color:var(--mist);padding:22px 24px 0;box-sizing:border-box;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;font-size:12px;font-weight:500;letter-spacing:.1em;line-height:14px}
+.mwd::before{content:'';position:absolute;left:24px;right:24px;top:8px;height:1px;background:var(--nline)}
+.weekwrap{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px) + 44px - var(--hch, 240px));z-index:5;height:calc(var(--hch, 240px) + 48px);background:var(--night);overflow-x:clip;overflow-y:visible;touch-action:pan-y;--p:0;transition:height var(--t3) var(--sheet)} /* --hch = (Zeilen − 1) × 48px: der Block ist so hoch wie der Monat Zeilen hat */
+.weekwrap::after{content:'';position:absolute;left:0;right:0;top:100%;height:28px;opacity:0;transition:opacity var(--t1) var(--ease);pointer-events:none;
+  background:linear-gradient(var(--night), var(--night)) left top / 100% 14px no-repeat,
+             radial-gradient(circle at 100% 100%, transparent 13.5px, var(--night) 14px) left bottom / 14px 14px no-repeat,
+             radial-gradient(circle at 0 100%, transparent 13.5px, var(--night) 14px) right bottom / 14px 14px no-repeat} /* die Liste läuft mit runden Ecken unter der eingeklappten Woche durch */
+.weekwrap.pinned::after{opacity:1}
+.wkmini{position:absolute;right:24px;top:100%;margin-top:-6px;z-index:2;height:20px;padding:0 10px 0 7px;border-radius:10px;display:flex;align-items:center;gap:5px;background:var(--night);color:var(--linen);
+  box-shadow:inset 0 0 0 1px rgba(242,243,239,.2);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1;opacity:0;transform:translate3d(0,-6px,0) scale(.92);pointer-events:none;
+  transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)} /* eingeklappt: kleine Heute-Kapsel am unteren Rand des Kopfs, damit man auch beim Scrollen zurück zu heute kommt */
+.wkmini.on{opacity:1;transform:none;pointer-events:auto;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet)}
+.wkmini svg{width:10px;height:10px;transition:transform var(--t2) var(--sheet)} .wkmini.dir-r svg{transform:rotate(180deg)}
+.stickytitle.stuck .stickysearch{transition-delay:.18s}
+.mpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:48px;align-content:start}
+.mday{height:48px;display:flex;justify-content:center;align-items:flex-start;padding:4px 0 0;
+  transform:translate3d(0,calc((var(--hch, 240px) - var(--r) * 48px) * var(--p)),0)}
+.mday:not(.srow){opacity:max(0, calc(1 - var(--p) * 1.8));transform:translate3d(0,calc((var(--hch, 240px) - var(--r) * 48px) * var(--p)),0) scale(calc(1 - .12 * var(--p)))}
+.mday.out:not(.srow){opacity:min(.32, max(0, calc(1 - var(--p) * 1.8)))}
+.mday.out.srow{opacity:calc(.32 + .68 * var(--p))}
+.weekwrap.col .mday:not(.srow){pointer-events:none}
+.mday .dot{transition:transform var(--t1) var(--ease)}
+.mday:active .dot{transform:scale(.9)}
+#weektrack .dot,#weektrack .is-sel .dot{box-shadow:none}
+#weektrack .dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);opacity:0;transform:scale(.86);
+  transition:opacity var(--t1) var(--ease), transform var(--t3) var(--sheet);pointer-events:none;will-change:transform,opacity} /* Ring = eigene Ebene: nur opacity/scale, kein Schatten-Übergang */
+#weektrack .is-sel .dot::before{opacity:1;transform:none;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet)}
+#weektrack .dot::after{top:calc(100% + 4px)}
 .weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
 .weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .wday{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -693,7 +724,7 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   #homeTitle .t,#homeTitle .y{display:inline-block;will-change:transform}
   #homeTitle .y{padding-right:.12em} /* kursive Ziffern nicht abschneiden */
   #home.cal-in .stickytitle #scStat{opacity:0}
-  .weekwrap,.weekline,#todayLine{display:none}
+  .weekwrap,.mwd,.weekline,#todayLine{display:none}
   #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
   .floatbtn{right:42px;bottom:42px}
   .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
@@ -808,8 +839,15 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   .scpill .scp-h{font-size:18px}
   .scpill .scp-h.on{max-width:120px;padding:0 20px 0 19px}
   /* Woche: wie am Mac folgen beim Wischen nur die Tage gedämpft dem Finger, Wochentage bleiben stehen */
-  #weekwrap{position:relative}
-  #weektrack .dragging .wday .dot{transform:translate3d(var(--dx,0px),0,0);opacity:var(--do,1);transition:none}
+  /* Heute-Kapsel iPhone: schlank, ohne Pfeile (dort wischt man), ein Pfeil zeigt zu heute; nur sichtbar, wenn man woanders ist */
+  .scpill.wkpill{background:none;box-shadow:none;border-radius:0;overflow:visible}
+  .wkpill .scp-a{display:none}
+  .scpill.wkpill .scp-h{height:34px;border-radius:17px;font-size:19px;box-shadow:inset 0 0 0 1px rgba(242,243,239,0)}
+  .scpill.wkpill .scp-h.on{max-width:120px;padding:0 15px 0 11px;box-shadow:inset 0 0 0 1px rgba(242,243,239,.2)}
+  .wkpill .scp-h span{display:flex;align-items:center;gap:6px}
+  .wkpill .scp-h svg{transition:transform var(--t2) var(--sheet)}
+  .wkpill .scp-h.dir-r svg{transform:rotate(180deg)}
+  #weektrack .dragging :is(.wday,.mday) .dot{transform:translate3d(var(--dx,0px),0,0);opacity:var(--do,1);transition:none}
   /* Pfeil nach oben im weichen Auslauf */
   .totop{position:fixed;left:50%;bottom:calc(var(--safe-b) + 14px);z-index:14;width:44px;height:44px;margin-left:-22px;display:flex;align-items:center;justify-content:center;
     color:var(--olive);opacity:0;transform:translate3d(0,10px,0) scale(.9);pointer-events:none;
@@ -963,9 +1001,9 @@ html.night ::selection{background:rgba(194,122,82,.22)}
     </header>
     <div class="ptr" id="ptr" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle class="ptr-track" cx="15" cy="15" r="11"/><circle class="ptr-arc" cx="15" cy="15" r="11" pathLength="100"/></svg></div>
     <div class="stickytitle dark" id="stickyTitle"><h1 class="title" id="homeTitle"></h1><div class="title titlenext" id="homeTitleNext" aria-hidden="true"></div><button class="iconbtn stickysearch" data-act="search" aria-label="Suchen" tabindex="-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button></div>
+    <div class="mwd dark" id="mwd" aria-hidden="true"><span>MO</span><span>DI</span><span>MI</span><span>DO</span><span>FR</span><span>SA</span><span>SO</span></div>
+    <div class="weekwrap dark" id="weekwrap"><div class="weektrack" id="weektrack"></div><button class="wkmini" id="wkMini" data-act="thisweek" aria-label="Zurück zu heute" tabindex="-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Heute</button></div>
     <header class="hero dark herorest">
-      <div class="weekline"></div>
-      <div class="weekwrap" id="weekwrap"><div class="weektrack" id="weektrack"></div></div>
       <div class="todayline" id="todayLine"><button data-act="thisweek" id="thisWeekBtn" class="twbtn" aria-label="Zurück zu heute" tabindex="-1"><svg class="ar ar-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="tw">Heute</span><svg class="ar ar-r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       <div class="sidecal" id="sidecal"><div class="scinner">
         <div class="scview" id="scview"><div class="caltrack" id="sctrack"></div></div>
@@ -976,7 +1014,7 @@ html.night ::selection{background:rgba(194,122,82,.22)}
       </div></div>
       <div class="herofoot">
         <span class="stat" id="weekStat"><span class="count" id="weekCount"></span><span class="lbl" id="weekLbl">Tage</span><span class="away" id="weekAway"></span></span>
-        <div class="hfr"><div class="scpill wkpill" role="group" aria-label="Zeitraum"><button class="scp-a" data-act="weekshift" data-dir="-1" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="scp-h" id="wkTodayBtn" data-act="thisweek" aria-label="Zurück zu heute" tabindex="-1"><span>Heute</span></button><button class="scp-a" data-act="weekshift" data-dir="1" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
+        <div class="hfr"><div class="scpill wkpill" role="group" aria-label="Zeitraum"><button class="scp-a" data-act="weekshift" data-dir="-1" aria-label="Zurück"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="scp-h" id="wkTodayBtn" data-act="thisweek" aria-label="Zurück zu heute" tabindex="-1"><span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Heute</span></button><button class="scp-a" data-act="weekshift" data-dir="1" aria-label="Weiter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
         <button class="calbtn" data-act="calendar" aria-label="Kalender"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3.75" y="5.25" width="16.5" height="15" rx="2.5"/><path d="M3.75 10h16.5M8.5 3v4M15.5 3v4"/><circle cx="15.5" cy="15.2" r="1.6" fill="currentColor" stroke="none"/></svg></button></div>
       </div>
     </header>
@@ -1146,8 +1184,10 @@ const S = {
   side: { mode: 'week', y: 0, m: 0, w: 0 }, // Kalender in der Seitenleiste (Mac)
   cur: null,              // entry being edited (object, may be unsaved draft)
   homeDirty: true,
-  weekOff: 0
+  weekOff: 0,
+  hm: null                // iPhone-Startseite: { y, m, sel } – gezeigter Monat und gewählter Tag (siehe renderHomeMonth)
 };
+{ const t0 = new Date(); S.hm = { y: t0.getFullYear(), m: t0.getMonth(), sel: t0.getFullYear() + '-' + String(t0.getMonth() + 1).padStart(2, '0') + '-' + String(t0.getDate()).padStart(2, '0') }; }
 function reindex() {
   S.entries.sort((a, b) => (a.created < b.created ? 1 : a.created > b.created ? -1 : 0));
   S.byDate = new Map();
@@ -1246,6 +1286,7 @@ function weekPanelHTML(off) {
   return h + '</div>';
 }
 function renderWeek() {
+  if (!isDesktop()) { renderHomeMonth(); return; }
   const off = S.weekOff, t = today(), mon = weekStart(off), sun = new Date(mon); sun.setDate(mon.getDate() + 6);
   const ref = off === 0 ? t : new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 3); // Donnerstag bestimmt den Monat
   S.weekTitle = MONTHS[ref.getMonth()] + '|' + ref.getFullYear();
@@ -1290,11 +1331,24 @@ function pulseToday(tr) {
     ring.animate([{ transform: 'scale(1)', opacity: 0.6 }, { transform: 'scale(2)', opacity: 0 }], { duration: 1100, delay: 120, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' }).onfinish = () => ring.remove();
   });
 }
-function weekToToday() {
-  const off = S.weekOff; if (!off || trackBusy) return; const dir = off > 0 ? -1 : 1;
-  S.toTodayWk = true; setPill($('wkTodayBtn'), false);
-  flipTrack($('weektrack'), Math.abs(off), dir, (k) => { S.weekOff = off + dir * k; renderWeek(); },
-    () => { S.toTodayWk = false; S.weekOff = -dir; weekMove(dir, () => pulseToday($('weektrack'))); });
+function weekToToday() { // iPhone: Heute – eingeklappt durch die Wochen, aufgeklappt durch die Monate (Daumenkino), danach läuft der Ring einmal um heute
+  if (trackBusy || isDesktop()) return;
+  const t = today(), tk = keyOf(t), col = hmCollapsed(), st = S.hm, tr = $('weektrack');
+  const done = () => { S.toTodayWk = false; hmPill(); pulseToday(tr); };
+  if (col) {
+    const cur = st.sel ? parseKey(st.sel) : hmGridStart(st.y, st.m), n = Math.round((hmMonday(t) - hmMonday(cur)) / (7 * 864e5)), dir = Math.sign(n);
+    if (!dir) { hmSelect(tk); hmPill(); setTimeout(() => pulseToday(tr), 200); return; }
+    S.toTodayWk = true; hmPill();
+    flipTrack(tr, Math.abs(n), dir, (k) => { S.hm = hmStepWeeks(cur, dir * k); renderHomeMonth(); },
+      () => { S.hm = hmStepWeeks(t, -dir); renderHomeMonth(); hmMove(dir, done, true); });
+    return;
+  }
+  const n = (t.getFullYear() * 12 + t.getMonth()) - (st.y * 12 + st.m), dir = Math.sign(n);
+  if (!dir) { hmSelect(tk); setTimeout(() => pulseToday(tr), 250); return; }
+  const at = (k) => { const v = st.y * 12 + st.m + k, y = Math.floor(v / 12), m = ((v % 12) + 12) % 12; return { y, m, sel: y === t.getFullYear() && m === t.getMonth() ? tk : null }; };
+  S.toTodayWk = true; hmPill();
+  flipTrack(tr, Math.abs(n), dir, (k) => { S.hm = at(dir * k); renderHomeMonth(); },
+    () => { S.hm = at(n - dir); renderHomeMonth(); hmMove(dir, done, false); });
 }
 function calToday() {
   const t = today(), { mode, y, m } = S.cal; if (trackBusy) return;
@@ -1316,28 +1370,108 @@ function slideTrack(tr, dir, done, ms) { // dir +1 = weiter (nach links schieben
   setTimeout(() => { trackBusy = false; done(); }, d + 10);
 }
 function shiftWeek(dir, ms) { if (!isDesktop()) { weekMove(dir); return; } slideTrack($('weektrack'), dir, () => { S.weekOff += dir; renderWeek(); }, ms); }
-/* iPhone-Woche wie am Mac (sideMove): Wochentage bleiben stehen, nur die Tage wechseln als Welle in Laufrichtung,
-   der Titel wischt mit (animTitle). Hat der Finger die Tage schon verschoben (--dx/--do), startet die Welle genau dort. */
-function weekMove(dir, after) {
+/* iPhone-Startseite: Monat (aufgeklappt) oder Woche (eingeklappt) wechselt wie am Mac (sideMove): Wochentage bleiben stehen,
+   der alte Inhalt gleitet als Geist 12px weg (0,22s, blur 2px, gestaffelt 14ms), die neuen Tage kommen gleichzeitig als Welle
+   (16px, 0,6s --sheet, 80 + Reihenfolge × 28ms) – nie eine Lücke. Hat der Finger die Tage schon verschoben (--dx/--do), startet die Welle dort. */
+const HM_CH = 240; // Weg beim Einklappen: sechs Zeilen à 48px werden zu einer
+const hmMonday = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - mondayIdx(x)); return x; };
+const hmGridStart = (y, m) => hmMonday(new Date(y, m, 1));
+const hmRows = (y, m) => Math.ceil((mondayIdx(new Date(y, m, 1)) + daysIn(y, m)) / 7);
+function hmRowOf(y, m, key) { if (!key) return 0; const r = Math.floor(Math.round((parseKey(key) - hmGridStart(y, m)) / 864e5) / 7); return r >= 0 && r < hmRows(y, m) ? r : 0; }
+function hmStepWeeks(base, n) { const b = new Date(base); b.setDate(b.getDate() + 7 * n); const th = hmMonday(b); th.setDate(th.getDate() + 3); return { y: th.getFullYear(), m: th.getMonth(), sel: keyOf(b) }; } // Donnerstag bestimmt den Monat
+function hmNext(dir, col, st) {
+  st = st || S.hm;
+  if (col) return hmStepWeeks(st.sel ? parseKey(st.sel) : hmGridStart(st.y, st.m), dir);
+  let y = st.y, m = st.m + dir; if (m < 0) { m = 11; y--; } else if (m > 11) { m = 0; y++; }
+  const t = today(); return { y, m, sel: y === t.getFullYear() && m === t.getMonth() ? keyOf(t) : null };
+}
+const hmCollapsed = () => (S.hp || 0) > 0.5;
+function hmAway(col) { // „Heute“-Kapsel: nur wenn man woanders ist
+  const st = S.hm, t = today(); if (st.y !== t.getFullYear() || st.m !== t.getMonth()) return true;
+  return !!(col && st.sel && hmRowOf(st.y, st.m, st.sel) !== hmRowOf(st.y, st.m, keyOf(t)));
+}
+function hmPill() {
+  const col = hmCollapsed(), st = S.hm, t = today();
+  const fut = col && st.sel ? parseKey(st.sel) > t : (st.y * 12 + st.m) > (t.getFullYear() * 12 + t.getMonth());
+  const away = hmAway(col) && !S.toTodayWk; setPill($('wkTodayBtn'), away, fut);
+  const mi = $('wkMini'), on = away && $('weekwrap').classList.contains('pinned'); mi.classList.toggle('on', on); mi.tabIndex = on ? 0 : -1; mi.classList.toggle('dir-r', !fut);
+}
+function monthPanelHTML(st) {
+  const g0 = hmGridStart(st.y, st.m), rows = hmRows(st.y, st.m), sr = hmRowOf(st.y, st.m, st.sel), tk = keyOf(today());
+  let h = '<div class="mpanel">';
+  for (let i = 0; i < rows * 7; i++) {
+    const d = new Date(g0); d.setDate(g0.getDate() + i); const k = keyOf(d), r = Math.floor(i / 7);
+    h += '<button class="mday ' + dayState(d) + (d.getMonth() !== st.m ? ' out' : '') + (r === sr ? ' srow' : '') + (k === tk ? ' is-now' : '') + (k === st.sel ? ' is-sel' : '') +
+      '" style="--r:' + r + '" data-act="day" data-key="' + k + '" aria-label="' + WDLONG[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()] +
+      '"><span class="dot">' + d.getDate() + '</span></button>';
+  }
+  return h + '</div>';
+}
+function renderHomeMonth() { // Monat als Startseite: drei Felder (vorher · jetzt · nachher), eingeklappt sind es Wochen
+  const hm = S.hm, t = today(), col = hmCollapsed();
+  S.weekTitle = MONTHS[hm.m] + '|' + hm.y;
+  if (S.updateHomeTitle) S.updateHomeTitle(); else $('homeTitle').innerHTML = titleHTML(MONTHS[hm.m], hm.y);
+  $('weektrack').innerHTML = monthPanelHTML(hmNext(-1, col)) + monthPanelHTML(hm) + monthPanelHTML(hmNext(1, col));
+  resetTrack($('weektrack'));
+  const hch = (hmRows(hm.y, hm.m) - 1) * 48;
+  if (S.hch !== hch) { // Höhe passt sich den Zeilen an: aufgeklappt gleitet sie (--sheet), eingeklappt bleibt die Liste durch Nachführen der Scrollposition stehen
+    const wk = $('weekwrap'), old = S.hch, home = $('home'); S.hch = hch;
+    if (old != null && (S.hp || 0) > 0.5) { wk.style.transition = 'none'; wk.style.setProperty('--hch', hch + 'px'); home.scrollTop += hch - old; void wk.offsetHeight; wk.style.transition = ''; }
+    else wk.style.setProperty('--hch', hch + 'px');
+  }
+  const first = new Date(hm.y, hm.m, 1), last = new Date(hm.y, hm.m, daysIn(hm.y, hm.m)), end = last < t ? last : t;
+  const elapsed = first > t ? 0 : Math.round((end - first) / 864e5) + 1;
+  setCount($('weekCount'), elapsed ? countRange(first, end) : 0, elapsed);
+  $('weekStat').classList.toggle('is-empty', !elapsed); setAway($('weekAway'), awayText('month', (hm.y * 12 + hm.m) - (t.getFullYear() * 12 + t.getMonth())));
+  hmPill();
+}
+function hmSelect(k) { // Auswahl ohne Neuaufbau: der Ring (eigene Ebene) blendet am neuen Tag ein und am alten aus
+  S.hm.sel = k;
+  const panel = $('weektrack').children[1]; if (!panel) return;
+  const sr = hmRowOf(S.hm.y, S.hm.m, k);
+  panel.querySelectorAll('.mday').forEach((c) => { c.classList.toggle('is-sel', c.dataset.key === k); c.classList.toggle('srow', +c.style.getPropertyValue('--r') === sr); });
+  const col = hmCollapsed();
+  for (const [i, o] of [[0, -1], [2, 1]]) if ($('weektrack').children[i]) $('weektrack').children[i].outerHTML = monthPanelHTML(hmNext(o, col));
+}
+function hmPick(k) { // Tipp auf einen Tag: auswählen; ist er schon gewählt, öffnet das zweite Tippen den Tag
+  if (trackBusy) return;
+  if (S.hm.sel === k) { deskFade(() => openDay(k), (S.byDate.get(k) || [{}])[0].id || 'draft' + k); return; }
+  hmSelect(k); hmPill();
+}
+function weekMove(dir, after) { hmMove(dir, after, hmCollapsed()); }
+function hmFollow(k) { // zurück aus einem Eintrag: die Auswahl geht auf dessen Tag – eingeklappt (andere Woche) mit Daumenkino/Welle, aufgeklappt im Monat
+  if (isDesktop() || !k || S.hm.sel === k || trackBusy || S.stack[S.stack.length - 1] !== 'home') return;
+  const d = parseKey(k), st = S.hm, tr = $('weektrack');
+  if (hmCollapsed()) {
+    const cur = st.sel ? parseKey(st.sel) : hmGridStart(st.y, st.m), n = Math.round((hmMonday(d) - hmMonday(cur)) / (7 * 864e5)), dir = Math.sign(n);
+    if (!dir) { hmSelect(k); hmPill(); return; }
+    const land = () => { S.hm = hmStepWeeks(d, -dir); renderHomeMonth(); hmMove(dir, null, true); };
+    if (Math.abs(n) >= 2) flipTrack(tr, Math.abs(n), dir, (j) => { S.hm = hmStepWeeks(cur, dir * j); renderHomeMonth(); }, land); else land();
+    return;
+  }
+  const n = (d.getFullYear() * 12 + d.getMonth()) - (st.y * 12 + st.m), dir = Math.sign(n);
+  if (!dir) { hmSelect(k); hmPill(); return; }
+  const at = (j) => { const v = st.y * 12 + st.m + j; return { y: Math.floor(v / 12), m: ((v % 12) + 12) % 12, sel: null }; };
+  const land = () => { S.hm = at(n - dir); renderHomeMonth(); hmMove(dir, () => { hmSelect(k); hmPill(); }, false); };
+  if (Math.abs(n) >= 2) flipTrack(tr, Math.abs(n), dir, (j) => { S.hm = at(dir * j); renderHomeMonth(); }, land); else land();
+}
+function hmMove(dir, after, col) {
   const tr = $('weektrack'); if (trackBusy) return;
-  const next = S.weekOff + dir, mon = weekStart(next), ref = next === 0 ? today() : new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 3);
-  const stuck = $('stickyTitle').classList.contains('stuck');
+  const nx = hmNext(dir, col);
   if (S.fx === 'slide' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const p = tr.children[1]; if (p) { p.classList.remove('dragging'); p.style.removeProperty('--dx'); p.style.removeProperty('--do'); }
-    slideTrack(tr, dir, () => { S.weekOff = next; renderWeek(); if (after) after(); }, 400); return;
+    slideTrack(tr, dir, () => { S.hm = nx; renderHomeMonth(); if (after) after(); }, 400); return;
   }
   trackBusy = true;
-  const vp = tr.parentElement, old = tr.children[1], cs = getComputedStyle(vp);
+  const vp = tr.parentElement, old = tr.children[1];
   const dx = parseFloat(old.style.getPropertyValue('--dx')) || 0, dop = old.style.getPropertyValue('--do') ? parseFloat(old.style.getPropertyValue('--do')) : 1;
   const clone = old.cloneNode(true); clone.classList.remove('dragging'); clone.style.removeProperty('--dx'); clone.style.removeProperty('--do');
-  clone.querySelectorAll('.wd').forEach((x) => { x.style.visibility = 'hidden'; });
-  const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true');
-  ghost.style.padding = cs.paddingTop + ' 0 ' + cs.paddingBottom; ghost.appendChild(clone); vp.appendChild(ghost);
-  if (!stuck) animTitle(MONTHS[ref.getMonth()] + '|' + ref.getFullYear(), dir, S.fx === 'roll');
-  S.weekOff = next; renderWeek();
+  const ghost = document.createElement('div'); ghost.className = 'morphghost'; ghost.setAttribute('aria-hidden', 'true'); ghost.appendChild(clone); vp.appendChild(ghost);
+  if (!S.listLinked) animTitle(MONTHS[nx.m] + '|' + nx.y, dir, S.fx === 'roll');
+  S.hm = nx; renderHomeMonth();
   const np = tr.children[1], E = 'cubic-bezier(0.32, 0.72, 0, 1)', roll = S.fx === 'roll';
-  const cells = (p) => [...p.querySelectorAll('.wday')].map((c, i) => ({ dot: c.querySelector('.dot'), col: i })).filter((c) => c.dot);
-  const order = (c) => (dir > 0 ? c.col : 6 - c.col);
+  const cells = (p) => [...p.querySelectorAll('.mday')].map((c, i) => ({ dot: c.querySelector('.dot'), col: i % 7, row: Math.floor(i / 7), vis: c.classList.contains('srow') })).filter((c) => c.dot && (!col || c.vis));
+  const order = (c) => (dir > 0 ? c.col : 6 - c.col) + c.row * 0.35;
   for (const c of cells(clone)) {
     const from = 'translate3d(' + dx + 'px,0,0)', tx = roll ? 'translate3d(' + dx + 'px,' + (-dir * 10) + 'px,0)' : 'translate3d(' + (dx - dir * 12) + 'px,0,0)';
     c.dot.animate([{ opacity: dop, transform: from, filter: 'blur(0)' }, { opacity: 0, transform: tx, filter: 'blur(2px)' }], { duration: 220, delay: order(c) * 14, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' });
@@ -1691,7 +1825,7 @@ async function renderEntry(dir) {
   $('entry').scrollTop = 0;
   if (isDesktop()) { const d0 = parseKey(e.date);
     updateSideSel(); markCurrentRow(); scrollListTo(e.id, !dir);
-    if (S.side.mode === 'week' && weekOf(d0) !== S.side.w) sideJump({ w: weekOf(d0) });
+    if (S.side.mode === 'week' && weekOf(d0) !== S.side.w) flipTo({ w: weekOf(d0) }); // andere Woche gewählt: ab 3 Wochen Daumenkino, sonst eine Welle
     else if (S.side.mode === 'month' && (d0.getFullYear() !== S.side.y || d0.getMonth() !== S.side.m) && dir) sideJump({ y: d0.getFullYear(), m: d0.getMonth() }); }
 }
 function draftFor(k) {
@@ -1867,10 +2001,11 @@ function back() {
     return;
   }
   if (S.stack[S.stack.length - 1] === 'entry' && SF.on && !SF.closing) sfReset(); // Bewegung abbrechen, Blatt schließt dann wie früher
-  const leaving = S.stack.pop();
+  const leaving = S.stack.pop(), leftDate = leaving === 'entry' && S.cur ? S.cur.date : null;
   if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(); }
   applyStack();
   if (leaving === 'entry' || S.homeDirty) { renderHome(); if (S.stack.includes('calendar')) renderCalendar(); }
+  if (leftDate && !isDesktop()) setTimeout(() => hmFollow(leftDate), 380);
 
 }
 
@@ -2021,6 +2156,7 @@ document.addEventListener('click', (ev) => {
   else if (a === 'weekshift') shiftWeek(+b.dataset.dir);
   else if (a === 'calshift') shiftCal(+b.dataset.dir);
   else if (a === 'caltoday') calToday();
+  else if (a === 'day' && b.closest('#weektrack')) hmPick(b.dataset.key); // Startseite iPhone: erst wählen, zweites Tippen öffnet
   else if (a === 'day') { // im Monatskalender (iPhone): erst Vorschau, zweites Tippen öffnet
     const k = b.dataset.key;
     if (b.closest('#sctrack')) document.querySelectorAll('#sctrack .cell, #sctrack .wday').forEach((c) => c.classList.toggle('is-sel', c.dataset.key === k)); // Ring sofort beim Klick, nicht erst nach dem Überblenden
@@ -2085,7 +2221,7 @@ async function deleteEntry(id) {
   if (S.cur === e && !isDesktop() && S.stack[S.stack.length - 1] === 'entry') { // iPhone: erst zurück dorthin, wo man war (Liste bleibt an ihrer Stelle), dann faltet sich die Karte dort zusammen
     if (document.activeElement) document.activeElement.blur();
     clearTimeout(saveTimer); e._savedSig = sigOf(e); S.cur = null; closedSheet = true; sfReset();
-    S.stack.pop(); applyStack(); if (S.homeDirty) renderHome(); if (S.stack.includes('calendar')) renderCalendar(); if (S.stack.includes('search')) renderSearch();
+    S.stack.pop(); applyStack(); if (S.homeDirty) renderHome(); if (e && e.date) setTimeout(() => hmFollow(e.date), 380); if (S.stack.includes('calendar')) renderCalendar(); if (S.stack.includes('search')) renderSearch();
     await new Promise((r) => setTimeout(r, 480));
   }
   const rows = [...document.querySelectorAll('.row[data-id="' + CSS.escape(id) + '"]')];
@@ -2287,10 +2423,11 @@ for (const v of ['home', 'calendar', 'entry', 'search', 'settings']) {
 
 /* Startseite: nach unten ziehen = aktualisieren */
 (function pullToRefresh() {
-  const home = $('home'), ptr = $('ptr'); const TH = 80; let y0 = null, dist = 0, busy = false;
-  home.addEventListener('touchstart', (e) => { if (busy || isDesktop() || home.scrollTop > 0 || e.touches.length !== 1 || e.target.closest('#weekwrap')) { y0 = null; return; } y0 = e.touches[0].clientY; dist = 0; }, { passive: true });
+  const home = $('home'), ptr = $('ptr'); const TH = 80; let y0 = null, x0 = 0, dist = 0, busy = false;
+  home.addEventListener('touchstart', (e) => { if (busy || isDesktop() || home.scrollTop > 0 || e.touches.length !== 1) { y0 = null; return; } y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dist = 0; }, { passive: true });
   home.addEventListener('touchmove', (e) => {
     if (y0 == null) return;
+    if (Math.abs(e.touches[0].clientX - x0) > Math.abs(e.touches[0].clientY - y0)) { dist = 0; return; } // waagerecht (Monat wechseln) ist kein Ziehen zum Aktualisieren
     dist = e.touches[0].clientY - y0;
     if (dist <= 0 || home.scrollTop > 0) { if (dist <= 0) { ptr.classList.remove('pulling', 'ready'); ptr.style.opacity = ''; ptr.style.transform = ''; } return; }
     const p = Math.min(1, dist / TH);
@@ -2358,21 +2495,68 @@ function linkTitle(next, p) {
       if (S.listTitle) setTitleNow(label); else { linkTitle(null, 0); animTitle(label, S.titleDir || 0, S.titleVert); }
       S.titleDir = 0; S.titleVert = false; return;
     }
-    // was unter den Titel gleitet, blendet weich aus – keine halben Ringe oder Punkte unter dem Monat
-    for (const [el, pt, pb] of [[$('weekwrap'), 16, 12], [$('todayLine'), 0, 0], [document.querySelector('#home .herofoot'), 6, 6]]) {
+    // Monatsblock: --p (0 offen … 1 eingeklappt) kommt direkt aus der Scrollposition, damit die Zeilen 1:1 dem Finger folgen
+    const wk = $('weekwrap'), tb = bar.offsetHeight;
+    if (tb && S.tb !== tb) { S.tb = tb; home.style.setProperty('--tb', tb + 'px'); }
+    const safeT = parseFloat(getComputedStyle(bar).top) || 0, hero = home.querySelector(':scope > .hero');
+    const d0 = hero ? Math.max(0, hero.offsetHeight - safeT) : 0; // so weit scrollt der obere Streifen weg, bevor der Titel hängen bleibt
+    const p = Math.max(0, Math.min(1, (home.scrollTop - d0) / (S.hch || HM_CH)));
+    if (p !== S.hp) {
+      const was = (S.hp || 0) > 0.999; S.hp = p; wk.style.setProperty('--p', p.toFixed(4));
+      const col = p > 0.5; if (col !== wk.classList.contains('col')) { wk.classList.toggle('col', col); hmPill(); }
+      if ((p > 0.999) !== was) hmPill();
+    }
+    // was unter den Monatsblock gleitet, blendet weich aus – keine halben Ringe oder Punkte unter dem Monat
+    const blockBottom = Math.max(barRect.bottom, wk.getBoundingClientRect().bottom);
+    const heroR = home.querySelector(':scope > .herorest'); // Band mit runden Ecken erst, wenn Zählzeile und Kapsel ganz unter dem Block sind
+    const pin = p > 0.999 && !!heroR && heroR.getBoundingClientRect().bottom <= blockBottom + 28;
+    if (pin !== wk.classList.contains('pinned')) { wk.classList.toggle('pinned', pin); hmPill(); }
+    for (const [el, pt, pb] of [[$('todayLine'), 0, 0], [document.querySelector('#home .herofoot'), 6, 6]]) {
       if (!el) continue; const r = el.getBoundingClientRect(), t0 = r.top + pt, b0 = r.bottom - pb;
-      const f = Math.max(0, Math.min(1, (b0 - barRect.bottom) / Math.max(1, b0 - t0)));
+      const f = Math.max(0, Math.min(1, (b0 - blockBottom) / Math.max(1, b0 - t0)));
       el.style.opacity = f < 1 ? (f * f).toFixed(3) : '';
     }
-    const edge = barRect.bottom + (stuck ? 14 : 0);
+    const edge = blockBottom + (stuck ? 14 : 0);
     let link = { next: null, p: 0 };
     if (stuck && $('list').getBoundingClientRect().top < edge) { link = listMonthAt(edge); if (link.cur) label = link.cur; }
+    S.listLinked = !!(stuck && link.cur && link.p !== undefined && $('list').getBoundingClientRect().top < edge);
     if (label && label !== shown) { shown = label; if (setTitleNow(label)) fitStuck(stuck); }
     linkTitle(link.next, link.p);
   }
   home.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   S.updateHomeTitle = () => { shown = ''; update(); };
   S.updateHomeTitleSoft = () => update();
+})();
+
+/* iPhone: Monat ⇄ Woche. Das Einklappen folgt dem Finger 1:1 (--p aus der Scrollposition, siehe stickyTitle); lässt man in der Mitte los,
+   gleitet es ganz zu oder ganz auf – Schwung zählt, ohne Schwung entscheidet die Hälfte. Ganz oben nach oben scrollen klappt wieder auf. */
+(function monthSnap() {
+  const home = $('home'); let touching = false, t = 0, tw = 0, y1 = 0, t1 = 0, v = 0;
+  const bez = (x1, y1_, x2, y2) => (x) => { // cubic-bezier wie --sheet
+    let a = 0, b = 1, m = 0; for (let i = 0; i < 18; i++) { m = (a + b) / 2; const cx = 3 * (1 - m) * (1 - m) * m * x1 + 3 * (1 - m) * m * m * x2 + m * m * m; if (cx < x) a = m; else b = m; }
+    return 3 * (1 - m) * (1 - m) * m * y1_ + 3 * (1 - m) * m * m * y2 + m * m * m;
+  };
+  const sheet = bez(0.32, 0.72, 0, 1);
+  const stop = () => { if (tw) { cancelAnimationFrame(tw); tw = 0; } };
+  function tween(to) {
+    stop(); const from = home.scrollTop, t0 = performance.now(), D = 550; // --t3
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { home.scrollTop = to; return; }
+    (function step(now) { const k = Math.min(1, (now - t0) / D); home.scrollTop = from + (to - from) * sheet(k); tw = k < 1 ? requestAnimationFrame(step) : 0; })(t0);
+  }
+  function settle() {
+    t = 0; if (touching || isDesktop() || tw) return;
+    const p = S.hp || 0; if (p <= 0.001 || p >= 0.999) return;
+    const toCol = Math.abs(v) > 0.3 ? v > 0 : p > 0.5; // v > 0: Finger bewegt sich nach oben (Liste läuft nach unten)
+    const target = toCol ? home.scrollTop + (1 - p) * (S.hch || HM_CH) : 0;
+    tween(Math.max(0, target));
+  }
+  const arm = () => { clearTimeout(t); t = setTimeout(settle, 110); };
+  home.addEventListener('scroll', () => { if (!isDesktop() && !tw) arm(); }, { passive: true });
+  home.addEventListener('touchstart', (e) => { stop(); touching = true; clearTimeout(t); v = 0; y1 = e.touches[0].clientY; t1 = performance.now(); }, { passive: true });
+  home.addEventListener('touchmove', (e) => { const y = e.touches[0].clientY, n = performance.now(); v = (y1 - y) / Math.max(1, n - t1); y1 = y; t1 = n; }, { passive: true });
+  const up = () => { touching = false; if (performance.now() - t1 > 120) v = 0; arm(); };
+  home.addEventListener('touchend', up, { passive: true }); home.addEventListener('touchcancel', up, { passive: true });
+  home.addEventListener('wheel', () => { stop(); }, { passive: true });
 })();
 
 /* Mac: Liste und Kalender gehen zusammen */
@@ -2500,8 +2684,8 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       underEl.style.setProperty('--dim', String(0.12 * (1 - p)));
     } else if (mode === 'track' && track.id === 'weektrack') { // wie am Mac: nur die Tage folgen gedämpft dem Finger
       const p = track.children[1]; p.classList.add('dragging');
-      const x = Math.sign(dx) * Math.min(Math.abs(dx) * 0.45, 70 + Math.max(0, Math.abs(dx) * 0.45 - 70) * 0.3);
-      p.style.setProperty('--dx', x.toFixed(1) + 'px'); p.style.setProperty('--do', Math.max(0.2, 1 - Math.abs(dx) / (W * 0.55)).toFixed(3));
+      const x = dx * 0.38; // gedämpft ×0,38
+      p.style.setProperty('--dx', x.toFixed(1) + 'px'); p.style.setProperty('--do', Math.max(0.25, 1 - Math.abs(dx) / 420).toFixed(3));
     } else if (mode === 'track') {
       track.style.transform = 'translate3d(' + trackX(track, dx) + 'px,0,0)';
       const f = Math.max(0, 1 - Math.abs(dx) / (W * 0.45));
@@ -2613,7 +2797,7 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
       } else if (track.id === 'weektrack') { // zurückgleiten
         const p = track.children[1], x = p.style.getPropertyValue('--dx') || '0px', o = parseFloat(p.style.getPropertyValue('--do')) || 1;
         p.classList.remove('dragging'); p.style.removeProperty('--dx'); p.style.removeProperty('--do');
-        p.querySelectorAll('.wday .dot').forEach((d) => d.animate([{ transform: 'translate3d(' + x + ',0,0)', opacity: o }, { transform: 'none', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' }));
+        p.querySelectorAll('.wday .dot, .mday .dot').forEach((d) => d.animate([{ transform: 'translate3d(' + x + ',0,0)', opacity: o }, { transform: 'none', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' }));
       } else {
         track.style.transition = 'transform .38s var(--sheet)'; track.style.transform = 'translate3d(' + trackX(track) + 'px,0,0)';
         for (const el of (track.id === 'caltrack' ? [$('calStats'), $('calTitle')] : [$('weekStat')])) { el.style.transition = 'opacity .38s var(--ease)'; el.style.opacity = ''; }
