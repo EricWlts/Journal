@@ -90,13 +90,14 @@
 })();
 $('confirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(); closeRow(); } });
 $('home').addEventListener('scroll', () => { if (S.openRow) closeRow(); }, { passive: true });
-function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+function focusEnd(el) { el.focus({ preventScroll: true }); const r = document.createRange(); let n = el; while (n.lastChild && n.lastChild.nodeType === 1 && !/^(BR|IMG)$/.test(n.lastChild.nodeName)) n = n.lastChild; r.selectNodeContents(n); r.collapse(false); if (n.lastChild && n.lastChild.nodeName === 'BR') { r.setStart(n, n.childNodes.length - 1); r.collapse(true); } const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 $('eBody').addEventListener('input', onEdit);
 $('eBody').addEventListener('paste', (e) => { // nur reiner Text
   e.preventDefault(); const txt = (e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText', false, txt);
 });
 $('eBody').addEventListener('drop', (e) => { const txt = e.dataTransfer && e.dataTransfer.getData('text/plain'); e.preventDefault(); if (txt) document.execCommand('insertText', false, txt); });
-$('eBody').addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && /^[biu]$/i.test(e.key)) e.preventDefault(); }); // keine Formatierung – nur Text
+$('eBody').addEventListener('click', (e) => { const b = $('eBody'); if (!isDesktop() && b.dataset.g && b.classList.contains('mt') && b.firstChild && e.clientY <= b.firstChild.getBoundingClientRect().bottom + 6) acceptGreet(); }); // Antippen der blassen Anrede übernimmt sie
+$('eBody').addEventListener('keydown', (e) => { if (e.key === 'Tab' && !e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && acceptGreet()) { e.preventDefault(); return; } if ((e.metaKey || e.ctrlKey) && /^[biu]$/i.test(e.key)) e.preventDefault(); }); // keine Formatierung – nur Text
 $('eBody').addEventListener('beforeinput', (e) => { if (/^format/.test(e.inputType)) e.preventDefault(); });
 $('eBody').addEventListener('blur', () => { const b = $('eBody'); if (b.firstChild && b.firstChild.nodeType === 3) setBody(bodyText(b)); }); // ordnen, sobald nicht mehr geschrieben wird (Initiale braucht eine erste Zeile)
 document.addEventListener('visibilitychange', () => { if (document.hidden) saveCur(true); else { renderHome(); Sync.soon(200); } });
@@ -405,3 +406,10 @@ function scrollListTo(id, gentle) { // Wischen/Pfeile: Eintrag wandert nach oben
     if (S.side.mode === 'month') setSideMode('year'); else if (S.side.mode === 'year') setSideMode('month'); else apply(0, true);
   });
 })();
+
+/* Tippen/Klicken in die freie Fläche unter dem Text: weiterschreiben am Ende */
+$('entry').addEventListener('click', (ev) => {
+  const b = $('eBody'); if (S.stack[S.stack.length - 1] !== 'entry' || ev.defaultPrevented || b.contains(ev.target) || ev.target.closest('button,a,input,label,img,.eimp,.emem,#ePhotos')) return;
+  const r = b.getBoundingClientRect(); if (ev.clientY < r.bottom || ev.clientX < r.left - 40 || ev.clientX > r.right + 40) return;
+  if (document.activeElement !== b) focusEnd(b);
+});

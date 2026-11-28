@@ -132,3 +132,17 @@ function excerptOf(e) {
   if (sp > 60) c = c.slice(0, sp);
   return c.replace(/[\s.,;:–-]+$/, '') + '…';
 }
+// Auszug der Karte: ist die erste Zeile eine Anrede (höchstens drei Wörter), beginnt er mit der zweiten Zeile, sonst mit der ersten
+function cardExcerpt(e) {
+  const ti = (e.title || '').trim(), tx = (e.text || '').trim();
+  let first = ti, rest = tx;
+  if (!ti) { const i = tx.indexOf('\n'); first = (i < 0 ? tx : tx.slice(0, i)).trim(); rest = i < 0 ? '' : tx.slice(i + 1); }
+  const sal = first.split(/\s+/).filter(Boolean).length <= 3;
+  let t = (sal ? rest : (rest.trim() && !/[.!?…:;,–—-]$/.test(first) ? first + ' – ' + rest : first + ' ' + rest)).replace(/\s+/g, ' ').trim(); // erste Zeile ohne Satzzeichen: Gedankenstrich statt Zusammenlaufen
+  if (!t) return { t: first, sal: true };
+  if (t.length > 78) { // zwei Zeilen auf dem iPhone: an der Wortgrenze kürzen, kein Satzzeichen vor „…“
+    let c = t.slice(0, 78); const sp = c.lastIndexOf(' '); if (sp > 44) c = c.slice(0, sp);
+    t = c.replace(/[\s.,;:–-]+$/, '') + '…';
+  }
+  return { t, sal: false };
+}

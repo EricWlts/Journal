@@ -56,9 +56,9 @@ function back() {
 }
 
 /* ---------- iPhone: Karte wird Blatt ----------
-   Die angetippte Karte wächst zum Blatt (Tageszahl und Titel gleiten an ihren Platz, Text wird von oben freigelegt),
+   Die angetippte Karte wächst zum Blatt (Tageszahl gleitet an ihren Platz, der Text setzt sich per Deckkraft dazu),
    beim Schließen läuft alles mit derselben Kurve zurück zur Karte. Bleibt keine Karte im Bild, gleitet das Blatt nach unten. */
-const SF = { on: false, running: false, closing: false, drag: false, row: null, t: 0, rvt: 0, at: 0 };
+const SF = { on: false, running: false, closing: false, drag: false, row: null, t: 0, at: 0 };
 const sfMotion = () => !isDesktop() && !matchMedia('(prefers-reduced-motion: reduce)').matches;
 const SF_PROPS = ['top', 'left', 'right', 'bottom', 'borderRadius', 'backgroundColor', 'boxShadow', 'transform'];
 function sfRel(el, root) { let x = 0, y = 0, n = el; while (n && n !== root) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x, y }; }
@@ -75,25 +75,16 @@ function sfRep(ent, card) { // exakte Kopie der Karte im Blatt
   const c = card.cloneNode(true); for (const a of ['data-act', 'data-id', 'data-date', 'style']) c.removeAttribute(a);
   c.classList.remove('swiping', 'is-open', 'snap', 'is-current'); c.tabIndex = -1; rep.appendChild(c); ent.appendChild(rep); return rep;
 }
-function sfPrep(ent, card) { // Zielwerte für Tageszahl und Titel (Karte ⇄ Blatt) als CSS-Variablen
+function sfPrep(ent, card) { // Zielwert für die Tageszahl (Karte ⇄ Blatt) als CSS-Variable
   const dn = $('eDn'), px = (el) => parseFloat(getComputedStyle(el).fontSize);
-  const n = card.querySelector('.n'), ti = card.querySelector('.ti');
-  const fn = sfRel(dn, ent), cn = sfRel(n.offsetParent ? n : card.querySelector('.d'), card), ct = sfRel(ti, card);
+  const n = card.querySelector('.n');
+  const fn = sfRel(dn, ent), cn = sfRel(n.offsetParent ? n : card.querySelector('.d'), card);
   ent.style.setProperty('--ntf', 'translate(' + (cn.x - fn.x) + 'px,' + (cn.y - fn.y) + 'px) scale(' + (px(n) / px(dn)) + ')');
-  const o = sfOv(ent);
-  if (o) { ent.classList.toggle('ml', o.ov.offsetHeight > o.lh * 1.5); ent.style.setProperty('--ttf', 'translate(' + (ct.x - o.x) + 'px,' + (ct.y - o.y) + 'px) scale(' + (px(ti) / o.fs) + ')'); }
-}
-function sfOv(ent) { // Titel der Karte fliegt zur ersten Zeile des Blatts (die ist jetzt der Titel) und blendet dort aus
-  const b = $('eBody'), ov = $('etOv'), t = S.cur ? (S.cur.title || '').trim() : '', has = !!t; ent.classList.toggle('ovon', has);
-  if (!has) return null;
-  const f = sfRel(b, ent), fs = parseFloat(getComputedStyle(b).fontSize) * 1.2, lh = Math.round(fs * 1.15);
-  ov.textContent = t; ov.style.cssText = 'left:' + f.x + 'px;top:' + f.y + 'px;width:' + b.offsetWidth + 'px;font-size:' + fs + 'px;line-height:' + lh + 'px;letter-spacing:-.01em';
-  return { ov, x: f.x, y: f.y, fs, lh };
 }
 function sfClear(ent) {
-  ent.classList.remove('fx', 'nt', 'pre', 'closing', 'down', 'drag', 'far', 'ovon', 'ml');
+  ent.classList.remove('fx', 'nt', 'pre', 'closing', 'down', 'drag', 'far');
   for (const p of SF_PROPS) ent.style[p] = '';
-  for (const v of ['--fw', '--ntf', '--ttf']) ent.style.removeProperty(v);
+  for (const v of ['--fw', '--ntf']) ent.style.removeProperty(v);
   const rep = ent.querySelector('.rep'); if (rep) rep.remove();
 }
 function sfEnd() { // Ende der Bewegung: alles im selben Bild zurücksetzen – die echte Karte ist wieder da, ohne Übergang
@@ -105,7 +96,7 @@ function sfEnd() { // Ende der Bewegung: alles im selben Bild zurücksetzen – 
 }
 function sfReset() { // sofort in den Ruhezustand (z. B. wenn der Eintrag anders geschlossen wird); das Blatt gleitet dann wie früher nach unten
   if (!SF.on && !$('entry').classList.contains('fx')) return;
-  const ent = $('entry'); clearTimeout(SF.t); clearTimeout(SF.rvt); ent.classList.remove('rv', 'rvpre');
+  const ent = $('entry'); clearTimeout(SF.t);
   sfClear(ent); if (SF.row) { SF.row.style.visibility = ''; SF.row = null; }
   const u = $(S.stack[S.stack.length - 2] || 'home'); if (u) { u.classList.remove('dragging'); u.style.removeProperty('filter'); }
   SF.on = SF.running = SF.closing = SF.drag = false;
@@ -116,15 +107,15 @@ function sfOpen(row, id) { // true, wenn die Karte zum Blatt wächst
   const e = S.entries.find((x) => x.id === id); if (!e) return false;
   const ent = $('entry'), app = $('app'), W = app.clientWidth, H = app.clientHeight, r = row.getBoundingClientRect();
   if (r.bottom < 60 || r.top > H - 20 || !r.width) return false;
-  SF.on = true; SF.running = true; SF.closing = false; clearTimeout(SF.t); clearTimeout(SF.rvt);
-  ent.style.setProperty('--fw', W + 'px'); ent.classList.add('fx', 'nt', 'rv', 'rvpre'); app.classList.add('sfx', 'card');
+  SF.on = true; SF.running = true; SF.closing = false; clearTimeout(SF.t);
+  ent.style.setProperty('--fw', W + 'px'); ent.classList.add('fx', 'nt'); app.classList.add('sfx', 'card');
   go('entry'); openEntry(e);
   sfRep(ent, row); sfPrep(ent, row);
   Object.assign(ent.style, { top: r.top + 'px', left: r.left + 'px', right: (W - r.right) + 'px', bottom: (H - r.bottom) + 'px', borderRadius: getComputedStyle(row).borderTopLeftRadius, backgroundColor: sfBg(row), boxShadow: 'none' });
   ent.classList.add('pre'); row.style.visibility = 'hidden'; SF.row = row;
   void ent.offsetWidth; // Karte steht – ab hier läuft die Bewegung
-  ent.classList.remove('nt', 'pre', 'rvpre'); for (const p of SF_PROPS) ent.style[p] = '';
-  SF.t = setTimeout(sfSettle, 880); SF.rvt = setTimeout(() => ent.classList.remove('rv'), 1750);
+  ent.classList.remove('nt', 'pre'); for (const p of SF_PROPS) ent.style[p] = '';
+  SF.t = setTimeout(sfSettle, 880);
   return true;
 }
 function sfClose() { // Zurück-Knopf oder Runterziehen: zur Karte des Eintrags, sonst nach unten
@@ -132,10 +123,10 @@ function sfClose() { // Zurück-Knopf oder Runterziehen: zur Karte des Eintrags,
   if (SF.closing || isDesktop() || S.stack[S.stack.length - 1] !== 'entry') return;
   if (typing()) document.activeElement.blur();
   if (!sfMotion()) { back(); return; }
-  SF.closing = true; SF.on = true; SF.running = false; clearTimeout(SF.t); clearTimeout(SF.rvt);
+  SF.closing = true; SF.on = true; SF.running = false; clearTimeout(SF.t);
   const settled = !ent.classList.contains('fx'), under = $(S.stack[S.stack.length - 2]);
-  ent.classList.remove('rv', 'rvpre'); app.classList.add('sfx', 'card');
-  if (settled) { ent.style.setProperty('--fw', W + 'px'); ent.classList.add('fx', 'nt', 'ovon'); $('etOv').style.cssText = ''; }
+  app.classList.add('sfx', 'card');
+  if (settled) { ent.style.setProperty('--fw', W + 'px'); ent.classList.add('fx', 'nt'); }
   under.style.removeProperty('filter');
   const tf = ent.style.transform; // Zieh-Versatz: applyStack löscht ihn, hier festhalten
   back();
@@ -147,7 +138,7 @@ function sfClose() { // Zurück-Knopf oder Runterziehen: zur Karte des Eintrags,
     const p = sfRel(card, view); fr = { left: p.x, top: p.y - view.scrollTop, width: card.offsetWidth, height: card.offsetHeight };
     if (!(fr.top + fr.height > 120 && fr.top < H - 24 && fr.width > 0)) card = null;
   }
-  if (!card) { ent.classList.remove('nt', 'ovon', 'drag', 'far'); ent.classList.add('down'); app.classList.remove('card'); ent.style.transform = ''; SF.t = setTimeout(sfEnd, 600); return; }
+  if (!card) { ent.classList.remove('nt', 'drag', 'far'); ent.classList.add('down'); app.classList.remove('card'); ent.style.transform = ''; SF.t = setTimeout(sfEnd, 600); return; }
   sfRep(ent, card); sfPrep(ent, card);
   const bg = sfBg(card), rad = getComputedStyle(card).borderTopLeftRadius; card.style.visibility = 'hidden'; SF.row = card;
   if (settled) void ent.offsetWidth;
@@ -168,7 +159,6 @@ function sfDragStart(ent, under) { // Runterziehen: Blatt folgt dem Finger, Star
   if (SF.closing || SF.running || !sfMotion()) return false;
   SF.drag = true; SF.on = true; $('app').classList.add('sfx', 'card');
   ent.style.setProperty('--fw', $('app').clientWidth + 'px'); ent.classList.add('fx', 'drag');
-  sfOv(ent);
   under.classList.add('dragging'); return true;
 }
 function sfDragFrame(ent, under, dy) {
@@ -229,8 +219,7 @@ document.addEventListener('click', (ev) => {
   }
   else if (a === 'open') {
     S.navList = (S.dsearch && b.closest('#list') && S.deskHits) ? S.deskHits : null; const id = b.dataset.id;
-    const from = isDesktop() && S.stack[S.stack.length - 1] === 'entry' && !(S.cur && S.cur.id === id) ? b.querySelector('.ti') : null;
-    if (!isDesktop() && b.matches('#list .row')) { if (SF.on) sfEnd(); if (sfOpen(b, id)) return; }
+        if (!isDesktop() && b.matches('#list .row')) { if (SF.on) sfEnd(); if (sfOpen(b, id)) return; }
     deskFade(() => openEntryById(id), id);
   }
   else if (a === 'today') newEntry();

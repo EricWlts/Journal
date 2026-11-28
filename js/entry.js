@@ -5,8 +5,8 @@ const photoURLs = new Map();
 async function renderEntry(dir) {
   const e = S.cur; const d = new Date(e.created);
   $('eWd').textContent = WDLONG[d.getDay()];
-  $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-  $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + (isDesktop() ? '\n' : ' ') + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); // Mac: Randspalte, bewusst zwei Zeilen
+  $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + (isDesktop() ? '\n' : ' ') + d.getFullYear(); // Mac: Randspalte, bewusst zwei Zeilen
   syncTrash(); saveMark(null);
   setBody(fullOf(e));
   writeAids();
@@ -27,9 +27,12 @@ async function renderEntry(dir) {
 /* ---------- Blatt „Schlicht“: ein Feld, die erste Zeile ist der Titel (Datenmodell bleibt title + text) ---------- */
 const fullOf = (e) => (e.title || '') && (e.text || '') ? e.title + '\n' + e.text : (e.title || e.text || '');
 function setBody(full) { // jede Zeile ein eigener Absatz (div) – so bekommen Absätze ihren Abstand
-  const b = $('eBody'); b.textContent = ''; if (!full) return;
+  const b = $('eBody'); b.textContent = '';
+  if (!full) { b.innerHTML = '<div class="bl"><br></div>'; markMt(b); return; } // leeres Blatt: die erste Zeile gibt es trotzdem (Anrede-Stil, Schreibmarke darin)
   for (const ln of full.split('\n')) { const d = document.createElement('div'); if (ln) d.textContent = ln; else { d.appendChild(document.createElement('br')); d.className = 'bl'; } b.appendChild(d); }
+  markMt(b);
 }
+function markMt(b) { b.classList.toggle('mt', !b.textContent.replace(/[\u200b\s]/g, '') && !b.querySelector('img')); } // leer = Platzhalter/Vorschlag zeigen
 function bodyText(b) { // Text aus dem Feld lesen – unabhängig davon, wie der Browser Zeilen anlegt (div, br oder \n)
   const lines = []; let cur = null;
   const flush = () => { if (cur !== null) { lines.push(cur); cur = null; } };
@@ -51,15 +54,27 @@ function tidyBody(b) { // erste Zeile in einen eigenen Absatz holen, sobald die 
 }
 
 /* ---------- Beim Schreiben: Tagesimpuls, Begrüßung, Ort & Wetter, Heute vor einem Jahr ---------- */
-const WS = (() => { const d = { imp: true, meta: true, mem: true }; try { return Object.assign(d, JSON.parse(localStorage.getItem('journal.write') || '{}')); } catch (e) { return d; } })();
+const WS = (() => { const d = { greet: true, imp: true, meta: true, mem: true }; try { return Object.assign(d, JSON.parse(localStorage.getItem('journal.write') || '{}')); } catch (e) { return d; } })();
 function markW() { document.querySelectorAll('.wrow[data-k]').forEach((r) => r.setAttribute('aria-checked', WS[r.dataset.k] ? 'true' : 'false')); }
-function toggleW(k) { WS[k] = !WS[k]; try { localStorage.setItem('journal.write', JSON.stringify(WS)); } catch (e) {} markW(); if (k === 'meta') { SKY.sig = ''; paintSky(); if (WS.meta) locate(true); } }
+function toggleW(k) { WS[k] = !WS[k]; try { localStorage.setItem('journal.write', JSON.stringify(WS)); } catch (e) {} markW(); if (k === 'greet') writeAids(); if (k === 'meta') { SKY.sig = ''; paintSky(); if (WS.meta) locate(true); } }
 let IMP = null;
 function loadImp() { if (IMP || loadImp.p) return; loadImp.p = fetch('impulse.json').then((r) => r.json()).then((j) => { if (Array.isArray(j) && j.length) { IMP = j; writeAids(); } }).catch(() => { loadImp.p = null; }); }
 const AID = { e: null, i: -1, mem: false }; // das neue Blatt, für das Impuls und Erinnerung gelten; i < 0 = Impuls des Tages
 const doyOf = (k) => { const d = parseKey(k); return Math.round((d - new Date(d.getFullYear(), 0, 1)) / 864e5) + 1; };
 const typo = (t) => String(t || '').replace(/"([^"]*)"/g, '„$1“').replace(/ - /g, ' – ').replace(/\.\.\./g, '…');
-function greetText() { const h = new Date().getHours(); return (h >= 5 && h < 11 ? 'Guten Morgen' : h >= 11 && h < 17 ? 'Guten Tag' : 'Guten Abend') + ', Eric.'; }
+function greetWord() { const h = new Date().getHours(); return (h >= 5 && h < 11 ? 'Guten Morgen' : h >= 11 && h < 17 ? 'Guten Tag' : 'Guten Abend') + '.'; }
+function acceptGreet() { // Vorschlag übernehmen: die Anrede wird echte erste Zeile, die Schreibmarke steht in der neuen zweiten
+  const b = $('eBody'), g = b.dataset.g; if (!g || !b.classList.contains('mt')) return false;
+  setBody(g + '\n'); b.focus({ preventScroll: true });
+  const r = document.createRange(), l = b.lastChild; r.setStart(l, 0); r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  onEdit(); return true;
+}
+function closeHTML(e) { // Schlusszeile: Uhrzeit · Ort, Wetter · Sonne
+  const d = new Date(e.created), p = [pad(d.getHours()) + ':' + pad(d.getMinutes())];
+  if (e.wx) p.push(esc(e.wx));
+  if (e.sun) { const m = /^(\S+)\s+[–-]\s+(\S+)$/.exec(e.sun); p.push('<span class="sb">' + SUNI + (m ? '↑ ' + esc(m[1]) + ' ↓ ' + esc(m[2]) : esc(e.sun)) + '</span>'); }
+  return p.join(' · ');
+}
 const impIdx = () => AID.i >= 0 ? AID.i : (doyOf(S.cur.date) - 1) % IMP.length;
 function paintImp() { // Wörter bauen sich gestaffelt auf, danach zieht sich die Haarlinie neu auf
   const e = S.cur, i = impIdx(), c = IMP[i], d = parseKey(e.date), ph = $('eImpPh'), pb = $('eImpT');
@@ -97,7 +112,6 @@ function impNext() { // anderer Impuls: Wörter verschwimmen raus, die neuen bau
 }
 function yearAgo(k) { const d = parseKey(k); const y = new Date(d.getFullYear() - 1, d.getMonth(), d.getDate()); if (y.getMonth() !== d.getMonth()) return null; const L = S.byDate.get(keyOf(y)); return L && L.length ? L[L.length - 1] : null; }
 const SUNI = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 14a5 5 0 0 1 10 0"/></svg>';
-function metaHTML(e) { return (e.wx ? '<span>' + esc(e.wx) + '</span>' : '') + (e.sun ? '<span class="sb">' + SUNI + esc(e.sun) + '</span>' : ''); }
 /* Haptik iPhone (iOS 18+, Regel 4): ein versteckter Schalter <input switch> gibt beim Umschalten ein leises Tippen. Scheitert leise. */
 function haptic() { try { if (isDesktop() || !matchMedia('(pointer:coarse)').matches) return; const l = $('hapL'); if (!l) return; const prev = document.activeElement; l.click(); const i = l.querySelector('input'); i.blur(); if (prev && prev !== document.body && prev !== i && prev.focus) prev.focus({ preventScroll: true }); } catch (e) {} } // Fokus nie behalten
 $('hapL').addEventListener('click', (e) => e.stopPropagation());

@@ -4,11 +4,12 @@ function writeAids() {
   const e = S.cur; if (!e) return;
   if (AID.e !== e && !e.id && !hasContent(e)) { AID.e = e; AID.i = -1; AID.mem = false; $('eImp').dataset.for = ''; if (WS.meta) { if (SKY.lat == null) locate(true); else { fetchWx(); setTimeout(fillMeta, 0); } } } // neues, leeres Blatt
   const fresh = AID.e === e, empty = !hasContent(e);
-  const mh = metaHTML(e); if ($('eMeta').innerHTML !== mh) { $('eMeta').innerHTML = mh; $('eMetaP').innerHTML = mh; }
+  const cl = $('eClose'), ch = empty ? '' : closeHTML(e); cl.hidden = empty; if (cl.innerHTML !== ch) cl.innerHTML = ch;
   const box = $('eImp'), want = fresh && WS.imp;
   if (want && !IMP) loadImp();
   box.hidden = !(want && IMP); if (!empty && !box.hidden && !box.classList.contains('wr')) fitImpSmall(box); box.classList.toggle('wr', !empty);
-  if (!box.hidden) { const g = greetText(); if ($('eGreet').textContent !== g) $('eGreet').textContent = g; if (box.dataset.for !== e.created + '|' + impIdx()) paintImp(); }
+  if (!box.hidden) { if (box.dataset.for !== e.created + '|' + impIdx()) paintImp(); }
+  { const b = $('eBody'); if (fresh && empty && WS.greet) b.dataset.g = greetWord(); else delete b.dataset.g; }
   $('eBody').dataset.ph = !box.hidden ? 'Oder einfach losschreiben …' : 'Was möchtest du festhalten?';
   const m = $('eMem'), last = fresh && WS.mem ? yearAgo(e.date) : null;
   m.hidden = !last;
@@ -38,10 +39,12 @@ function onEdit() {
   const e = S.cur; if (!e) return;
   const b = $('eBody'), full = bodyText(b), nl = full.indexOf('\n');
   e.title = nl < 0 ? full : full.slice(0, nl); e.text = nl < 0 ? '' : full.slice(nl + 1); // erste Zeile = Titel, der Rest = Text
-  if (!full.trim() && nl < 0) b.innerHTML = ''; else tidyBody(b);
+  if (!full.trim() && nl < 0) { const f = b.firstChild; if (!(b.childNodes.length === 1 && f.nodeName === 'DIV' && !f.textContent && !f.querySelector('img'))) { b.innerHTML = '<div class="bl"><br></div>'; const r = document.createRange(); r.setStart(b.firstChild, 0); r.collapse(true); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); } else f.className = 'bl'; } else tidyBody(b);
+  markMt(b);
   writeAidsSoon();
   if (e.deleted) { delete e.deleted; S.trash = S.trash.filter((x) => x !== e); if (!S.entries.includes(e)) { S.entries.push(e); reindex(); } } // im Papierkorb weitergeschrieben: wieder lebendig
-  if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); }
+  // nur die übernommene Anrede ist noch kein Eintrag
+  if (!e.id && (e.text.trim() || (e.title.trim() && !/^Guten (Morgen|Tag|Abend)\.?$/.test(e.title.trim())))) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); }
   syncTrash();
   if (e.id) saveMark('pending');
   clearTimeout(saveTimer); saveTimer = setTimeout(saveCur, 350);
@@ -158,31 +161,30 @@ function adjacent(dir) { // dir -1 = older, +1 = newer
   return false;
 }
 
-/* Mac: Wechsel per Klick – alter Eintrag blendet weich nach oben aus, der neue steigt gestaffelt ein */
+/* Mac: Wechsel – der alte Inhalt blendet kurz aus, der neue kommt ohne Maske per Deckkraft (0,55s) und 6px Setzen (0,82s, --sheet) */
 function deskFade(open, id) {
   const top = S.stack[S.stack.length - 1];
-  if (!isDesktop() || top !== 'entry' || matchMedia('(prefers-reduced-motion: reduce)').matches) { open(); return; }
+  if (!isDesktop() || top !== 'entry') { open(); return; }
   if (S.cur && (S.cur.id || 'draft' + S.cur.date) === id) return; // schon offen
-  const el = $('entryInner'), ent = $('entry');
+  const el = $('entryInner'), rm = matchMedia('(prefers-reduced-motion: reduce)').matches, cs = getComputedStyle(document.documentElement);
+  const sheet = cs.getPropertyValue('--sheet').trim(), ease = cs.getPropertyValue('--ease').trim(), t1 = parseFloat(cs.getPropertyValue('--t1')) * 1000 || 160;
   clearTimeout(deskFade.t); el.getAnimations().forEach((a) => a.cancel());
-  const out = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 170, easing: 'cubic-bezier(0.4, 0, 0.6, 1)', fill: 'forwards' });
-  out.onfinish = () => {
-    open(); out.cancel(); revealDown();
+  const enter = () => {
+    if (rm) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: t1, easing: ease }); return; }
+    el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 550, easing: ease });
+    el.animate([{ transform: 'translate3d(0,6px,0)' }, { transform: 'translate3d(0,0,0)' }], { duration: 820, easing: sheet });
   };
-}
-function revealDown() { // wie frisch geschrieben: eine weiche Kante läuft von oben nach unten über das Blatt und gibt den Inhalt frei
-  const el = $('entryInner'), V = $('entry').clientHeight, F = 220;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  for (const pre of ['webkitMask', 'mask']) { el.style[pre + 'Image'] = 'linear-gradient(to bottom, #000 0, #000 ' + V + 'px, transparent ' + (V + F) + 'px)'; el.style[pre + 'Size'] = '100% ' + (2 * V + F) + 'px'; el.style[pre + 'Repeat'] = 'no-repeat'; }
-  const from = '0px ' + (-(V + F)) + 'px';
-  const a = el.animate([{ webkitMaskPosition: from, maskPosition: from }, { webkitMaskPosition: '0px 0px', maskPosition: '0px 0px' }], { duration: 1150, easing: 'cubic-bezier(0.3, 0.15, 0.25, 1)', fill: 'both' });
-  const end = () => { a.cancel(); unmask(el); };
-  a.onfinish = end; clearTimeout(revealDown.t); revealDown.t = setTimeout(() => { if (a.playState !== 'finished') return; end(); }, 1400);
+  if (rm) { open(); enter(); return; }
+  const out = el.animate([{ opacity: +getComputedStyle(el).opacity || 1 }, { opacity: 0 }], { duration: 160, easing: 'cubic-bezier(0.4, 0, 0.6, 1)', fill: 'forwards' });
+  out.onfinish = () => { open(); out.cancel(); enter(); };
 }
 function switchEntry(dir) { // mit kurzer Ausblende, dann blendet der neue Eintrag von der anderen Seite ein
   const el = $('entryInner');
   if (!adjacentOf(dir)) { el.style.transition = 'transform .32s var(--sheet), opacity .32s var(--sheet)'; el.style.transform = ''; el.style.opacity = ''; setTimeout(() => { el.style.transition = ''; }, 340); return false; }
   if (typing()) document.activeElement.blur();
+  if (isDesktop()) { // Mac: dieselbe Überblendung wie beim Klick auf eine Karte
+    deskFade(() => { el.style.transition = 'none'; el.style.transform = ''; el.style.opacity = ''; adjacent(dir); requestAnimationFrame(() => { el.style.transition = ''; }); }, 'sw' + Date.now()); return true;
+  }
   el.style.transition = 'transform .14s cubic-bezier(0.4, 0, 1, 1), opacity .14s linear';
   el.style.transform = 'translate3d(' + (dir > 0 ? -72 : 72) + 'px,0,0)'; el.style.opacity = '0';
   clearTimeout(switchEntry.t);

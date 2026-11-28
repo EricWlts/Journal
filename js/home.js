@@ -271,9 +271,10 @@ const CAM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke=
 function rowHTML(e, prev) { // prev: Eintrag davor – gleicher Tag: nur Uhrzeit
   const d = parseKey(e.date), c = new Date(e.created), np = (e.photos || []).length;
   const day = prev ? (prev.date === e.date ? ' cont' : ' newday') : '';
-  const meta = np ? '<span class="mt"><span class="ph">' + CAM + np + '</span></span>' : ''; // Fotos (nur Mac sichtbar)
+  const meta = np ? '<span class="mt"><span class="ph">' + CAM + np + '</span></span>' : ''; // Fotos
+  const x = cardExcerpt(e);
   return '<button class="row' + day + '" data-act="open" data-id="' + esc(e.id) + '" data-date="' + esc(e.date) + '"><span class="d"><span class="n">' + d.getDate() + '</span><span class="wd">' + WD[mondayIdx(d)] +
-    '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="th"><span class="ti">' + esc(titleOf(e)) + '</span>' + meta + '</span><span class="ex">' + esc(excerptOf(e)) + '</span></span></button>';
+    '</span><span class="tm">' + pad(c.getHours()) + ':' + pad(c.getMinutes()) + '</span></span><span class="tx"><span class="ex' + (x.sal ? ' sal' : '') + '">' + esc(x.t) + '</span>' + meta + '</span></button>';
 }
 function markCurrentRow() {
   document.querySelectorAll('.row.is-current').forEach((r) => r.classList.remove('is-current'));

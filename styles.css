@@ -432,10 +432,7 @@ html.night .scrub i{color:#6f7a71}
 .row .n{font-family:var(--serif);font-size:32px;line-height:.95;font-variant-numeric:tabular-nums}
 .row .wd{font-size:12px;font-weight:500;letter-spacing:.12em;color:var(--muted)}
 .row .tx{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
-.row .th{display:flex;align-items:baseline;gap:12px;min-width:0}
-.row .th .ti{flex:1;min-width:0}
 .row .mt,.row .tm{display:none}
-.row .ti{font-family:var(--serif);font-size:23px;line-height:1.1;overflow-wrap:break-word}
 .row .ex{font-size:14px;line-height:1.5;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .row.is-current{background:var(--stone);margin:0 -12px;padding-left:12px;padding-right:12px;width:calc(100% + 24px);border-radius:3px}
 .emptylist{padding:40px 0;margin:0;font:italic 400 22px/1.35 var(--serif);color:var(--dimtext);text-wrap:balance} /* Regel 7: ein Satz in kursiver Serif */
@@ -454,20 +451,22 @@ html.night .scrub i{color:#6f7a71}
 #list .mgroup > .row:first-child::before,#list .sep + .row::before{opacity:0}
 :is(#list,.rep) .row.is-current{margin:0 0 6px;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:10px}
 :is(#list,.rep) .row.is-current::before,:is(#list,.rep) .row.is-current + .row::before{opacity:0}
-:is(#list,.rep) .row.is-current .n,:is(#list,.rep) .row.is-current .ti{color:var(--linen)}
-:is(#list,.rep) .row.is-current .wd,:is(#list,.rep) .row.is-current .ex,:is(#list,.rep) .row.is-current .mt{color:var(--mist)}
-:is(#list,.rep) .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+:is(#list,.rep) .row.is-current :is(.n,.ex){color:var(--linen)}
+:is(#list,.rep) .row.is-current :is(.wd,.mt){color:var(--mist)}
+:is(#list,.rep) .row .mt{display:flex;align-items:center;gap:8px;flex:none;align-self:flex-start;margin-top:3px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
 :is(#list,.rep) .row .ph{display:flex;align-items:center;gap:3px}
-:is(#list,.rep) .row .ex{-webkit-line-clamp:2}
-/* Titel immer einzeilig – alle Karten im selben Rhythmus */
-:is(#list,.rep) .row .ti{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#list,.rep) .row .tx{flex-direction:row;align-items:flex-start;gap:10px}
+:is(#list,.rep) .row .ex{flex:1;min-width:0;font-family:'Newsreader',Georgia,serif;font-size:15.5px;line-height:1.45;color:var(--ink);-webkit-line-clamp:2;overflow-wrap:break-word}
+:is(#list,.rep) .row .ex.sal{font-style:italic}
+:is(#list,.rep) .row .d{min-height:67px;gap:2px}
+:is(#list,.rep) .row .n{font-size:28px}
 /* mehrere Einträge am selben Tag: Datum nur bei der ersten Karte, danach nur die Uhrzeit; Karten eines Tages rücken zusammen, zwischen Tagen etwas mehr Luft */
 :is(#list,.rep) .row.cont{margin-top:-3px}
 :is(#list,.rep) .row.newday{margin-top:6px}
 :is(#list,.rep) .row.cont .n,:is(#list,.rep) .row.cont .wd{display:none}
 :is(#list,.rep) .row.cont .tm{margin-top:5px}
 :is(#list,.rep) .row .d{width:40px}
-:is(#list,.rep) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
+:is(#list,.rep) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--dimtext);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
 :is(#list,.rep) .row.is-current .tm{color:var(--mist)}
 /* hell: der gewählte Eintrag ist leiser – er liegt wie das offene Blatt hell auf, mit feinem Tinten-Rand (Nacht bleibt dunkel) */
 html:not(.night) :is(#list,.rep) .row.is-current{background:#3a3e3b} /* gefüllt wie vorher, eine Spur heller als die Tinte */
@@ -604,7 +603,6 @@ html:not(.night) :is(#list,.rep) .row.is-current{background:#3a3e3b} /* gefüllt
 .done:active span{transform:scale(.9)}
 .eline{height:1px;background:var(--line);margin-top:16px}
 .ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--copper)}
-.ebody:empty::before{content:attr(data-ph);color:var(--dimtext)}
 @media (max-width:959px){
   /* Suche (iPhone): das Feld wächst aus der Lupe, der Kopf mit Monat/Woche/Jahr bleibt sichtbar */
   .topbar{position:relative;z-index:7}
@@ -807,7 +805,6 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
   .sidecal.snapping{transition:height .45s var(--sheet)}
   .scinner{padding-bottom:6px;transform-origin:50% 0}
   #home.cal-in .scinner{pointer-events:none}
-  .row .ti{font-size:22.5px;line-height:1.15} .row .n{font-size:28px}
   #list{padding:0 18px 40px}
   /* weicher Auslauf unten als ruhende Fläche über der Liste (keine Maske auf dem scrollenden Element – die ruckelt in Safari) */
   .listfade{display:block;position:absolute;left:0;width:var(--side);bottom:18px;height:28px;pointer-events:none;z-index:2;
@@ -951,31 +948,33 @@ html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0
 html.night ::selection{background:rgba(194,122,82,.22)}
 .tm,.row .wd,.edate,.row .mt,.otd .go,.stats .count,.count{font-variant-numeric:tabular-nums}
 .ebody{font-variant-numeric:oldstyle-nums}
-.title,.stickytitle,.row .ti,.entry .title,h1,h2,h3{text-wrap:balance}
+.title,.stickytitle,.entry .title,h1,h2,h3{text-wrap:balance}
 .ebody,.row .ex,.otd .ti,p{text-wrap:pretty}
-.row .ti{letter-spacing:-.015em}
 
 /* Schritt 6 · Das Blatt „Schlicht“: kein Titelfeld – die erste Zeile ist der Titel; Buchsatz in Newsreader */
 .ebody{font-family:'Newsreader', Georgia, serif;font-optical-sizing:auto;font-size:17px;line-height:1.6;color:#2b2722;font-kerning:normal;font-variant-numeric:oldstyle-nums proportional-nums;hyphens:auto;-webkit-hyphens:auto;margin-top:22px}
 html.night .ebody{color:#d3d9d1}
 .ebody > div + div{margin-top:1.05em}
 .ebody > div.bl,.ebody > div.bl + div{margin-top:0} /* Leerzeile im Text: wirkt wie ein Absatz, nicht doppelt */
-.ebody:empty::before{font-family:var(--serif);font-style:italic;font-size:1.2em;color:var(--dimtext)}
-/* Initiale: nur zum Lesen – beim Bearbeiten steht der Buchstabe normal, damit die Schreibmarke immer stimmt */
-.ebody:not(:focus) > div:first-child::first-letter{float:left;font-family:var(--serif);font-size:78px;line-height:.78;margin:.07em .1em -.06em -.02em;color:var(--copper);font-variant-numeric:normal;letter-spacing:0}
-.erule{display:none}
-.emeta{display:none}
-.emeta .sb{display:inline-flex;align-items:center;gap:6px;color:var(--dim)}
-.emeta .sb svg{flex:none}
-.emetap:not(:empty){display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px;font-size:12.5px;color:var(--dimtext);font-variant-numeric:tabular-nums}
+.ebody{position:relative;--al:26px;--ag:18px}
+/* Anrede: die erste Zeile – immer gleich, mit und ohne Fokus */
+.ebody > div:first-child{font-family:var(--serif);font-style:italic;font-weight:400;font-size:var(--al);line-height:1.1;color:var(--ink);margin-bottom:var(--ag)}
+.ebody > div:first-child + div{margin-top:0}
+.ebody > div:first-child:has(+ .bl:not(:last-child)){margin-bottom:0}
+/* leeres Blatt: Platzhalter (und blasser Anrede-Vorschlag) stehen exakt an der Stelle der ersten Zeile */
+.ebody.mt::before{content:attr(data-ph);position:absolute;left:0;right:0;top:0;pointer-events:none;font-family:var(--serif);font-style:italic;font-size:var(--al);line-height:1.1;color:var(--dimtext)}
+.ebody.mt[data-g]::before{content:attr(data-g);opacity:.55}
+.ebody.mt[data-g]::after{content:attr(data-ph);position:absolute;left:0;right:0;top:calc(var(--al) * 1.1 + var(--ag));pointer-events:none;color:var(--dimtext);opacity:.55}
+/* Schlusszeile unter dem Text */
+.eclose{margin-top:28px;font-family:var(--sans);font-size:12px;line-height:1.4;color:var(--dimtext);font-variant-numeric:tabular-nums}
+.eclose[hidden]{display:none}
+.eclose::before{content:'';display:block;width:24px;height:1px;background:var(--copper);margin-bottom:10px}
+.eclose .sb{display:inline-flex;align-items:center;gap:6px}
+.eclose .sb svg{flex:none}
 @media (min-width:960px){
-  .ebody{font-size:20.5px;line-height:1.6;margin:0}
-  .ebody:not(:focus) > div:first-child::first-letter{font-size:96px;margin:.08em .1em -.06em -.02em}
-  .emetap{display:none !important}
-  .entry .erule{display:block;width:28px;height:1px;background:var(--copper);margin:18px 0 12px}
-  .entry .emeta:not(:empty){display:flex;flex-direction:column;font-size:12.5px;line-height:1.7;color:var(--dimtext);font-variant-numeric:tabular-nums}
-  .entry .emeta .sb{gap:7px}
-}
+  .ebody{font-size:20.5px;line-height:1.6;margin:0;--al:30px;--ag:20px}
+  .entry .eclose{grid-column:2}
+  }
 @media (min-width:1500px){ .ebody{font-size:21.5px} }
 @media (min-width:1800px){ .ebody{font-size:22.5px} }
 
@@ -983,7 +982,6 @@ html.night .ebody{color:#d3d9d1}
 .eimp{margin-top:26px;overflow:hidden}
 .eimp[hidden]{display:none}
 .eimp .ig{overflow:hidden;max-height:90px;transition:max-height var(--t4) var(--sheet), opacity var(--t3) var(--ease), filter var(--t3) var(--ease), margin var(--t4) var(--sheet)}
-.egreet{display:none}
 .ik{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;font-size:9.5px;font-weight:600;letter-spacing:.2em;color:var(--olive);text-transform:uppercase}
 .ino{font-family:var(--serif);font-style:italic;font-weight:400;font-size:15px;letter-spacing:0;text-transform:none;color:var(--dimtext);font-variant-numeric:tabular-nums}
 .pbox{height:98px;overflow:hidden;font-family:var(--serif);font-size:25px;line-height:1.28;letter-spacing:-.008em;text-wrap:balance;color:var(--ink);
@@ -1005,12 +1003,11 @@ html.night .ebody{color:#d3d9d1}
 .eimp.wr .pbox{height:var(--wh,40px);font-size:15px;color:var(--dimtext)}
 .irl{transition:transform var(--t4) var(--sheet), margin var(--t4) var(--sheet), height var(--t4) var(--sheet)}
 .eimp.wr .irl{transform:scaleX(0);margin-top:0;height:0}
-.eimp.wr + .ebody{margin-top:14px}
+.eimp.wr:not([hidden]) + .ebody{margin-top:14px}
 @media (min-width:960px){
   .eimp{grid-column:2;margin:-4px 0 30px}
   .eimp.wr{margin-bottom:18px}
-  .eimp.wr + .ebody{margin-top:0}
-  .egreet{display:block;font-family:var(--serif);font-size:34px;line-height:1.15;letter-spacing:-.015em;color:var(--ink);margin-bottom:22px}
+  .eimp.wr:not([hidden]) + .ebody{margin-top:0}
   .pbox{height:118px;font-size:30px}
   .pbox.sm{font-size:26px}
   .pbox.xs{font-size:22px}
@@ -1041,7 +1038,6 @@ html.night .emem{box-shadow:0 0 0 1px var(--hair)}
 html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
 
 /* Karte wird Blatt (iPhone): die angetippte Karte wächst zum Blatt und kehrt beim Schließen genau dorthin zurück */
-.etov{display:none}
 @media (max-width:959px){
   #entry{border-radius:16px 16px 0 0}
   #entry.is-top{box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
@@ -1068,19 +1064,11 @@ html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
   #entry.fx .enav{background:transparent}
   #entry.fx .enav::after,#entry.fx.pre .enav::after{transition:transform var(--t4) var(--sheet) .3s, opacity var(--t2) var(--ease) .3s}
   #entry.fx:is(.pre,.closing) .enav::after{transform:scaleX(0);opacity:0;transition:transform var(--t2) var(--sheet), opacity var(--t1) var(--ease)}
-  /* Tageszahl und Titel gleiten zwischen Karte und Blatt */
-  #entry.fx #eDn,#entry.fx .etov{transform-origin:0 0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .04s}
-  #entry.fx:is(.pre,.closing) #eDn,#entry.fx:is(.pre,.closing) .etov{transform:var(--ntf,none)}
-  #entry.fx:is(.pre,.closing) .etov{transform:var(--ttf,none)}
-  #entry.fx.closing.ml .etov{transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .05s}
-  #entry.fx.pre #eDn,#entry.fx.pre .etov{opacity:0;transition:none}
-  #entry.fx.closing #eDn,#entry.fx.closing .etov{opacity:0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .46s}
-  #entry.fx.ovon .etov{display:block;position:absolute;margin:0;font-family:var(--serif);font-weight:400;color:var(--ink);pointer-events:none;z-index:1;overflow-wrap:break-word;text-wrap:balance}
-  #entry.fx.ovon:not(.pre):not(.closing):not(.drag) .etov{animation:ovOpen var(--t4) var(--ease) both}
-  #entry.fx.ovon.closing:not(.ml) .etov{animation:ovClose var(--t4) var(--ease) both}
-  #entry.fx.drag .etov{opacity:0}
-  @keyframes ovOpen{0%{opacity:0}18%{opacity:1}50%{opacity:1}100%{opacity:0}}
-  @keyframes ovClose{0%{opacity:0}22%{opacity:1}56%{opacity:1}100%{opacity:0}}
+  /* Tageszahl gleitet zwischen Karte und Blatt */
+  #entry.fx #eDn{transform-origin:0 0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .04s}
+  #entry.fx:is(.pre,.closing) #eDn{transform:var(--ntf,none)}
+  #entry.fx.pre #eDn{opacity:0;transition:none}
+  #entry.fx.closing #eDn{opacity:0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .46s}
   /* Datum und Mülleimer blenden verzögert ein, beim Zurück schnell aus */
   #entry.fx :is(.edate .wd,.edate .dtm,.eact){transition:opacity var(--t3) var(--ease) .35s}
   #entry.fx:is(.pre,.closing) :is(.edate .wd,.edate .dtm,.eact){opacity:0;transition:opacity .2s var(--ease)}
@@ -1091,12 +1079,11 @@ html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
   .rep{opacity:0;transition:opacity .22s var(--ease)}
   #entry.fx.pre .rep{opacity:1;transition:none}
   #entry.fx.closing .rep{opacity:1;transition:opacity .34s var(--ease) .44s}
-  /* Text wird von oben nach unten freigelegt (Maskenkante wie revealDown am Mac) */
-  #entry.rv :is(#eBody,#ePhotos){-webkit-mask-image:linear-gradient(#000 45%,transparent 55%);mask-image:linear-gradient(#000 45%,transparent 55%);-webkit-mask-size:100% 260%;mask-size:100% 260%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:0 0;mask-position:0 0;
-    transition:opacity var(--t3) var(--ease) .2s, transform var(--t4) var(--sheet) .2s, -webkit-mask-position 1.15s cubic-bezier(.4,0,.2,1) .25s, mask-position 1.15s cubic-bezier(.4,0,.2,1) .25s}
-  #entry.rv.rvpre :is(#eBody,#ePhotos){opacity:0;transform:translateY(16px);-webkit-mask-position:0 100%;mask-position:0 100%;transition:none}
-  #entry.fx.closing :is(#eBody,#ePhotos){opacity:0;transform:translateY(6px);transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)}
-  #entry.fx:not(.rv) :is(#eBody,#ePhotos){transition:opacity var(--t3) var(--ease) .1s}
+  /* Text setzt sich per Deckkraft und 10px Setzen dazu (leicht verzögert), beim Schließen schnell weg */
+  #entry.fx :is(#eBody,#ePhotos,#eClose){transition:opacity var(--t3) var(--sheet) .12s, transform var(--t3) var(--sheet) .12s}
+  #entry.fx.pre :is(#eBody,#ePhotos,#eClose){opacity:0;transform:translateY(10px)}
+  #entry.fx.closing :is(#eBody,#ePhotos,#eClose){opacity:0;transform:translateY(6px);transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)}
+}
 }
 
 /* ---------- iPhone: Gedrückt halten (Vorschau + Menü) ---------- */
@@ -1172,3 +1159,8 @@ html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
 .trow .btn{height:36px;padding:0 14px;font-size:13px;flex:none}
 .sect .trashempty{margin:0;padding:6px 0 10px;font:italic 400 18px/1.35 var(--serif);color:var(--dimtext)}
 .sect .trashnote{margin:12px 0 0;font-size:13px;color:var(--muted)}
+
+/* Schlusszeile direkt unter dem Text: Mindesthöhe nur für das leere Blatt; Tippen unter den Text setzt die Schreibmarke ans Ende (ui.js) */
+.ebody:not(.mt){min-height:0}
+.ephotos:empty{display:none}
+@media (min-width:960px){ .ebody:not(.mt){min-height:132px} } /* Mac: die Datumsspalte (über Impuls + Text) darf die Impulszeile nicht strecken */

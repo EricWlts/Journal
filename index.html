@@ -90,21 +90,19 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
   <section class="view is-off" id="entry" aria-label="Eintrag">
     <div class="entry" id="entryInner">
       <div class="enav">
-        <div class="edate"><span class="wd" id="eWd"></span><span class="dn" id="eDn" aria-hidden="true"></span><span class="dt" id="eDt"></span><span class="dtm" id="eDtm" aria-hidden="true"></span><span class="savedot" id="saveDot" aria-hidden="true"></span><span class="erule" aria-hidden="true"></span><span class="emeta" id="eMeta"></span></div>
+        <div class="edate"><span class="wd" id="eWd"></span><span class="dn" id="eDn" aria-hidden="true"></span><span class="dt" id="eDt"></span><span class="dtm" id="eDtm" aria-hidden="true"></span><span class="savedot" id="saveDot" aria-hidden="true"></span></div>
         <div class="eact"><button class="trash" data-act="trashcur" id="trashBtn" aria-label="Eintrag löschen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 6.5h15M9.5 6.5V4.75h5V6.5M6.5 6.5l.85 12.2a1.5 1.5 0 0 0 1.5 1.4h6.3a1.5 1.5 0 0 0 1.5-1.4l.85-12.2M10 10.5v6M14 10.5v6"/></svg></button>
         <button class="done" data-act="done" id="doneBtn" aria-label="Fertig"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4 4 9-9.5"/></svg></span></button></div>
       </div>
-      <div class="emeta emetap" id="eMetaP" aria-hidden="true"></div>
       <div class="eimp" id="eImp" hidden>
-        <div class="egreet ig" id="eGreet"></div>
         <div class="ik ig"><span id="eImpK"></span><span class="ino" id="eImpNo"></span></div>
         <div class="iph" id="eImpPh"><div class="pbox" id="eImpT"></div><div class="isrc ig" id="eImpS"></div><div class="irl"></div></div>
         <div class="ibar ig"><button class="ilnk" data-act="impnext"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>Anderer Impuls</button></div>
       </div>
       <div class="ebody" id="eBody" contenteditable="true" lang="de" role="textbox" aria-multiline="true" aria-label="Eintrag – die erste Zeile ist der Titel" data-ph="Was möchtest du festhalten?" spellcheck="true"></div>
       <div class="ephotos" id="ePhotos"></div>
+      <div class="eclose" id="eClose" hidden></div>
     </div>
-    <div class="etov" id="etOv" aria-hidden="true"></div>
     <button class="emem" id="eMem" data-act="memtoggle" hidden><span class="mk">Heute vor einem Jahr</span><span class="mt2" id="eMemT"></span><span class="mx" id="eMemX"></span><span class="mw" id="eMemW"></span></button>
     <button class="floatbtn" data-act="entryback" id="entryBtn" aria-label="Zurück"><svg class="i-back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5.5M11 6l-6 6 6 6"/></svg></button>
   </section>
@@ -141,6 +139,7 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
         <h2>Beim Schreiben</h2>
         <p>Was auf einem neuen, leeren Blatt erscheinen soll.</p>
         <div class="wsets">
+          <button class="wrow" data-act="wset" data-k="greet" role="switch"><span><span class="wl">Anrede vorschlagen</span><span class="ws">Blass auf dem leeren Blatt – Tab oder Antippen übernimmt sie</span></span><span class="fsw"></span></button>
           <button class="wrow" data-act="wset" data-k="imp" role="switch"><span><span class="wl">Tagesimpuls</span><span class="ws">Jeden Tag eine neue Frage</span></span><span class="fsw"></span></button>
           <button class="wrow" data-act="wset" data-k="meta" role="switch"><span><span class="wl">Ort &amp; Wetter</span><span class="ws">Nur „Leer · 4° Nebel“ wird gespeichert, keine Koordinaten</span></span><span class="fsw"></span></button>
           <button class="wrow" data-act="wset" data-k="mem" role="switch"><span><span class="wl">Heute vor einem Jahr</span><span class="ws">Erinnerung unten auf dem Blatt</span></span><span class="fsw"></span></button>
