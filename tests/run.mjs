@@ -4,7 +4,7 @@ import { launch, shutdown, open, openNew, dbAll, seed, visibleEntries, newEntryV
 const filter = (process.argv[2] || '').toLowerCase();
 const tests = [];
 // known: Text, falls bekannt rot (Test läuft, Ergebnis zählt nicht für den Exit-Code)
-const test = (name, fn, devices = ['iPhone', 'Mac'], known) => tests.push({ name, fn, devices, known });
+const test = (name, fn, devices = ['iPhone', 'Mac'], known, opts = {}) => tests.push({ name, fn, devices, known, opts });
 const isTop = (page, id) => page.evaluate((id) => S.stack[S.stack.length - 1] === id, id);
 const ok = (c, msg) => { if (!c) throw new Error(msg); };
 
@@ -22,7 +22,7 @@ test('neuer Eintrag', async ({ page, device }) => {
 test('neuer Eintrag: Feld sofort fokussiert', async ({ page, device }) => {
   await openNew(page, device); await page.waitForTimeout(500);
   ok(await page.evaluate(() => document.activeElement === document.getElementById('eBody')), '#eBody nicht fokussiert (activeElement: ' + await page.evaluate(() => document.activeElement.id || document.activeElement.tagName) + ')');
-}, ['iPhone'], 'App: focusEnd() in newEntry() läuft, bevor die Ansicht sichtbar ist (Chrome verweigert den Fokus); Tastatur öffnet sich evtl. nicht von selbst');
+}, ['iPhone'], null);
 
 test('tippen + speichern', async ({ page, device }) => {
   await newEntryViaUI(page, device); await typeEntry(page);
@@ -103,13 +103,18 @@ test('Abgleich', async ({ page, device, mock }) => {
   await page.waitForFunction(() => S.entries.some((x) => x.id === 'efremd1'), null, { timeout: 6000 });
 }, ['iPhone', 'Mac'], null);
 
+// weitere Testdateien: tests/t-*.mjs exportieren default (test, h) => { test('name', fn, devices, known, opts) }
+import { readdirSync } from 'node:fs';
+import * as H from './helpers.mjs';
+for (const f of readdirSync(new URL('.', import.meta.url)).filter((f) => /^t-.*\.mjs$/.test(f)).sort()) (await import('./' + f)).default(test, { ...H, ok, isTop });
+
 const srv = await startServer(); await launch();
 let pass = 0, fail = 0, known = 0, total = 0; const t0 = Date.now();
 for (const t of tests) {
   if (filter && !t.name.toLowerCase().includes(filter)) continue;
   for (const device of t.devices) {
     total++; const s = Date.now(); let err;
-    const env = await open(device, srv.url, { sync: t.name === 'Abgleich' });
+    const env = await open(device, srv.url, { sync: t.name === 'Abgleich' || !!t.opts.sync, motion: !!t.opts.motion });
     try { await t.fn({ ...env, device }); } catch (e) { err = e.message.split('\n')[0]; }
     await env.ctx.close();
     const ms = Date.now() - s;

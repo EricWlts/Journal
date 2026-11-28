@@ -48,7 +48,7 @@ function back() {
   }
   if (S.stack[S.stack.length - 1] === 'entry' && SF.on && !SF.closing) sfReset(); // Bewegung abbrechen, Blatt schließt dann wie früher
   const leaving = S.stack.pop(), leftDate = leaving === 'entry' && S.cur ? S.cur.date : null;
-  if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(); }
+  if (leaving === 'entry') { if (document.activeElement) document.activeElement.blur(); saveCur(true); }
   applyStack();
   if (leaving === 'entry' || S.homeDirty) { renderHome(); if (S.stack.includes('calendar')) renderCalendar(); }
   if (leftDate && !isDesktop()) setTimeout(() => hmFollow(leftDate), 380);
@@ -192,7 +192,7 @@ document.addEventListener('click', (ev) => {
   const a = b.dataset.act;
   if (a === 'search') { deskSearch(!S.dsearch); }
   else if (a === 'qchip') { $('dq').value = b.dataset.w; S.qKeep = false; dqRun(); $('dq').blur(); }
-  else if (a === 'settings') { if (back.busy && S.stack[S.stack.length - 1] === 'settings') { clearTimeout(back.lt); back.busy = false; $('settings').classList.remove('leaving'); } /* Regel 2: mitten im Schließen wieder auf */ else if (S.stack[S.stack.length - 1] === 'settings') back(); else { const r = b.getBoundingClientRect(), v = $('settings'); v.style.setProperty('--ox', Math.round(r.left + r.width / 2) + 'px'); v.style.setProperty('--oy', Math.round(r.top + r.height / 2) + 'px'); renderAbout(); go('settings'); } } // zweiter Klick schließt
+  else if (a === 'settings') { if (back.busy && S.stack[S.stack.length - 1] === 'settings') { clearTimeout(back.lt); back.busy = false; $('settings').classList.remove('leaving'); } /* Regel 2: mitten im Schließen wieder auf */ else if (S.stack[S.stack.length - 1] === 'settings') back(); else { const r = b.getBoundingClientRect(), v = $('settings'); v.style.setProperty('--ox', Math.round(r.left + r.width / 2) + 'px'); v.style.setProperty('--oy', Math.round(r.top + r.height / 2) + 'px'); renderAbout(); renderTrash(); go('settings'); } } // zweiter Klick schließt
   else if (a === 'calendar') { const t = today(); S.cal.y = t.getFullYear(); S.cal.m = t.getMonth(); S.cal.sel = null; renderCalendar(); go('calendar'); }
   else if (a === 'calmode') { if (S.cal.mode !== b.dataset.mode) { const zo = b.dataset.mode === 'year'; S.cal.sel = null; morphSwap($('caltrack'), zo, () => { S.cal.mode = b.dataset.mode; renderCalendar(); }); softIn($('calTitle'), $('calStats')); } }
   else if (a === 'pickmonth') { morphSwap($('caltrack'), false, () => { S.cal.mode = 'month'; S.cal.m = +b.dataset.m; S.cal.y = +b.dataset.y; renderCalendar(); }); softIn($('calTitle'), $('calStats')); }
@@ -221,6 +221,7 @@ document.addEventListener('click', (ev) => {
   else if (a === 'trashcur') { if (S.cur && S.cur.id && hasContent(S.cur)) askDelete(S.cur.id); else syncTrash(); }
   else if (a === 'ctxopen') { const id = S.ctxId; hideCtx(); if (id) { S.navList = null; openEntryById(id); } }
   else if (a === 'ctxdel') { const id = S.ctxId; hideCtx(); if (id) askDelete(id); }
+  else if (a === 'untrash') { const e = S.trash.find((x) => x.id === b.dataset.id); if (e) restoreEntry(e).then(() => { renderTrash(); renderHome(); if (S.stack.includes('calendar')) renderCalendar(); if (typeof renderAbout === 'function') renderAbout(); toast('Wiederhergestellt'); }); }
   else if (a === 'confirmdel') { const id = S.pendingDel; closeConfirm(); if (id) deleteEntry(id); }
   else if (a === 'canceldel') { closeConfirm(); closeRow(); }
   else if (a === 'open' && S.openRow) { // offene Zeile: Tipp auf „Löschen“ fragt nach, sonst schließt sie sich
@@ -267,7 +268,7 @@ function closeRow() { const r = S.openRow; if (!r) return; S.openRow = null; r.c
 function askDelete(id) {
   const e = S.entries.find((x) => x.id === id); if (!e) return;
   S.pendingDel = id; const d = parseKey(e.date);
-  $('cText').textContent = '„' + titleOf(e) + '“ vom ' + d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' wird auf allen Geräten gelöscht. Das lässt sich nicht rückgängig machen.';
+  $('cText').textContent = '„' + titleOf(e) + '“ vom ' + d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' kommt in den Papierkorb und bleibt dort 30 Tage, bevor er auf allen Geräten endgültig verschwindet.';
   const c = $('confirm'); c.hidden = false; void c.offsetWidth; c.classList.add('show');
   setTimeout(() => c.querySelector('[data-act="canceldel"].btn').focus({ preventScroll: true }), 60);
 }
@@ -287,16 +288,14 @@ async function deleteEntry(id) {
   for (const r of rows) { r.style.overflow = 'hidden'; r.animate([{ height: r.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px', borderBottomWidth: '0px' }], { duration: 380, easing: 'cubic-bezier(0.32, 0.72, 0, 1)', fill: 'forwards' }); }
   S.openRow = null;
   await new Promise((r) => setTimeout(r, rows.length ? 360 : 0));
-  S.entries = S.entries.filter((x) => x !== e); reindex();
-  try { await DB.del('entries', id); } catch (err) {}
-  Sync.markDeleted(id); Sync.soon(800);
+  await trashEntry(e);
   if (S.cur === e) { // offener Eintrag: iPhone zurück zur Liste, Mac zum Nachbarn
     if (isDesktop()) { S.cur = null; openEntry(nb || draftFor(keyOf(today()))); }
     else { S.cur = null; if (!closedSheet && S.stack[S.stack.length - 1] === 'entry') back(); }
   }
   if (S.navList) S.navList = S.navList.filter((x) => x !== e);
   renderHome(); if (S.stack.includes('calendar')) renderCalendar();
-  toast('Eintrag gelöscht');
+  toast('In den Papierkorb gelegt');
 }
 try { S.light = localStorage.getItem('journal.light') || 'auto'; } catch (e) { S.light = 'auto'; }
 /* Licht: Tageszeit (Papier verändert sich ganz leicht), Hell oder Nacht */

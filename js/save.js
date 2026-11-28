@@ -7,7 +7,7 @@ function writeAids() {
   const mh = metaHTML(e); if ($('eMeta').innerHTML !== mh) { $('eMeta').innerHTML = mh; $('eMetaP').innerHTML = mh; }
   const box = $('eImp'), want = fresh && WS.imp;
   if (want && !IMP) loadImp();
-  box.hidden = !(want && IMP); box.classList.toggle('wr', !empty);
+  box.hidden = !(want && IMP); if (!empty && !box.hidden && !box.classList.contains('wr')) fitImpSmall(box); box.classList.toggle('wr', !empty);
   if (!box.hidden) { const g = greetText(); if ($('eGreet').textContent !== g) $('eGreet').textContent = g; if (box.dataset.for !== e.created + '|' + impIdx()) paintImp(); }
   $('eBody').dataset.ph = !box.hidden ? 'Oder einfach losschreiben …' : 'Was möchtest du festhalten?';
   const m = $('eMem'), last = fresh && WS.mem ? yearAgo(e.date) : null;
@@ -30,6 +30,7 @@ function saveMark(st) {
   const d = $('saveDot'); clearTimeout(saveMark.t);
   if (!st) { d.className = 'savedot'; return; }
   if (st === 'pending') { d.className = 'savedot pending'; return; }
+  if (st === 'error') { d.className = 'savedot error'; return; }
   d.className = 'savedot saved'; void d.offsetWidth; d.classList.add('pop');
   saveMark.t = setTimeout(() => d.classList.add('rest'), 2200);
 }
@@ -39,6 +40,7 @@ function onEdit() {
   e.title = nl < 0 ? full : full.slice(0, nl); e.text = nl < 0 ? '' : full.slice(nl + 1); // erste Zeile = Titel, der Rest = Text
   if (!full.trim() && nl < 0) b.innerHTML = ''; else tidyBody(b);
   writeAidsSoon();
+  if (e.deleted) { delete e.deleted; S.trash = S.trash.filter((x) => x !== e); if (!S.entries.includes(e)) { S.entries.push(e); reindex(); } } // im Papierkorb weitergeschrieben: wieder lebendig
   if (!e.id && (e.title.trim() || e.text.trim())) { e.id = 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); S.entries.push(e); reindex(); }
   syncTrash();
   if (e.id) saveMark('pending');
@@ -48,21 +50,79 @@ function onEdit() {
 const hasContent = (e) => !!(e && ((e.title || '').trim() || (e.text || '').trim() || (e.photos || []).length));
 function syncTrash() { const e = S.cur; $('entry').classList.toggle('has-id', !!(e && e.id && hasContent(e))); }
 const sigOf = (e) => (e.title || '') + '\u0001' + (e.text || '') + '\u0001' + (e.photos || []).join(',');
-async function saveCur() {
-  clearTimeout(saveTimer);
-  const e = S.cur; if (!e || !e.id) return;
-  const sig = sigOf(e); if (sig === e._savedSig) return; // nichts geändert
-  e._savedSig = sig; e.modified = new Date().toISOString();
-  if (!e.title.trim() && !e.text.trim() && !(e.photos || []).length) {
-    S.entries = S.entries.filter((x) => x !== e); reindex(); await DB.del('entries', e.id);
-    Sync.markDeleted(e.id); e.id = null; if (S.cur === e) syncTrash();
-  } else {
-    e._dirty = true; await DB.put('entries', e);
-    if (S.cur === e) saveMark('saved');
-  }
-  Sync.soon();
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+/* Speichern: _savedSig erst nach erfolgreichem DB.put; bis zu 3 neue Versuche (0,5 s, 1,5 s, 4 s), dann sichtbar melden.
+   Gearbeitet wird mit dem Objekt, nicht mit S.cur – so geht nichts verloren, wenn das Blatt inzwischen wechselt. */
+function saveCur(leave) { clearTimeout(saveTimer); const e = S.cur; return e && e.id ? saveEntry(e, leave === true) : Promise.resolve(); }
+const SV = new WeakMap(); // laufendes Speichern je Eintrag (nicht am Objekt: IndexedDB kann keine Promises klonen)
+const isSaving = (e) => SV.has(e);
+function saveEntry(e, leave) {
+  const run = SV.get(e);
+  if (run) { run.again = true; if (leave) run.leave = true; return run.p; }
+  const st = { again: false, leave: !!leave, p: null }; SV.set(e, st);
+  st.p = (async () => {
+    try {
+      do {
+        st.again = false;
+        if (e.deleted) break;
+        if (st.leave) { st.leave = false; if (!hasContent(e)) { await trashEmpty(e); break; } } // leeres Blatt verlassen: letzte Fassung still in den Papierkorb
+        if (!hasContent(e)) break; // leer getippt: die gespeicherte Fassung nicht überschreiben – sie geht beim Verlassen in den Papierkorb
+        if (sigOf(e) === e._savedSig) break; // nichts geändert
+        let done = false;
+        for (let i = 0; i < 4 && !done; i++) {
+          if (i) await wait([500, 1500, 4000][i - 1]);
+          if (e.deleted) break;
+          const sig = sigOf(e); e.modified = new Date().toISOString(); e._dirty = true;
+          try { await DB.put('entries', e); e._savedSig = sig; done = true; } catch (err) { console.error(err); }
+        }
+        if (e.deleted) break;
+        if (!done) { if (S.cur === e) saveMark('error'); toast('Nicht gespeichert – neuer Versuch beim nächsten Tippen'); break; }
+        if (S.cur === e && !st.again) saveMark('saved');
+        Sync.soon(); S.homeDirty = true; if (isDesktop()) renderHomeSoon();
+      } while (st.again);
+    } catch (err) { console.error(err); }
+    SV.delete(e);
+  })();
+  return st.p;
+}
+/* ---------- Papierkorb ---------- */
+const TRASH_DAYS = 30;
+function splitEntries(all) { S.entries = all.filter((e) => !e.deleted); S.trash = all.filter((e) => e.deleted); reindex(); }
+async function trashEntry(e) { // in den Papierkorb legen: Löschmarke setzen, speichern, abgleichen
+  const now = new Date().toISOString();
+  e.deleted = now; e.modified = now; e._dirty = true;
+  S.entries = S.entries.filter((x) => x !== e); if (!S.trash.includes(e)) S.trash.push(e); reindex();
+  if (S.navList) S.navList = S.navList.filter((x) => x !== e);
   S.homeDirty = true;
-  if (isDesktop()) renderHomeSoon();
+  try { const sig = sigOf(e); await DB.put('entries', e); e._savedSig = sig; } catch (err) { console.error(err); toast('Nicht gespeichert – neuer Versuch beim nächsten Tippen'); }
+  Sync.soon(800);
+}
+async function trashEmpty(e) { // leer verlassen: zuletzt gespeicherten Inhalt zurückholen und in den Papierkorb; nie Gespeichertes einfach verwerfen
+  let st = null; try { st = await DB.get('entries', e.id); } catch (err) {}
+  if (st && hasContent(st)) { e.title = st.title; e.text = st.text; e.photos = st.photos || []; await trashEntry(e); return; }
+  S.entries = S.entries.filter((x) => x !== e); reindex(); S.homeDirty = true;
+  try { await DB.del('entries', e.id); } catch (err) {}
+  if (Sync.meta.shas['entries/' + e.id + '.json']) Sync.markDeleted(e.id);
+  e.id = null; if (S.cur === e) syncTrash();
+}
+async function restoreEntry(e) { // aus dem Papierkorb zurück in die Liste
+  delete e.deleted; e.modified = new Date().toISOString(); e._dirty = true;
+  S.trash = S.trash.filter((x) => x !== e); if (!S.entries.includes(e)) S.entries.push(e); reindex();
+  S.homeDirty = true;
+  try { const sig = sigOf(e); await DB.put('entries', e); e._savedSig = sig; } catch (err) { console.error(err); }
+  Sync.soon(800);
+}
+async function purgeTrash() { // endgültig nach 30 Tagen: lokal entfernen, Datei im Daten-Repo löschen
+  const lim = Date.now() - TRASH_DAYS * 864e5, old = S.trash.filter((e) => Date.parse(e.deleted) < lim);
+  if (!old.length) return;
+  for (const e of old) { try { await DB.del('entries', e.id); } catch (err) { continue; } S.trash = S.trash.filter((x) => x !== e); Sync.markDeleted(e.id); }
+  Sync.soon();
+}
+function renderTrash() {
+  const box = $('trashList'); if (!box) return;
+  const L = (S.trash || []).slice().sort((a, b) => (a.deleted < b.deleted ? 1 : -1));
+  if (!L.length) { box.innerHTML = '<p class="trashempty">Der Papierkorb ist leer.</p>'; return; }
+  box.innerHTML = L.map((e) => { const d = parseKey(e.date); return '<div class="trow"><span><span class="wl">' + esc(titleOf(e)) + '</span><span class="ws">' + d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</span></span><button class="btn ghost" data-act="untrash" data-id="' + esc(e.id) + '">Wiederherstellen</button></div>'; }).join('');
 }
 let homeTimer = null;
 function renderHomeSoon() { clearTimeout(homeTimer); homeTimer = setTimeout(renderHome, 400); }
@@ -77,7 +137,7 @@ function openDay(k) {
 function newEntry() { // Plus / ⌘N: immer ein neues, leeres Blatt für heute – mehrere Einträge am Tag sind erlaubt
   const k = keyOf(today()), top = S.stack[S.stack.length - 1];
   if (top === 'entry' && S.cur && !S.cur.id && S.cur.date === k) { focusEnd($('eBody')); return; } // steht schon ein leeres Blatt offen
-  saveCur(); S.navList = null;
+  saveCur(true); S.navList = null;
   const open = () => { go('entry'); openEntry(draftFor(k)); focusEnd($('eBody')); };
   if (isDesktop() && top === 'entry') deskFade(open, 'new' + Date.now()); else open();
 }
@@ -94,7 +154,7 @@ function adjacentOf(dir) {
 }
 function adjacent(dir) { // dir -1 = older, +1 = newer
   const n = adjacentOf(dir);
-  if (n) { saveCur(); openEntry(n, dir < 0 ? -1 : 1); return true; }
+  if (n) { saveCur(true); openEntry(n, dir < 0 ? -1 : 1); return true; }
   return false;
 }
 

@@ -126,6 +126,25 @@ async function exportBackup() {
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   note.textContent = 'Sicherung gespeichert: ' + name;
 }
+// Bestätigung: nutzt das vorhandene #confirm mit eigenem Text und eigenem Knopf
+let backupAsk = null;
+function askBackupConfirm(text) {
+  return new Promise((resolve) => {
+    if (backupAsk) backupAsk(false);
+    const c = $('confirm'), t = $('cTitle'), p = $('cText'), ok = c.querySelector('[data-act="confirmdel"]');
+    const old = { t: t.textContent, p: p.textContent, b: ok.textContent };
+    t.textContent = 'Sicherung laden?'; p.textContent = text; ok.textContent = 'Übernehmen';
+    const done = (v) => { c.removeEventListener('click', onClick, true); backupAsk = null; setTimeout(() => { t.textContent = old.t; ok.textContent = old.b; }, 500); resolve(v); };
+    const onClick = (ev) => {
+      const b = ev.target.closest('[data-act]'); if (!b) return;
+      if (b.dataset.act === 'confirmdel') { ev.stopPropagation(); ev.preventDefault(); closeConfirm(); done(true); }
+      else if (b.dataset.act === 'canceldel') done(false);
+    };
+    backupAsk = done; c.addEventListener('click', onClick, true);
+    c.hidden = false; void c.offsetWidth; c.classList.add('show');
+    setTimeout(() => { const x = c.querySelector('[data-act="canceldel"].btn'); if (x) x.focus({ preventScroll: true }); }, 60);
+  });
+}
 $('fileBackup').addEventListener('change', async (ev) => {
   const file = ev.target.files[0]; ev.target.value = ''; if (!file) return;
   const note = $('noteBackup');
@@ -133,15 +152,29 @@ $('fileBackup').addEventListener('change', async (ev) => {
     const data = JSON.parse(await file.text());
     if (data.app !== 'journal' || !Array.isArray(data.entries)) throw new Error('Das ist keine Sicherung dieser App.');
     note.textContent = 'Lade Sicherung …';
+    const local = new Map(); for (const x of S.entries.concat(Array.isArray(S.trash) ? S.trash : [])) local.set(x.id, x);
+    const take = []; let nNew = 0, nNewer = 0;
+    for (const b of data.entries) {
+      if (!b || !b.id) continue; b.modified = b.modified || b.created;
+      const l = local.get(b.id);
+      if (!l) { take.push(b); nNew++; } else if ((b.modified || 0) > (l.modified || 0)) { take.push(b); nNewer++; }
+    }
+    if (!take.length) { note.textContent = ''; toast('Nichts Neues in der Sicherung'); return; }
+    const keep = data.entries.length - take.length;
+    const go = await askBackupConfirm(take.length + (take.length === 1 ? ' Eintrag' : ' Einträge') + ' übernehmen? ' + nNew + (nNew === 1 ? ' neuer' : ' neue') + ', ' + nNewer + (nNewer === 1 ? ' neuere Fassung' : ' neuere Fassungen') + '. ' + keep + ' bleiben unverändert.');
+    if (!go) { note.textContent = ''; return; }
+    note.textContent = 'Lade Sicherung …';
     for (const p of (data.photos || [])) {
       const bin = atob(p.data); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
       await DB.put('photos', { id: p.id, type: p.type, blob: new Blob([u], { type: p.type }) });
     }
-    for (const b of data.entries) { b._dirty = true; b.modified = b.modified || b.created; }
-    await DB.putMany('entries', data.entries); Sync.soon(500);
-    const ids = new Set(data.entries.map((e) => e.id));
-    S.entries = S.entries.filter((x) => !ids.has(x.id)).concat(data.entries); reindex(); renderHome();
-    note.textContent = data.entries.length + ' Einträge geladen.'; toast('Sicherung geladen'); renderAbout();
+    for (const b of take) b._dirty = true;
+    await DB.putMany('entries', take); Sync.soon(500);
+    const ids = new Set(take.map((e) => e.id));
+    S.entries = S.entries.filter((x) => !ids.has(x.id)).concat(take.filter((e) => !e.deleted));
+    if (Array.isArray(S.trash)) S.trash = S.trash.filter((x) => !ids.has(x.id)).concat(take.filter((e) => e.deleted));
+    reindex(); renderHome();
+    note.textContent = take.length + (take.length === 1 ? ' Eintrag' : ' Einträge') + ' übernommen.'; toast('Sicherung geladen'); renderAbout();
   } catch (err) { note.textContent = 'Das hat nicht geklappt: ' + (err.message || err); }
 });
 async function renderAbout() {

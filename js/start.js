@@ -2,12 +2,12 @@
 'use strict';
 /* ---------- start ---------- */
 (async function start() {
-  try { await DB.open(); S.entries = await DB.all('entries'); } catch (e) { console.error(e); toast('Speicher nicht verfügbar'); }
+  try { await DB.open(); splitEntries(await DB.all('entries')); } catch (e) { console.error(e); toast('Speicher nicht verfügbar'); }
   reindex();
   const t = today(); S.cal.y = S.side.y = t.getFullYear(); S.cal.m = S.side.m = t.getMonth();
   renderHome();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderWeek(); renderSide(); });
-  Sync.load(); Sync.soon(400);
+  Sync.load(); purgeTrash().catch(() => {}); Sync.soon(400);
   setInterval(() => { if (!document.hidden) Sync.run(); }, 30000);
   window.addEventListener('online', () => Sync.soon(300));
   if (isDesktop()) { S.stack = ['home', 'entry']; openEntry((S.byDate.get(keyOf(t)) || [])[0] || draftFor(keyOf(t))); }

@@ -48,6 +48,7 @@ const DB = {
 
 /* ---------- state ---------- */
 const S = {
+  trash: [],              // gelöschte Einträge (Papierkorb, `deleted` = ISO-Zeit); S.entries enthält nur lebende
   entries: [],            // {id, date:'YYYY-MM-DD', created: ISO, title, text, photos:[ids], source}
   byDate: new Map(),
   stack: ['home'],
@@ -124,5 +125,10 @@ function titleOf(e) {
 function excerptOf(e) {
   let t = (e.text || '').trim();
   if (!(e.title && e.title.trim())) t = t.split('\n').slice(1).join(' ');
-  return t.replace(/\s+/g, ' ').slice(0, 220);
+  t = t.replace(/\s+/g, ' ');
+  if (t.length <= 140) return t;
+  // an der Wortgrenze kürzen, Satzzeichen vor der Auslassung entfernen („.…“ vermeiden)
+  let c = t.slice(0, 140); const sp = c.lastIndexOf(' ');
+  if (sp > 60) c = c.slice(0, sp);
+  return c.replace(/[\s.,;:–-]+$/, '') + '…';
 }

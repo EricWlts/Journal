@@ -16,9 +16,8 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -158,6 +157,11 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
         <div class="fxseg" role="radiogroup" aria-label="Übergang"><button role="radio" data-act="setfx" data-fx="fade">Überblenden</button><button role="radio" data-act="setfx" data-fx="slide">Gleiten</button><button role="radio" data-act="setfx" data-fx="roll">Rollen</button></div>
       </div>
       <div class="sect">
+        <h2>Papierkorb</h2>
+        <div id="trashList" aria-live="polite"></div>
+        <p class="trashnote">Einträge bleiben 30 Tage hier.</p>
+      </div>
+      <div class="sect">
         <h2>Über diese App</h2>
         <p id="about"></p>
       </div>
@@ -169,8 +173,8 @@ try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().ge
 <div class="toast" id="toast" role="status"></div>
 <div class="ctxmenu" id="ctxmenu" role="menu" hidden><button role="menuitem" data-act="ctxopen">Öffnen</button><button role="menuitem" class="danger" data-act="ctxdel">Löschen …</button></div>
 <div class="confirm" id="confirm" hidden><div class="cback" data-act="canceldel"></div>
-  <div class="cpanel" role="alertdialog" aria-modal="true" aria-labelledby="cTitle" aria-describedby="cText"><h2 id="cTitle">Eintrag löschen?</h2><p id="cText"></p>
-    <button class="btn danger" data-act="confirmdel">Löschen</button><button class="btn ghost" data-act="canceldel">Abbrechen</button></div></div>
+  <div class="cpanel" role="alertdialog" aria-modal="true" aria-labelledby="cTitle" aria-describedby="cText"><h2 id="cTitle">In den Papierkorb?</h2><p id="cText"></p>
+    <button class="btn danger" data-act="confirmdel">In den Papierkorb</button><button class="btn ghost" data-act="canceldel">Abbrechen</button></div></div>
 
 <script src="js/core.js"></script>
 <script src="js/home.js"></script>

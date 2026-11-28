@@ -3,7 +3,7 @@
 /* ---------- Abgleich über ein privates GitHub-Repository ---------- */
 async function pool(items, n, fn) { let i = 0; const run = async () => { while (i < items.length) { const k = i++; await fn(items[k]); } }; await Promise.all(Array.from({ length: Math.min(n, items.length) }, run)); }
 const b64ToBytes = (b64) => { const bin = atob(b64.replace(/\s/g, '')); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
-const cleanEntry = (e) => Object.assign({ id: e.id, date: e.date, created: e.created, modified: e.modified || e.created, title: e.title || '', text: e.text || '', photos: e.photos || [], source: e.source || 'app' }, e.wx ? { wx: e.wx } : {}, e.sun ? { sun: e.sun } : {});
+const cleanEntry = (e) => Object.assign({ id: e.id, date: e.date, created: e.created, modified: e.modified || e.created, title: e.title || '', text: e.text || '', photos: e.photos || [], source: e.source || 'app' }, e.wx ? { wx: e.wx } : {}, e.sun ? { sun: e.sun } : {}, e.deleted ? { deleted: e.deleted } : {});
 const deviceName = () => /iPhone|iPad/.test(navigator.userAgent) ? 'iPhone' : /Mac/.test(navigator.userAgent) ? 'Mac' : 'Gerät';
 function sniffType(u) {
   if (u[0] === 0x89 && u[1] === 0x50) return 'image/png';
@@ -12,7 +12,7 @@ function sniffType(u) {
   return 'image/jpeg';
 }
 const Sync = {
-  cfg: null, meta: { shas: {}, deletes: [], last: null, head: null, init: false }, busy: false, again: false, timer: null, remote: new Map(),
+  cfg: null, meta: { shas: {}, deletes: [], last: null, head: null, init: false }, busy: false, again: false, timer: null, remote: new Map(), uploading: new Set(),
   load() {
     try { this.cfg = JSON.parse(localStorage.getItem('journal.sync') || 'null'); } catch (e) { this.cfg = null; }
     try { const m = JSON.parse(localStorage.getItem('journal.syncmeta') || 'null'); if (m) this.meta = Object.assign(this.meta, m); } catch (e) {}
@@ -21,7 +21,13 @@ const Sync = {
   on() { return !!(this.cfg && this.cfg.repo && this.cfg.token); },
   status(msg) { const n = $('noteSync'); if (n) n.textContent = msg; },
   branch() { return (this.cfg && this.cfg.branch) || 'main'; },
-  markDeleted(id) { if (this.meta.shas['entries/' + id + '.json'] && !this.meta.deletes.includes(id)) { this.meta.deletes.push(id); this.saveMeta(); } },
+  markDeleted(id) { if (!this.meta.deletes.includes(id)) { this.meta.deletes.push(id); this.saveMeta(); } }, // auch ohne bekannten sha vormerken (Upload kann noch laufen)
+  all() { return S.entries.concat(S.trash); },
+  find(id) { return S.entries.find((x) => x.id === id) || S.trash.find((x) => x.id === id); },
+  prune() { // vorgemerkte Löschungen vergessen, wenn die Datei remote fehlt und kein Upload mehr aussteht
+    const keep = this.meta.deletes.filter((id) => this.remote.has('entries/' + id + '.json') || this.uploading.has(id) || (this.find(id) && this.find(id)._dirty));
+    if (keep.length !== this.meta.deletes.length) { this.meta.deletes = keep; this.saveMeta(); }
+  },
   soon(ms) { if (!this.on()) return; clearTimeout(this.timer); this.timer = setTimeout(() => this.run(), ms == null ? 2500 : ms); },
   async api(path, opts = {}) {
     const r = await fetch('https://api.github.com/repos/' + this.cfg.repo + path, {
@@ -70,17 +76,17 @@ const Sync = {
       this.meta.last = new Date().toISOString(); this.saveMeta();
       this.status('Abgeglichen · ' + new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' · ' + S.entries.length + ' Einträge');
     } catch (e) { console.error(e); this.status(this.errorText(e)); if (verbose) toast('Abgleich fehlgeschlagen'); }
-    finally { this.busy = false; if (this.again) { this.again = false; this.soon(400); } }
+    finally { this.busy = false; this.uploading = new Set(); if (this.again) { this.again = false; this.soon(400); } }
   },
   async cycle(verbose) {
     let h = await this.ensureRepo();
-    const pending = S.entries.some((e) => e._dirty) || this.meta.deletes.length;
     if (h.commit !== this.meta.head || !this.remote.size || !this.meta.init) await this.pull(h);
     if (!this.meta.init) { // erster Abgleich: alles hochladen, was dort noch fehlt
-      for (const e of S.entries) if (!this.remote.has('entries/' + e.id + '.json')) e._dirty = true;
+      for (const e of this.all()) if (!this.remote.has('entries/' + e.id + '.json')) e._dirty = true;
       this.meta.init = true; this.saveMeta();
     }
-    if (!pending && !S.entries.some((e) => e._dirty)) return;
+    await purgeTrash(); this.prune();
+    if (!this.all().some((e) => e._dirty) && !this.meta.deletes.length) return;
     for (let attempt = 0; attempt < 3; attempt++) {
       try { await this.push(h); return; }
       catch (e) { if (e.status !== 422 && e.status !== 409) throw e; h = await this.head(); await this.pull(h); }
@@ -94,7 +100,7 @@ const Sync = {
     await pool(changed, 6, async ([path, sha]) => {
       const b = await this.api('/git/blobs/' + sha);
       const r = JSON.parse(new TextDecoder().decode(b64ToBytes(b.content)));
-      const local = S.entries.find((x) => x.id === r.id);
+      const local = this.find(r.id);
       if (!(local && local._dirty && (local.modified || '') >= (r.modified || ''))) updated.push(r);
       this.meta.shas[path] = sha;
       if (++done % 25 === 0) this.status('Lade Einträge … ' + done + ' von ' + changed.length);
@@ -102,7 +108,7 @@ const Sync = {
     const removed = [];
     for (const path of Object.keys(this.meta.shas)) {
       if (this.remote.has(path)) continue;
-      const id = path.slice(8, -5); const local = S.entries.find((x) => x.id === id);
+      const id = path.slice(8, -5); const local = this.find(id);
       if (local && !local._dirty) removed.push(id);
       delete this.meta.shas[path];
     }
@@ -110,9 +116,11 @@ const Sync = {
     if (updated.length || removed.length) await applyRemote(updated, removed);
   },
   async push(h) {
-    const dirty = S.entries.filter((e) => e._dirty);
-    const dels = this.meta.deletes.filter((id) => this.remote.has('entries/' + id + '.json'));
-    const snap = new Map(dirty.map((e) => [e.id, e.modified]));
+    const dirty = this.all().filter((e) => e._dirty);
+    const dels = this.meta.deletes.filter((id) => this.remote.has('entries/' + id + '.json') && !dirty.some((e) => e.id === id));
+    const stamp = (e) => e.modified + '|' + (e.deleted || '');
+    const snap = new Map(dirty.map((e) => [e.id, stamp(e)]));
+    this.uploading = new Set(dirty.map((e) => e.id));
     const photoIds = [...new Set(dirty.flatMap((e) => e.photos || []))].filter((pid) => !this.remote.has('photos/' + pid));
     const items = []; let n = 0;
     await pool(photoIds, 3, async (pid) => {
@@ -123,7 +131,7 @@ const Sync = {
     });
     for (const e of dirty) items.push({ path: 'entries/' + e.id + '.json', mode: '100644', type: 'blob', content: JSON.stringify(cleanEntry(e), null, 1) });
     for (const id of dels) items.push({ path: 'entries/' + id + '.json', mode: '100644', type: 'blob', sha: null });
-    if (!items.length) { this.meta.deletes = []; this.saveMeta(); return; }
+    if (!items.length) { this.uploading = new Set(); this.prune(); return; }
     if (dirty.length > 20) this.status('Lade ' + dirty.length + ' Einträge hoch …');
     const tree = await this.api('/git/trees', { method: 'POST', body: { base_tree: h.tree, tree: items } });
     const msg = [dirty.length ? dirty.length + (dirty.length === 1 ? ' Eintrag' : ' Einträge') : '', dels.length ? dels.length + ' gelöscht' : ''].filter(Boolean).join(', ') + ' · ' + deviceName();
@@ -133,11 +141,11 @@ const Sync = {
     this.remote = new Map(); for (const it of nt.tree) if (it.type === 'blob') this.remote.set(it.path, it.sha);
     for (const e of dirty) {
       const path = 'entries/' + e.id + '.json'; if (this.remote.has(path)) this.meta.shas[path] = this.remote.get(path);
-      if (e.modified === snap.get(e.id)) { e._dirty = false; await DB.put('entries', e); } // in der Zwischenzeit geändert? Dann beim nächsten Mal
+      if (stamp(e) === snap.get(e.id)) { e._dirty = false; await DB.put('entries', e); } // in der Zwischenzeit geändert? Dann beim nächsten Mal
     }
     for (const id of dels) delete this.meta.shas['entries/' + id + '.json'];
     this.meta.deletes = this.meta.deletes.filter((id) => !dels.includes(id));
-    this.meta.head = commit.sha; this.saveMeta();
+    this.meta.head = commit.sha; this.uploading = new Set(); this.prune(); this.saveMeta();
   },
   async fetchPhoto(pid) {
     if (!this.on()) return null;
@@ -150,18 +158,37 @@ const Sync = {
   }
 };
 async function applyRemote(updated, removed) {
-  const curId = S.cur && S.cur.id;
+  const cur = S.cur, onSheet = !!cur && S.stack.includes('entry');
+  // offenes Blatt ungespeichert, ungesichert oder gerade im Schreiben? Dann gewinnt die lokale Fassung.
+  const busy = !!cur && !!cur.id && (cur._dirty || isSaving(cur) || (cur._savedSig !== undefined && sigOf(cur) !== cur._savedSig) || (onSheet && typing()));
+  const nb = cur && cur.id && !busy && (removed.includes(cur.id) || updated.some((r) => r.id === cur.id && r.deleted)) ? (adjacentOf(-1) || adjacentOf(1)) : null;
+  const before = cur ? sigOf(cur) : '', put = []; let curGone = false;
+  const keep = [];
   for (const r of updated) {
+    const old = Sync.find(r.id);
+    if (old && old === cur && busy) { cur._dirty = true; keep.push(cur); continue; } // lokale Fassung bleibt, lädt erneut hoch
     r._dirty = false; r._savedSig = undefined;
-    const i = S.entries.findIndex((x) => x.id === r.id);
-    if (i >= 0) S.entries[i] = r; else S.entries.push(r);
+    let t = r;
+    if (old && old === cur) { Object.assign(cur, r); delete cur.deleted; if (r.deleted) cur.deleted = r.deleted; t = cur; } // Identität behalten
+    t._savedSig = sigOf(t);
+    S.entries = S.entries.filter((x) => x.id !== r.id); S.trash = S.trash.filter((x) => x.id !== r.id);
+    (t.deleted ? S.trash : S.entries).push(t);
+    put.push(t);
+    if (t === cur && t.deleted) curGone = true;
   }
-  if (updated.length) await DB.putMany('entries', updated);
-  for (const id of removed) { S.entries = S.entries.filter((x) => x.id !== id); await DB.del('entries', id); }
-  reindex(); renderHome();
+  for (const e of keep) put.push(e);
+  if (put.length) await DB.putMany('entries', put);
+  for (const id of removed) {
+    if (cur && cur.id === id && busy) { cur._dirty = true; await DB.put('entries', cur); continue; }
+    if (cur && cur.id === id) curGone = true;
+    S.entries = S.entries.filter((x) => x.id !== id); S.trash = S.trash.filter((x) => x.id !== id); await DB.del('entries', id);
+  }
+  reindex(); if (S.navList) S.navList = S.navList.filter((x) => !x.deleted && S.entries.includes(x));
+  S.homeDirty = true; renderHome();
   if (S.stack.includes('calendar')) renderCalendar();
-  if (curId && !typing()) {
-    const fresh = S.entries.find((x) => x.id === curId);
-    if (fresh && fresh !== S.cur && S.stack.includes('entry')) openEntry(fresh);
-  }
+  if (!cur) return;
+  if (curGone) { // der offene Eintrag wurde anderswo gelöscht
+    if (isDesktop()) { S.cur = null; openEntry(nb || draftFor(keyOf(today()))); }
+    else { S.cur = null; if (S.stack[S.stack.length - 1] === 'entry') back(); }
+  } else if (cur.id && S.entries.includes(cur) && sigOf(cur) !== before && S.stack.includes('entry')) openEntry(cur);
 }

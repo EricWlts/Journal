@@ -79,6 +79,13 @@ function fitImp() { // immer drei Zeilen: lange Impulse eine oder zwei Stufen kl
   pb.style.transition = 'none'; pb.classList.remove('sm', 'xs'); if (pb.scrollHeight > pb.clientHeight + 1) { pb.classList.add('sm'); if (pb.scrollHeight > pb.clientHeight + 1) { pb.classList.remove('sm'); pb.classList.add('xs'); } }
   void pb.offsetWidth; pb.style.transition = '';
 }
+function fitImpSmall(box) { // kleiner Impuls: Höhe passt genau zum Text (keine Lücke bis #eBody), Wert für CSS-Übergang
+  const c = box.cloneNode(true); c.removeAttribute('id'); c.querySelectorAll('[id]').forEach((n) => n.removeAttribute('id')); c.classList.add('wr');
+  c.style.cssText = 'position:absolute;left:0;right:0;visibility:hidden;pointer-events:none;transition:none';
+  const pb = c.querySelector('.pbox'); pb.style.cssText = 'height:auto;transition:none'; pb.querySelectorAll('.wq').forEach((w) => { w.style.transition = 'none'; });
+  box.parentNode.insertBefore(c, box); const h = Math.round(pb.getBoundingClientRect().height); c.remove();
+  if (h > 0) box.style.setProperty('--wh', h + 'px');
+}
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$('eImp').hidden) fitImp(); });
 function impNext() { // anderer Impuls: Wörter verschwimmen raus, die neuen bauen sich auf – mehrfaches Tippen ist erlaubt
   if (!IMP || !S.cur) return; const ph = $('eImpPh'), cur = impIdx(); let ni = cur;

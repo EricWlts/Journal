@@ -99,8 +99,8 @@ $('eBody').addEventListener('drop', (e) => { const txt = e.dataTransfer && e.dat
 $('eBody').addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && /^[biu]$/i.test(e.key)) e.preventDefault(); }); // keine Formatierung – nur Text
 $('eBody').addEventListener('beforeinput', (e) => { if (/^format/.test(e.inputType)) e.preventDefault(); });
 $('eBody').addEventListener('blur', () => { const b = $('eBody'); if (b.firstChild && b.firstChild.nodeType === 3) setBody(bodyText(b)); }); // ordnen, sobald nicht mehr geschrieben wird (Initiale braucht eine erste Zeile)
-document.addEventListener('visibilitychange', () => { if (document.hidden) saveCur(); else { renderHome(); Sync.soon(200); } });
-window.addEventListener('pagehide', saveCur);
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveCur(true); else { renderHome(); Sync.soon(200); } });
+window.addEventListener('pagehide', () => saveCur(true));
 
 /* iOS schiebt beim Fokussieren manchmal den ganzen App-Rahmen – zurücksetzen */
 $('app').addEventListener('scroll', () => { const a = $('app'); if (a.scrollLeft || a.scrollTop) { a.scrollLeft = 0; a.scrollTop = 0; } });
