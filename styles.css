@@ -1,0 +1,1158 @@
+/* Journal – alle Stile der App (Farben, Startseite, Kalender, Eintrag, Mac-Layout, iPhone-Gesten) */
+:root{
+  --paper:#eeece6; --stone:#e3e2dc; --ink:#26302b; --ink2:#4a554e; --muted:#5d6a62; --olive:#506055; --line:#cfd0c8;
+  --night:#12150f; --linen:#f2f3ef; --mist:#b1bdb3; --dim:#8d998f; --nline:#3b4740; --empty:#d4d4cb;
+  --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --sans:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --safe-t:env(safe-area-inset-top, 0px); --safe-b:env(safe-area-inset-bottom, 0px);
+  --ease:cubic-bezier(0.2, 0.7, 0.2, 1);
+  --sheet:cubic-bezier(0.32, 0.72, 0, 1); /* iOS-artige Kurve, wie bei Vaul */
+  --t1:.16s; --t2:.28s; --t3:.55s; --t4:.82s; /* Bewegungssystem: nur diese Dauern */
+  --dimtext:#6f7a71; /* grauer Hilfstext auf Papier (4,5:1); --dim bleibt für Symbole und dunklen Kopf */
+  --copper:#a35f3a;
+  --side:492px; --sheetbg:#f6f5f1; --card:rgba(38,48,43,.05); --cardh:rgba(38,48,43,.085); --cardp:rgba(38,48,43,.12);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{touch-action:manipulation;overscroll-behavior:none}
+button,label,.hero,.pnav,.enav,.legend,.kicker,.stats{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+[contenteditable],input{-webkit-user-select:text;user-select:text}
+html,body{margin:0;height:100%;background:var(--night);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{overflow:hidden;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer}
+button:focus-visible,a:focus-visible,label:focus-within{outline:2px solid var(--olive);outline-offset:2px}
+[contenteditable]:focus,[contenteditable]:focus-visible{outline:none}
+[hidden]{display:none !important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.statusfill{position:fixed;left:0;right:0;top:0;height:var(--safe-t);background:var(--night);z-index:50;pointer-events:none}
+
+.app{position:fixed;inset:0;overflow:hidden}
+.view{position:absolute;inset:0;background:var(--paper);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
+  transition:transform .44s var(--sheet), visibility 0s linear 0s}
+.view.dragging{will-change:transform}
+.view::after{content:'';position:fixed;inset:0;background:#080a08;opacity:0;pointer-events:none;transition:opacity .44s var(--sheet);z-index:20}
+.view.is-under::after{opacity:var(--dim,.12)}
+.view.dragging::after{transition:none}
+.view.is-top{transform:none;visibility:visible;z-index:3;box-shadow:-1px 0 0 rgba(8,10,8,.12), -10px 0 24px -14px rgba(8,10,8,.3)}
+.view.is-under{transform:translateX(-28%);visibility:visible;z-index:2}
+.view.is-off{transform:translateX(100%);visibility:hidden;z-index:1;transition:transform .44s var(--sheet), visibility 0s linear .44s}
+#home{box-shadow:none}
+.view.dragging{transition:none}
+.view.sheeting{border-radius:var(--r,0px) var(--r,0px) 0 0;box-shadow:0 -1px 0 rgba(8,10,8,.06), 0 -18px 40px -24px rgba(8,10,8,.55)}
+.view.sheet-under{border-radius:14px;transform-origin:50% 0}
+
+/* shared type */
+.title{margin:8px 0 0;height:64px;display:flex;align-items:baseline;gap:12px;font-family:var(--serif);font-weight:400;white-space:nowrap}
+.title .t{font-size:64px;line-height:64px;letter-spacing:-.015em}
+.title .y{font-size:44px;line-height:1;font-style:italic;color:var(--dim)}
+.kicker{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
+.iconbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.count{font-family:var(--serif);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.count .of{color:var(--dim)}
+
+/* home */
+#home{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
+.hero{background:var(--night);color:var(--linen);padding:calc(var(--safe-t) + 8px) 24px 20px}
+#home > .hero:first-of-type{padding-bottom:0}
+.herorest{padding-top:0;padding-bottom:8px;display:flow-root}
+.stickytitle{position:sticky;top:var(--safe-t);z-index:6;background:var(--night);color:var(--linen);padding:0 24px}
+.stickytitle .title{margin:0;padding-top:8px;height:72px;position:relative;z-index:1;clip-path:inset(-40px -40px -14px -40px)} /* Rollen endet an der Kante der dunklen Fläche – Unterlängen bleiben sichtbar */
+.stickytitle::after{content:'';position:absolute;left:0;right:0;top:100%;height:28px;opacity:0;transition:opacity .2s var(--ease);pointer-events:none;
+  background:linear-gradient(var(--night), var(--night)) left top / 100% 14px no-repeat,
+             radial-gradient(circle at 100% 100%, transparent 13.5px, var(--night) 14px) left bottom / 14px 14px no-repeat,
+             radial-gradient(circle at 0 100%, transparent 13.5px, var(--night) 14px) right bottom / 14px 14px no-repeat} /* die Liste läuft mit runden Ecken unter dem Kopf durch – wie ein Blatt */
+.stickytitle.stuck::after{opacity:1}
+@media (max-width:959px){.stickytitle::after{display:none}}
+.stickysearch{position:absolute;right:14px;top:8px;color:var(--linen);opacity:0;transform:translateY(-12px);pointer-events:none;
+  transition:opacity .3s var(--ease), transform .45s var(--sheet)}
+.stickytitle.stuck .stickysearch{opacity:1;transform:none;pointer-events:auto}
+#homeTitle,#homeTitleNext{transform-origin:0 70%;transition:scale .5s var(--sheet)}
+.stickytitle .titlenext{position:absolute;left:24px;top:0;opacity:0;pointer-events:none}
+.topbar{height:44px;display:flex;justify-content:flex-end;align-items:center;gap:0;margin-right:-10px}
+.weekline{height:1px;background:var(--nline);margin-top:16px;position:relative}
+.todayline{position:relative;height:20px;margin-top:4px;--hw:0px;--gl:0px;--gr:0px;--c:-4px} /* --c: optische Mitte für die Kursive */
+.todayline::before,.todayline::after{content:'';position:absolute;top:50%;height:1px;background:var(--nline);transition:width .55s var(--sheet)}
+.todayline::before{left:0;width:calc(50% + var(--c) - var(--hw) - var(--gl))}
+.todayline::after{right:0;width:calc(50% - var(--c) - var(--hw) - var(--gr))}
+.todayline.on{--hw:var(--hwon,28px)}
+.todayline.on.dir-r{--gl:10px;--gr:36px} .todayline.on.dir-l{--gl:36px;--gr:10px}
+.twbtn{position:absolute;left:50%;top:50%;width:180px;height:44px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;transition:opacity .45s var(--ease)}
+.todayline.on .twbtn{opacity:1;pointer-events:auto}
+.twbtn .tw{position:absolute;left:50%;top:50%;transform:translate(calc(-50% + var(--c)),-50%);color:var(--linen);font-family:var(--serif);font-style:italic;font-size:21px;line-height:1;white-space:nowrap}
+.twbtn .ar{position:absolute;top:50%;margin-top:-9px;color:var(--linen);transition:opacity .3s var(--ease)}
+.twbtn .ar-r{left:calc(50% + var(--c) + var(--hw) + 9px)}
+.twbtn .ar-l{right:calc(50% - var(--c) + var(--hw) + 9px)}
+.todayline.dir-r .ar-l,.todayline.dir-l .ar-r{opacity:0}
+.twbtn:active .tw,.twbtn:active .ar{opacity:.6}
+/* iPhone-Startseite (PLAN 4a): Monat im dunklen Kopf. Der Monatsblock (.weekwrap, 6 Zeilen à 48px) bleibt beim Scrollen mit dem Finger 1:1 gekoppelt:
+   er hängt oben fest (sticky, top negativ), die Zeilen laufen über --p (0 offen … 1 eingeklappt, aus der Scrollposition) zur Woche des gewählten Tages zusammen. */
+.mwd{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px) + 16px);z-index:6;height:28px;background:var(--night);color:var(--mist);padding:6px 24px 0;box-sizing:border-box;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;font-size:12px;font-weight:500;letter-spacing:.1em;line-height:14px}
+.yline{position:relative;height:1px;background:var(--nline);--yp:50%}
+.yline::before{content:'';position:absolute;left:0;top:0;height:1px;width:var(--yp);background:color-mix(in srgb, var(--copper) 70%, transparent)}
+.yline::after{content:'';position:absolute;top:-3px;left:var(--yp);width:1px;height:7px;background:var(--copper)}
+.ylinew{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px));z-index:6;height:16px;background:var(--night);padding:8px 24px 0;box-sizing:border-box} /* Jahreslinie (PLAN 7): kupfern bis heute, mit Marke */
+.ylinew .yrmini{top:-2px;margin-top:0;z-index:3}
+/* Mond und Sonne (PLAN 7): eine leise Zeile unter der Jahreslinie; scrollt am iPhone unter die Linie weg */
+.sky{display:flex;align-items:center;gap:14px;height:34px;color:var(--mist)}
+.skyw{background:var(--night);padding:8px 24px 12px}
+.sky .moon{flex:0 0 34px;width:34px;height:34px;display:block}
+.sky .mtx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sky .mn{font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.1;color:#e2e6df;white-space:nowrap}
+.sky .mx{font-size:11.5px;line-height:1.2;color:#7f8b81;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sky .sun{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;color:#9aa59c;font-variant-numeric:tabular-nums;opacity:0;transition:opacity var(--t3) var(--ease)}
+.sky .sun.on{opacity:1}
+.sky .sun > span{display:flex;align-items:center;gap:6px}
+.sky .sun svg{width:15px;height:15px}
+.weekwrap{position:sticky;top:calc(var(--safe-t) + var(--tb, 80px) + 44px - var(--hch, 240px));z-index:5;height:calc(var(--hch, 240px) + 48px);background:var(--night);overflow-x:clip;overflow-y:visible;touch-action:pan-y;--p:0;transition:height var(--t3) var(--sheet)} /* --hch = (Zeilen − 1) × 48px: der Block ist so hoch wie der Monat Zeilen hat */
+.weekwrap::after{content:'';position:absolute;left:0;right:0;top:100%;height:28px;opacity:0;transition:opacity var(--t1) var(--ease);pointer-events:none;
+  background:linear-gradient(var(--night), var(--night)) left top / 100% 14px no-repeat,
+             radial-gradient(circle at 100% 100%, transparent 13.5px, var(--night) 14px) left bottom / 14px 14px no-repeat,
+             radial-gradient(circle at 0 100%, transparent 13.5px, var(--night) 14px) right bottom / 14px 14px no-repeat} /* die Liste läuft mit runden Ecken unter der eingeklappten Woche durch */
+.weekwrap.pinned::after{opacity:1}
+.wkmini,.yrmini{position:absolute;right:24px;top:100%;margin-top:-6px;z-index:2;height:20px;padding:0 10px 0 7px;border-radius:10px;display:flex;align-items:center;gap:5px;background:var(--night);color:var(--linen);
+  box-shadow:inset 0 0 0 1px rgba(242,243,239,.2);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1;opacity:0;transform:translate3d(0,-6px,0) scale(.92);pointer-events:none;
+  transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)} /* eingeklappt: kleine Heute-Kapsel am unteren Rand des Kopfs, damit man auch beim Scrollen zurück zu heute kommt */
+.wkmini.on,.yrmini.on{opacity:1;transform:none;pointer-events:auto;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet)}
+.wkmini svg,.yrmini svg{width:10px;height:10px;transition:transform var(--t2) var(--sheet)} .wkmini.dir-r svg,.yrmini.dir-r svg{transform:rotate(180deg)}
+
+/* Jahr (PLAN 4b): Ein Tipp auf den Monatstitel zoomt den Monat an seinen Platz im Jahr (iPhone: Kopf der Startseite, Mac: Seitenleiste).
+   Die Jahresebene (.ylay) liegt als eigene Ebene über dem Monat: jeder Tag ist ein absolut platziertes Feld (.yz), Monate/Übersicht sind nur zwei Lagen
+   derselben Felder (--mx/--my bzw. --ox/--oy), dadurch wandert beim Umschalten jeder Tag einzeln (0,9s --sheet, gestaffelt nach Monat) und alles ist
+   unterbrechbar: Klassen (.pre, .o, .zhide) umschalten, die Übergänge kehren von der aktuellen Stelle um. */
+.zmo{transform-origin:0 0;transition:transform .9s var(--sheet), opacity var(--t3) var(--ease) .4s}
+.zmo.zhide{transform:translate3d(var(--zx,0px),var(--zy,0px),0) scale(var(--zsx,.3),var(--zsy,.3));opacity:0;pointer-events:none;transition:transform .9s var(--sheet), opacity var(--t2) var(--ease) .5s}
+.ylay{position:absolute;left:0;top:0;right:0;height:100%;z-index:3;visibility:visible;transition:visibility 0s;--ms:11px;--mfs:7.5px;--ys:#4a564e}
+.ylay.mac{--ms:10px;--mfs:7px}
+.ylay.pre{visibility:hidden;transition:visibility 0s 1.2s}
+.ylay .yz{position:absolute;display:grid;place-items:center;pointer-events:none;left:var(--mx);top:var(--my);width:var(--mw);height:var(--mh);
+  transition:left .9s var(--sheet) var(--sdl,0s), top .9s var(--sheet) var(--sdl,0s), width .9s var(--sheet) var(--sdl,0s), height .9s var(--sheet) var(--sdl,0s), opacity var(--t3) var(--ease) var(--edl,0s), transform var(--t4) var(--sheet) var(--edl,0s)}
+.ylay.o .yz{left:var(--ox);top:var(--oy);width:var(--ow);height:var(--oh)}
+.ylay.pre .yz{opacity:0;transform:translate3d(var(--ax,0px),var(--ay,0px),0) scale(.9);
+  transition:left .9s var(--sheet) var(--sdl,0s), top .9s var(--sheet) var(--sdl,0s), width .9s var(--sheet) var(--sdl,0s), height .9s var(--sheet) var(--sdl,0s), opacity var(--t2) var(--ease), transform var(--t4) var(--sheet)}
+.ylay .yz i{display:grid;place-items:center;position:relative;width:var(--ms);height:var(--ms);border-radius:50%;font-style:normal;font-weight:600;font-size:var(--mfs);line-height:1;font-variant-numeric:tabular-nums;color:var(--mist);
+  transition:width .9s var(--sheet) var(--sdl,0s), height .9s var(--sheet) var(--sdl,0s), font-size var(--t3) var(--ease), background-color var(--t3) var(--ease), color var(--t3) var(--ease), box-shadow var(--t3) var(--ease)}
+.ylay .yz.e i{background:var(--linen);color:var(--night)}
+.ylay .yz.f i{color:var(--ys)}
+.ylay .yz.t i{color:var(--linen);box-shadow:inset 0 0 0 1px var(--linen)}
+.ylay .yz.e.n i{box-shadow:0 0 0 1.5px var(--night), 0 0 0 2.5px var(--linen)}
+.ylay.o .yz i{width:6px;height:6px;font-size:0}
+.ylay.o .yz.m i{background:var(--nline)}
+.ylay.o .yz.f i{width:2px;height:2px;background:var(--ys)}
+.ylay.o .yz.t i{width:8px;height:8px;box-shadow:inset 0 0 0 1.5px var(--linen)}
+.ylay.o .yz.e.n i{box-shadow:0 0 0 1.5px var(--night), 0 0 0 2.5px var(--linen)}
+.ylay .yl{position:absolute;left:var(--lmx);top:var(--lmy);font-size:9.5px;font-weight:600;letter-spacing:.18em;line-height:1;color:var(--mist);pointer-events:none;white-space:nowrap;
+  transition:left .9s var(--sheet), top .9s var(--sheet), opacity var(--t3) var(--ease) var(--edl,0s), color var(--t3) var(--ease)}
+.ylay.mac .yl{font-size:10.5px}
+.ylay.o .yl{left:var(--lox);top:var(--loy)}
+.ylay.pre .yl{opacity:0;transition:left .9s var(--sheet), top .9s var(--sheet), opacity var(--t2) var(--ease)}
+.ylay .yl.now{color:var(--linen)}
+.ylay .yh{position:absolute;left:var(--hmx);top:var(--hmy);width:var(--hmw);height:var(--hmh);border:0;background:none;padding:0;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:left .9s var(--sheet), top .9s var(--sheet), width .9s var(--sheet), height .9s var(--sheet), background-color var(--t1) var(--ease)}
+.ylay.o .yh{left:var(--hox);top:var(--hoy);width:var(--how);height:var(--hoh)}
+.ylay.pre .yh{pointer-events:none}
+.ylay .yh:active{background:rgba(242,243,239,.08)}
+@media (hover:hover) and (pointer:fine){ .ylay .yh:hover{background:rgba(242,243,239,.06)} }
+.ylay .ymk,.ymk{position:absolute;left:0;right:0;top:var(--mky,2px);height:14px;font-size:12px;font-weight:500;line-height:14px;color:var(--mist);font-variant-numeric:tabular-nums;opacity:0;pointer-events:none;transition:opacity var(--t2) var(--ease)}
+.ymk span{position:absolute;top:0;transform:translateX(-50%)}
+.ylay.o:not(.pre) .ymk{opacity:1;transition:opacity var(--t3) var(--ease) .3s}
+.yseg{visibility:hidden;position:relative;display:inline-grid;grid-template-columns:1fr 1fr;height:32px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--nline);opacity:0;pointer-events:none;transform:scale(.96);
+  transition:opacity var(--t2) var(--ease), transform var(--t2) var(--sheet), visibility 0s var(--t2)}
+.yseg button{position:relative;z-index:1;width:86px;padding:0;font-size:12.5px;font-weight:500;color:var(--mist);transition:color var(--t3) var(--ease)}
+.yseg button[aria-pressed="true"]{color:var(--night)}
+.yseg .ysk{position:absolute;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);border-radius:14px;background:var(--linen);transition:transform var(--t3) var(--sheet)}
+.yseg.o .ysk{transform:translateX(100%)}
+#home.yr .yseg,#sidecal.is-year .yseg{visibility:visible;opacity:1;pointer-events:auto;transform:none;transition:opacity var(--t3) var(--ease) .25s, transform var(--t3) var(--sheet) .25s, visibility 0s}
+.hfr{position:relative}
+.hfr .yseg{position:absolute;right:34px;top:50%;margin-top:-16px}
+.scnav .yseg{position:absolute;left:50%;top:50%;margin:-16px 0 0 -86px}
+.mwd > span{transition:opacity var(--t2) var(--ease)}
+.mwd .ymk{top:6px}
+#home.yr.yo .mwd .ymk{opacity:1;transition:opacity var(--t3) var(--ease) .3s}
+#home.yr .mwd > span:not(.ymk){opacity:0}
+.weekwrap.yrt{transition-duration:.9s}
+.weekwrap.yr{height:var(--yh,472px)}
+#home.yr,#home.ylock{overflow:hidden}
+.snap,.snap *{transition:none !important}
+.ylay.dragging .yz{transform:translate3d(var(--dx,0px),0,0);opacity:var(--do,1);transition:none}
+#home.yr .wkpill{opacity:0;pointer-events:none}
+.wkpill{transition:opacity var(--t3) var(--ease)}
+#home.yr .wkpill{transition:opacity var(--t2) var(--ease)}
+#home .list,#home .fadebot{transition:background-color 1.2s, opacity var(--t3) var(--ease) .3s}
+#home.yr .list,#home.yr .fadebot{opacity:.5;pointer-events:none;transition:background-color 1.2s, opacity var(--t2) var(--ease)}
+.calpanel{position:relative}
+@media (prefers-reduced-motion:reduce){ .ylay *,.zmo,.zmo.zhide,.yseg,.yseg *{transition-duration:.01s !important;transition-delay:0s !important} }
+.stickytitle.stuck .stickysearch{transition-delay:.18s}
+.mpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:48px;align-content:start}
+.mday{height:48px;display:flex;justify-content:center;align-items:flex-start;padding:4px 0 0;
+  transform:translate3d(0,calc((var(--hch, 240px) - var(--r) * 48px) * var(--p)),0)}
+.mday:not(.srow){opacity:max(0, calc(1 - var(--p) * 1.8));transform:translate3d(0,calc((var(--hch, 240px) - var(--r) * 48px) * var(--p)),0) scale(calc(1 - .12 * var(--p)))}
+.mday.out:not(.srow){opacity:min(.32, max(0, calc(1 - var(--p) * 1.8)))}
+.mday.out.srow{opacity:calc(.32 + .68 * var(--p))}
+.weekwrap.col .mday:not(.srow){pointer-events:none}
+.mday .dot{transition:transform var(--t1) var(--ease)}
+.mday:active .dot{transform:scale(.9)}
+#weektrack .dot,#weektrack .is-sel .dot{box-shadow:none}
+#weektrack .dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);opacity:0;transform:scale(.86);
+  transition:opacity var(--t1) var(--ease), transform var(--t3) var(--sheet);pointer-events:none;will-change:transform,opacity} /* Ring = eigene Ebene: nur opacity/scale, kein Schatten-Übergang */
+#weektrack .is-sel .dot::before{opacity:1;transform:none;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet)}
+#weektrack .dot::after{top:calc(100% + 4px)}
+.weektrack,.caltrack{display:flex;width:300%;transform:translateX(-33.3333%)}
+.weekpanel{flex:0 0 33.3333%;padding:0 24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.wday{display:flex;flex-direction:column;align-items:center;gap:8px}
+.wday .wd{font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--mist)}
+.dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.dark .is-entry .dot{background:var(--linen);color:var(--night)}
+
+.dark .is-missed .dot{font-weight:400;color:var(--linen)}
+.dark .is-future .dot{font-weight:400;color:var(--dim)}
+.herofoot{display:flex;justify-content:space-between;align-items:center;height:40px;font-size:13px;gap:16px}
+.herofoot .linkbtn{height:auto;padding:14px 0;align-items:baseline}
+.calbtn{width:44px;height:44px;margin-right:-10px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--linen);transition:transform .16s var(--ease), opacity .16s var(--ease)}
+.calbtn:active{transform:scale(.9);opacity:.6}
+.herofoot .linkbtn svg{align-self:center}
+@keyframes softin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.soft-in{animation:softin .5s var(--ease)}
+#weekStat,#weekStat .count,#weekStat .lbl,#calStats .count,#calStats .lbl,#calTitle{transition:opacity .35s var(--ease)}
+#weekStat.is-empty .count,#weekStat.is-empty .lbl,#calStats.is-empty .count,#calStats.is-empty .lbl{opacity:0}
+.floatbtn{position:fixed;right:20px;bottom:calc(var(--safe-b) + 22px + var(--kb, 0px));width:58px;height:58px;border-radius:50%;z-index:15;
+  background:var(--night);color:var(--linen);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 16px 32px -14px rgba(8,10,8,.6), 0 2px 6px rgba(8,10,8,.12), inset 0 0 0 1px rgba(242,243,239,.07);
+  transition:transform .18s var(--ease), bottom .3s var(--sheet)}
+.floatbtn:active{transform:scale(.92)}
+.floatbtn.away{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .35s var(--sheet), opacity .25s var(--ease)}
+.floatbtn svg{position:absolute;transition:opacity .22s var(--ease), transform .3s var(--sheet)}
+.floatbtn svg{position:static}
+#entry.is-typing .floatbtn{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .35s var(--sheet), opacity .2s var(--ease)}
+#home .fabwrap{display:none}
+@media (max-width:959px){#home #list{padding-bottom:calc(var(--safe-b) + 104px)}
+  /* Eintrag gleitet als Blatt von unten herein; die Ansicht darunter tritt leicht verkleinert zurück */
+  .view{transition:transform .5s var(--sheet), border-radius .5s var(--sheet), visibility 0s linear 0s}
+  #entry{top:calc(var(--safe-t) + 10px);border-radius:14px 14px 0 0}
+  #entry.is-top{box-shadow:0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
+  #entry.is-off{transform:translate3d(0,100%,0);transition:transform .5s var(--sheet), visibility 0s linear .5s}
+  #entry .entry{padding-top:8px}
+  #entry .enav{top:var(--vvtop, 0px)}
+  .view.is-under.under-sheet{transform:translate3d(0,10px,0) scale(.94);border-radius:14px;transform-origin:50% 0;--dim:.28}
+  #home > .herorest{padding-bottom:28px}
+  #home > .list{position:relative;z-index:1;margin-top:-20px;border-radius:14px 14px 0 0}
+  #calendar .calhero{padding-bottom:20px}
+  #calendar .calbody{position:relative;margin-top:-20px;border-radius:14px 14px 0 0}}
+.homeplus.off{opacity:0;transform:scale(.8);pointer-events:none;transition:opacity .2s var(--ease), transform .3s var(--sheet)}
+.page.wide{padding-bottom:calc(var(--safe-b) + 110px)}
+.calbody{padding-bottom:calc(var(--safe-b) + 110px);background:var(--paper);min-height:calc(100% - 260px)}
+#calendar{background:linear-gradient(var(--night) 0 50%, var(--paper) 50% 100%)}
+.herofoot .stat{display:flex;align-items:baseline;gap:10px}
+.herofoot .count{font-size:21px;color:var(--linen)}
+.herofoot .lbl{color:var(--mist)}
+.linkbtn{display:flex;align-items:center;gap:6px;height:44px;font-weight:500}
+.sidecal{display:none}
+.topbar .sctabs{display:none} /* iPhone: Woche · Monat · Jahr nur in der Kalender-Ansicht */
+.dsearch{display:none}
+/* Suche lässt Tage leuchten (iPhone + Mac): nur Treffer-Tage in Woche, Monat und beiden Jahresansichten bekommen Lichtschein, nacheinander (--gl), alles andere tritt zurück */
+:root{--glow:0 0 0 4px rgba(242,243,239,.10), 0 0 22px rgba(242,243,239,.38); --glows:0 0 0 2px rgba(242,243,239,.10), 0 0 10px rgba(242,243,239,.45)}
+@keyframes glowin{from{box-shadow:0 0 0 0 rgba(242,243,239,0), 0 0 0 0 rgba(242,243,239,0)}}
+#home.sq :is(.wday,.mday,.mgrid .cell).is-entry .dot{box-shadow:var(--glow);animation:glowin var(--t4) var(--ease) var(--gl,0ms) backwards}
+#home.sq :is(.wday,.mday,.mgrid .cell):not(.is-entry) .dot{color:#5d685f;transition:color var(--t3) var(--ease)}
+#home.sq .ylay .yz.e i{box-shadow:var(--glows);animation:glowin var(--t4) var(--ease) var(--gl,0ms) backwards}
+#home.sq .ylay .yz.e.n i{box-shadow:0 0 0 1.5px var(--night), 0 0 0 2.5px var(--linen), var(--glows)}
+#home.sq .ylay .yz:not(.e) i{color:#3a433b} #home.sq .ylay.o .yz:not(.e) i{background:#1d231e}
+#home.sq .ylay .yl:not(.lit){color:#3f483f}
+#home.sq .ylay .yl.lit{color:var(--linen)}
+/* iPhone: Vorschläge über den Treffern */
+@media (max-width:959px){ #list .hitcount{padding:14px 12px 4px} }
+.qchips{display:flex;gap:8px;padding:2px 40px 12px 12px;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)} /* weicher Auslauf rechts, wenn die Chips seitlich laufen */
+.qempty{margin:0;padding:26px 12px;font:italic 400 22px/1.3 var(--serif);color:var(--dimtext);text-wrap:balance}
+.qhint{margin:0;padding:2px 12px 10px;font-size:14px;color:var(--muted)}
+.qchips::-webkit-scrollbar{display:none}
+.qchip{flex:none;height:30px;padding:0 13px;border:1px solid var(--line);border-radius:15px;background:transparent;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--olive);cursor:pointer;-webkit-tap-highlight-color:transparent;
+  animation:chipin var(--t3) var(--ease) calc(var(--i) * 40ms) backwards;transition:background-color var(--t1) var(--ease)}
+.qchip:active{background:var(--stone)}
+@keyframes chipin{from{opacity:0;transform:translateY(6px);filter:blur(3px)}}
+.searchbtn{position:relative}
+.searchbtn svg{position:absolute;transition:opacity .2s var(--ease), transform .45s var(--sheet)}
+.searchbtn .i-x{opacity:0;transform:rotate(-90deg) scale(.5)}
+#home.searching .searchbtn .i-mag{opacity:0;transform:rotate(90deg) scale(.5)}
+#home.searching .searchbtn .i-x{opacity:1;transform:none}
+.topbar .setbtn,.topbar .newbtn{transition:opacity .25s var(--ease), transform .45s var(--sheet)}
+#home.searching .topbar .setbtn,#home.searching .topbar .newbtn{opacity:0;transform:translateX(-8px);pointer-events:none}
+.newbtn{display:none;position:relative}
+.listfade{display:none}
+/* Mac: eigene Scroll-Leiste (der Safari-Balken verschwindet zu schnell zum Greifen) mit Jahres-Legende */
+@media (min-width: 960px){ #home > #list{scrollbar-width:none} #home > #list::-webkit-scrollbar{display:none} }
+.rail{position:fixed;left:0;top:0;z-index:39;width:14px;opacity:0;pointer-events:none;transition:opacity .5s var(--ease);touch-action:none;cursor:default}
+.rail.on{opacity:1;pointer-events:auto;transition-duration:.2s}
+.rail::before{content:'';position:absolute;right:5px;top:0;bottom:0;width:2px;border-radius:1px;background:rgba(38,48,43,.08);opacity:0;transition:opacity .3s var(--ease)}
+.rail.legend::before{opacity:1}
+.rail-t{position:absolute;right:4px;top:0;width:4px;border-radius:3px;background:rgba(38,48,43,.3);transition:width .2s var(--ease), right .2s var(--ease), background-color .2s var(--ease)}
+.rail.legend .rail-t,.rail.drag .rail-t{width:6px;right:3px;background:rgba(38,48,43,.5)}
+html.night .rail::before{background:rgba(242,243,239,.08)}
+html.night .rail-t{background:rgba(242,243,239,.25)} html.night .rail.legend .rail-t,html.night .rail.drag .rail-t{background:rgba(242,243,239,.45)}
+.rail-y{position:absolute;right:16px;top:0;bottom:0;width:0}
+.ry{position:absolute;right:0;transform:translate3d(6px,-50%,0);padding:3px 8px 4px;border-radius:6px;background:var(--paper);color:var(--muted);
+  font-family:var(--serif);font-style:italic;font-size:16px;line-height:1;white-space:nowrap;opacity:0;pointer-events:none;
+  box-shadow:0 0 0 1px rgba(38,48,43,.06);transition:opacity .25s var(--ease), transform .4s var(--sheet), color .2s var(--ease)}
+.rail.legend .ry{opacity:1;transform:translate3d(0,-50%,0);pointer-events:auto}
+.ry:hover{color:var(--ink)}
+html.night .ry{box-shadow:0 0 0 1px rgba(242,243,239,.08)}
+/* Monat beim Ziehen und schnellen Scrollen: kleine Pille links neben der Leiste */
+.scrub{position:fixed;left:0;top:0;z-index:41;pointer-events:none;padding:6px 12px 7px;border-radius:8px;background:var(--night);color:var(--linen);
+  font-family:var(--serif);font-size:19px;line-height:1;white-space:nowrap;box-shadow:0 10px 24px -14px rgba(0,0,0,.45);opacity:0;transition:opacity .35s var(--ease)}
+.scrub i{color:var(--mist)}
+.scrub.on{opacity:1;transition-duration:.18s}
+html.night .scrub{background:var(--linen);color:#12150f}
+html.night .scrub i{color:#6f7a71}
+/* Hinweise beim Darüberfahren (nur Mac/Maus): erscheinen erst nach einer knappen Sekunde, ganz weich und ohne Fläche hinter dem Symbol */
+.topbar [data-tip]{position:relative}
+.topbar [data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:50%;transform:translate(-50%,-4px);white-space:nowrap;
+  padding:6px 10px;border-radius:8px;background:var(--linen);color:var(--night);font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.01em;
+  opacity:0;filter:blur(2px);pointer-events:none;transition:opacity .25s var(--ease), transform .3s var(--sheet), filter .25s var(--ease);z-index:5}
+.topbar .searchbtn[data-tip]::after{left:auto;right:0;transform:translate(0,-4px)} /* bleibt in der Karte */
+@media (hover:hover) and (pointer:fine){
+  .topbar [data-tip]:hover::after{opacity:1;filter:blur(0);transform:translate(-50%,0);transition:opacity .6s var(--ease) .9s, transform .8s var(--sheet) .9s, filter .6s var(--ease) .9s}
+  .topbar .searchbtn[data-tip]:hover::after{transform:translate(0,0)}
+}
+#home.searching .searchbtn::after,#home.set-open .setbtn::after{display:none} /* bei offener Suche/Einstellungen kein Hinweis */
+.newbtn svg{transition:transform .2s var(--ease)}
+.newbtn:active svg{transform:scale(.84)} /* drücken: das Plus gibt leicht nach */
+.newbtn{transition:opacity .25s var(--ease), transform .45s var(--sheet)}
+.newring{position:absolute;inset:7px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);pointer-events:none}
+.hitcount{padding:20px 0 4px}
+/* Seitenleiste (Mac): großer Kalender mit Monat/Jahr */
+.scnav{height:48px;display:flex;align-items:center;justify-content:space-between;position:relative;margin-top:2px}
+.schome{position:absolute;right:74px;top:50%;display:flex;align-items:center;gap:7px;height:32px;padding:0 13px 0 11px;border-radius:8px;color:var(--linen);
+  background:rgba(242,243,239,.06);box-shadow:inset 0 0 0 1px rgba(242,243,239,.13);
+  font-family:var(--serif);font-style:italic;font-size:19px;line-height:1;opacity:0;pointer-events:none;transform:translate3d(6px,-50%,0) scale(.96);
+  transition:opacity .3s var(--ease), transform .45s var(--sheet), background-color .2s var(--ease), box-shadow .2s var(--ease)}
+.schome.dir-r{padding:0 11px 0 13px}
+.schome span{padding-right:.04em}
+.schome .ar{color:var(--mist);flex:none;transition:transform .35s var(--sheet), color .2s var(--ease)}
+.schome.on{opacity:1;pointer-events:auto;transform:translate3d(0,-50%,0)}
+.schome.dir-r .ar-l,.schome.dir-l .ar-r{display:none}
+@media (hover:hover) and (pointer:fine){
+  .schome:hover{background:rgba(242,243,239,.11);box-shadow:inset 0 0 0 1px rgba(242,243,239,.22)}
+  .schome:hover .ar{color:var(--linen)}
+  .schome.dir-l:hover .ar-l{transform:translateX(-2px)} .schome.dir-r:hover .ar-r{transform:translateX(2px)}
+}
+.schome:active{transform:translate3d(0,-50%,0) scale(.96);background:rgba(242,243,239,.15)}
+.seg{position:relative;display:flex;gap:22px;font-size:14px}
+.seg button{height:44px;color:var(--mist);transition:color .25s var(--ease)}
+.seg button[aria-selected="true"]{color:var(--linen);font-weight:600}
+.segi{position:absolute;left:0;bottom:9px;height:1px;width:0;background:var(--linen);transition:transform .45s var(--sheet), width .45s var(--sheet)}
+.scarrows{display:flex;align-items:center;margin-right:-10px}
+/* Zeitraum-Kapsel: ‹ Heute › als ein ruhiges Bauteil. „Heute“ ist nur außerhalb des aktuellen Zeitraums aktiv,
+   dann leuchtet auch der Pfeil auf, der in Richtung heute zeigt. Die Breite ändert sich nie. */
+.scpill{display:flex;align-items:stretch;height:32px;border-radius:8px;background:rgba(242,243,239,.045);box-shadow:inset 0 0 0 1px rgba(242,243,239,.1);overflow:hidden}
+.scpill button{display:flex;align-items:center;justify-content:center;color:var(--mist);transition:color .3s var(--ease), background-color .2s var(--ease), transform .2s var(--sheet)}
+.scp-a{width:34px}
+.scp-a svg{transition:transform .35s var(--sheet)}
+.scp-a[data-dir="-1"]{box-shadow:inset -1px 0 rgba(242,243,239,.09)} /* feine Trennlinie – auch, wenn die Kapsel geschlossen ist */
+/* *Heute* „atmet“: im aktuellen Zeitraum ist die Kapsel nur ‹ ›; außerhalb öffnet sie sich in der Mitte und das Wort gleitet hinein.
+   Die Kapsel steht rechtsbündig – daneben verschiebt sich nichts. */
+.scpill .scp-h{max-width:0;padding:0;overflow:hidden;white-space:nowrap;font-family:var(--serif);font-style:italic;font-size:17px;line-height:1;color:var(--linen) !important;
+  cursor:pointer;opacity:0;pointer-events:none;box-shadow:inset -1px 0 rgba(242,243,239,0);
+  transition:max-width .55s var(--sheet) .16s, padding .55s var(--sheet) .16s, opacity .3s var(--ease) .3s, box-shadow .3s var(--ease) .2s, background-color .2s var(--ease)}
+.scpill .scp-h.on{max-width:90px;padding:0 12px 0 11px;opacity:1;pointer-events:auto;box-shadow:inset -1px 0 rgba(242,243,239,.09);
+  transition:max-width .6s var(--sheet), padding .6s var(--sheet), opacity .2s var(--ease), box-shadow .3s var(--ease), background-color .2s var(--ease)}
+.scp-h span{display:block;opacity:0;filter:blur(3px);transform:translate3d(8px,0,0);
+  transition:opacity .28s var(--ease), filter .3s var(--ease), transform .45s var(--sheet)}
+.scp-h.dir-l span{transform:translate3d(-8px,0,0)} /* geht in die Richtung, in der heute liegt */
+.scp-h.on span{opacity:1;filter:blur(0);transform:none;transition:opacity .45s var(--ease) .2s, filter .45s var(--ease) .2s, transform .6s var(--sheet) .12s}
+.scpill:has(.scp-h.on.dir-l) .scp-a[data-dir="-1"],.scpill:has(.scp-h.on.dir-r) .scp-a[data-dir="1"]{color:var(--linen)}
+@media (hover:hover) and (pointer:fine){
+  .scpill .scp-a:hover,.scp-h.on:hover{background:rgba(242,243,239,.07);color:var(--linen)}
+  .scp-a[data-dir="-1"]:hover svg{transform:translateX(-1.5px)} .scp-a[data-dir="1"]:hover svg{transform:translateX(1.5px)}
+}
+.scpill button:active{background:rgba(242,243,239,.12)}
+.scarrows button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--mist);transition:color .2s var(--ease), background-color .2s var(--ease)}
+.scarrows button:hover{color:var(--linen);background:rgba(242,243,239,.07)}
+.scview{position:relative;height:312px;margin:10px -24px 0;overflow:hidden;transition:height .5s var(--sheet)}
+.sidecal.is-week .scview{height:80px}
+.scfoot{transition:height .5s var(--sheet), opacity .3s var(--ease), margin .5s var(--sheet)}
+.sidecal .wday .wd{color:var(--mist)}
+
+.scview .caltrack{height:100%}
+.scview .calpanel{padding:0 24px}
+.sidecal .wdhead{margin-bottom:4px}
+.sidecal .wdhead span{color:var(--mist)}
+.sidecal .cell{height:44px}
+.sidecal .cell .dot{width:36px;height:36px;font-size:14px;transition:transform .12s var(--ease), box-shadow .2s var(--ease), background-color .2s var(--ease)}
+.sidecal .is-today .dot{font-weight:600;color:var(--linen)}
+/* Mac: Auswahl eines Tages – Ring wächst sanft nach außen statt aufzublitzen, Tag federt beim Klicken weich */
+#sidecal .dot{position:relative;box-shadow:inset 0 0 0 0 rgba(242,243,239,0), inset 0 0 0 0 rgba(18,21,15,0), 0 0 0 0 var(--night), 0 0 0 0 rgba(242,243,239,0);
+  transition:box-shadow .6s var(--sheet), transform .5s var(--sheet), background-color .3s var(--ease), color .3s var(--ease)}
+/* Ausgewählter Tag (geöffneter Eintrag) = Ring außen; heute = kleiner heller Punkt unter dem Tag (Eric 25.11.2026, umgedreht gegenüber Entwurf B) */
+#sidecal .is-now .dot{font-weight:600}
+/* Ring als eigene Ebene: blendet und wächst nur über opacity/transform – kein Schatten-Übergang, keine Schriftänderung, daher kein Flackern */
+#sidecal .dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;box-shadow:0 0 0 1px var(--linen);opacity:0;transform:scale(.86);
+  transition:opacity .18s var(--ease), transform .45s var(--sheet);pointer-events:none;will-change:transform,opacity}
+#sidecal .dot,#sidecal .is-sel .dot{box-shadow:none}
+#sidecal .is-sel .dot::before{opacity:1;transform:none;transition:opacity .28s var(--ease), transform .55s var(--sheet)}
+#sidecal .dot::after{content:'';position:absolute;left:50%;top:calc(100% + 7px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--linen);
+  opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
+#sidecal .is-now .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
+/* iPhone wie Mac: ausgewählter Tag = Ring außen (ohne Auswahl: heute), heute = kleiner Punkt darunter */
+.dot{position:relative}
+.dark .is-sel .dot{box-shadow:0 0 0 3px var(--night), 0 0 0 4px var(--linen)}
+.light .is-sel .dot{box-shadow:0 0 0 3px var(--paper), 0 0 0 4px var(--ink)}
+.light .is-now .dot{font-weight:600}
+.dot::after{content:'';position:absolute;left:50%;top:calc(100% + 6px);width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--ink);
+  opacity:0;transform:scale(0);transition:opacity .2s var(--ease), transform .4s var(--sheet);pointer-events:none}
+.dark .dot::after{background:var(--linen)}
+.is-now .dot::after{opacity:1;transform:scale(1);transition:opacity .25s var(--ease), transform .55s cubic-bezier(0.34, 1.56, 0.64, 1)}
+.sidecal .yd.e.n{box-shadow:0 0 0 1.5px var(--night), 0 0 0 2.5px var(--linen)}
+.yd.e.n{box-shadow:0 0 0 1.5px var(--paper), 0 0 0 2.5px var(--ink)}
+.todaypulse{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px var(--linen);pointer-events:none}
+/* Wischen mit dem Trackpad: nur die Tage folgen dem Finger, Kopfzeilen bleiben stehen */
+#sctrack .dragging :is(.wday .dot,.mgrid .dot,.yd,.yz){transform:translate3d(var(--dx,0px),0,0);opacity:var(--do,1);transition:none}
+#sidecal .wday:active .dot,#sidecal .cell:active .dot{transform:scale(.9);transition-duration:.6s, .12s, .3s, .3s}
+.sidecal .ygrid{gap:3px}
+.sidecal .yrow{height:21px}
+.sidecal .yrow:hover{background:rgba(242,243,239,.06)}
+.sidecal .ylab,.sidecal .yhead .ydots{color:var(--mist)}
+.sidecal .yd.e{background:var(--linen)} .sidecal .yd.m{background:var(--nline)} .sidecal .yd.t{box-shadow:0 0 0 1.5px var(--linen) inset} .sidecal .yd.f{background:#4a564e}
+.scfoot{height:40px;display:flex;align-items:center;gap:10px;font-size:13px}
+.scfoot .count{font-size:22px;color:var(--linen)}
+.scfoot .lbl{color:var(--mist)}
+#scStat{display:flex;align-items:baseline;gap:10px;font-size:13px;transition:opacity .35s var(--ease)}
+#scStat .count{font-size:24px;color:var(--linen)}
+#scStat .lbl{color:var(--mist)}
+#scStat.is-empty .count,#scStat.is-empty .lbl{opacity:0}
+/* in der Zukunft: statt der leeren Zählung ruhig „in 2 Wochen“ – kursiv wie Heute */
+#scStat,#weekStat,#calStats{position:relative}
+.away{position:absolute;left:0;bottom:1px;white-space:nowrap;font-family:var(--serif);font-style:italic;font-size:19px;line-height:1;color:var(--mist);opacity:0;transform:translateY(3px);
+  transition:opacity .35s var(--ease), transform .45s var(--sheet);pointer-events:none}
+.is-empty > .away{opacity:1;transform:none;transition-delay:.12s}
+.list{background:var(--paper);padding:4px 24px 8px;min-height:55vh}
+.sep{padding:28px 0 6px}
+.row{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line);width:100%;text-align:left;content-visibility:auto;contain-intrinsic-size:auto 104px}
+.row .d{width:34px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+.row .n{font-family:var(--serif);font-size:32px;line-height:.95;font-variant-numeric:tabular-nums}
+.row .wd{font-size:12px;font-weight:500;letter-spacing:.12em;color:var(--muted)}
+.row .tx{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.row .th{display:flex;align-items:baseline;gap:12px;min-width:0}
+.row .th .ti{flex:1;min-width:0}
+.row .mt,.row .tm{display:none}
+.row .ti{font-family:var(--serif);font-size:23px;line-height:1.1;overflow-wrap:break-word}
+.row .ex{font-size:14px;line-height:1.5;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.row.is-current{background:var(--stone);margin:0 -12px;padding-left:12px;padding-right:12px;width:calc(100% + 24px);border-radius:3px}
+.emptylist{padding:40px 0;margin:0;font:italic 400 22px/1.35 var(--serif);color:var(--dimtext);text-wrap:balance} /* Regel 7: ein Satz in kursiver Serif */
+.fabwrap{position:sticky;bottom:0;z-index:4;display:flex;justify-content:center;padding:28px 24px calc(var(--safe-b) + 20px);
+  background:linear-gradient(to bottom, rgba(238,236,230,0) 0%, var(--paper) 40%);pointer-events:none}
+.fab{pointer-events:auto;display:flex;align-items:center;gap:10px;height:52px;padding:0 28px;border-radius:4px;background:var(--night);color:var(--linen);
+  font-size:15px;font-weight:500;box-shadow:0 30px 50px -30px rgba(8,10,8,.55);transition:transform .12s var(--ease)}
+.fab:active{transform:scale(.97)}
+.row{transition:background-color .2s var(--ease)}
+/* Einträge als ruhige Karten (iPhone + Mac); gewählter/eben geöffneter Eintrag als dunkle Fläche wie der Kopf */
+.list{padding-left:12px;padding-right:12px;padding-top:10px}
+#list .sep{padding-left:12px;padding-right:12px}
+:is(#list,.rep) .row{position:relative;overflow:hidden;padding:15px 12px 16px;border-bottom:0;border-radius:10px;gap:16px;margin-bottom:6px;background:var(--card);
+    transition:background-color .38s var(--ease), color .38s var(--ease)}
+:is(#list,.rep) .row::before{display:none}
+#list .mgroup > .row:first-child::before,#list .sep + .row::before{opacity:0}
+:is(#list,.rep) .row.is-current{margin:0 0 6px;width:100%;padding-left:12px;padding-right:12px;background:var(--ink);border-radius:10px}
+:is(#list,.rep) .row.is-current::before,:is(#list,.rep) .row.is-current + .row::before{opacity:0}
+:is(#list,.rep) .row.is-current .n,:is(#list,.rep) .row.is-current .ti{color:var(--linen)}
+:is(#list,.rep) .row.is-current .wd,:is(#list,.rep) .row.is-current .ex,:is(#list,.rep) .row.is-current .mt{color:var(--mist)}
+:is(#list,.rep) .row .mt{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+:is(#list,.rep) .row .ph{display:flex;align-items:center;gap:3px}
+:is(#list,.rep) .row .ex{-webkit-line-clamp:2}
+/* Titel immer einzeilig – alle Karten im selben Rhythmus */
+:is(#list,.rep) .row .ti{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* mehrere Einträge am selben Tag: Datum nur bei der ersten Karte, danach nur die Uhrzeit; Karten eines Tages rücken zusammen, zwischen Tagen etwas mehr Luft */
+:is(#list,.rep) .row.cont{margin-top:-3px}
+:is(#list,.rep) .row.newday{margin-top:6px}
+:is(#list,.rep) .row.cont .n,:is(#list,.rep) .row.cont .wd{display:none}
+:is(#list,.rep) .row.cont .tm{margin-top:5px}
+:is(#list,.rep) .row .d{width:40px}
+:is(#list,.rep) .row .tm{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums} /* Datum, Tag und Uhrzeit zusammen */
+:is(#list,.rep) .row.is-current .tm{color:var(--mist)}
+/* hell: der gewählte Eintrag ist leiser – er liegt wie das offene Blatt hell auf, mit feinem Tinten-Rand (Nacht bleibt dunkel) */
+html:not(.night) :is(#list,.rep) .row.is-current{background:#3a3e3b} /* gefüllt wie vorher, eine Spur heller als die Tinte */
+@media (hover:hover) and (pointer:fine){
+    :is(#list,.rep) .row:not(.is-current):hover{background:var(--cardh)}
+    :is(#list,.rep) .row:not(.is-current):hover::before,:is(#list,.rep) .row:not(.is-current):hover + .row::before{opacity:0}
+}
+:is(#list,.rep) .row:not(.is-current):active{background:var(--cardp);transition-duration:0s}
+
+/* iPhone: Eintrag nach links wischen = Löschen anbieten */
+.row{position:relative;--sx:0px}
+.row > span{transform:translate3d(var(--sx),0,0)}
+.row.snap > span{transition:transform .42s var(--sheet)}
+.row::after{content:'Löschen';position:absolute;top:0;bottom:0;right:0;width:calc(-1 * var(--sx));overflow:hidden;white-space:nowrap;
+  display:flex;align-items:center;justify-content:center;background:#9b4434;color:var(--linen);font-size:14px;font-weight:500;pointer-events:none}
+.row.snap::after{transition:width .42s var(--sheet)}
+.row.swiping,.row.is-open{background:transparent !important}
+.row.is-open::before,.row.swiping::before{opacity:0}
+.confirm{position:fixed;inset:0;z-index:70}
+.confirm .cback{position:absolute;inset:0;background:rgba(8,10,8,.42);opacity:0;transition:opacity .35s var(--ease)}
+.confirm .cpanel{position:absolute;left:0;right:0;bottom:0;background:var(--sheetbg);border-radius:18px 18px 0 0;padding:26px 24px calc(var(--safe-b) + 18px);
+  transform:translate3d(0,100%,0);transition:transform .5s var(--sheet);box-shadow:0 -18px 40px -24px rgba(8,10,8,.5)}
+.confirm.show .cback{opacity:1}
+.confirm.show .cpanel{transform:none}
+.confirm h2{margin:0 0 8px;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.1}
+.confirm p{margin:0 0 22px;font-size:15px;line-height:1.55;color:var(--ink2)}
+.confirm .btn{width:100%;height:52px}
+.confirm .btn + .btn{margin-top:10px}
+.btn.danger{background:#9b4434;color:var(--linen)}
+@media (min-width: 960px){.confirm .cpanel{left:50%;right:auto;bottom:50%;width:420px;border-radius:14px;transform:translate3d(-50%,calc(50% + 24px),0);opacity:0;transition:transform .5s var(--sheet), opacity .3s var(--ease)}
+  .confirm.show .cpanel{transform:translate3d(-50%,50%,0);opacity:1}}
+.row:active{background:var(--stone)}
+.wday .dot,.cell .dot{transition:transform .12s var(--ease)}
+.wday:active .dot,.cell:active .dot{transform:scale(.9)}
+.iconbtn,.linkbtn,.tab,.back{transition:opacity .12s var(--ease)}
+.iconbtn:active,.linkbtn:active,.tab:active,.back:active{opacity:.55}
+.yrow{border-radius:2px;transition:background-color .2s var(--ease)}
+.yrow:active{background:rgba(38,48,43,.06)}
+.otd{transition:opacity .12s var(--ease)} .otd:active{opacity:.6}
+
+/* pages (calendar, settings) */
+.page{padding:calc(var(--safe-t) + 8px) 24px calc(var(--safe-b) + 40px);min-height:100%}
+.pnav{height:44px;display:flex;justify-content:space-between;align-items:center}
+.tabs{display:flex;gap:20px;font-size:14px;margin-left:auto}
+.tab{height:44px;color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+.back{display:flex;align-items:center;gap:4px;height:44px;margin-left:-6px;font-size:15px;color:var(--olive)}
+.stats{margin-top:16px;height:56px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.stats .lbl{font-size:13px;color:var(--muted)}
+.calhero{padding-bottom:0}
+.calhero .pnav{margin-left:-3px}
+.roundbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+.roundbtn span{width:38px;height:38px;border-radius:50%;background:var(--linen);color:var(--night);display:flex;align-items:center;justify-content:center;transition:transform .12s var(--ease)}
+.roundbtn:active span{transform:scale(.92)}
+.dark .tab{color:var(--mist)}
+.dark .tab[aria-selected="true"]{color:var(--linen)}
+.dark .stats{border-top-color:var(--nline);border-bottom:0}
+.dark .stats .count{color:var(--linen)}
+.dark .stats .lbl{color:var(--mist)}
+.calbody{padding-top:0;min-height:0}
+.calarea{height:384px;padding-top:18px;display:flex;flex-direction:column;touch-action:pan-y}
+.calviewport{flex:1;overflow:hidden;margin:0 -24px;position:relative}
+.morphghost{position:absolute;inset:0;display:flex;pointer-events:none;transform-origin:50% 30%}
+.morphghost > *{flex:0 0 100% !important;width:100% !important;max-width:none !important}
+.caltrack .calpanel{transform-origin:50% 30%}
+.caltrack{height:100%}
+.calpanel{flex:0 0 33.3333%;padding:0 20px;display:flex;flex-direction:column}
+@keyframes inl{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes inr{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+.wdhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin-bottom:6px}
+.wdhead span{text-align:center;font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--muted)}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:4px}
+.cell{height:48px;display:flex;align-items:center;justify-content:center}
+.cell .dot{width:38px;height:38px;font-weight:400}
+.light .is-entry .dot{background:var(--ink);color:var(--linen);font-weight:600}
+
+.light .is-future .dot{color:var(--muted)}
+.legend{margin-top:auto;padding-top:8px;display:flex;gap:20px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.ygrid{display:flex;flex-direction:column;gap:4px}
+.yhead,.yrow{display:flex;align-items:center;gap:8px}
+.yhead{height:18px;margin-bottom:2px}
+.yrow{height:22px;width:100%}
+.ylab{width:32px;flex-shrink:0;font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--muted);text-align:left}
+.ydots{flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) 7px repeat(7,minmax(0,1fr)) 7px repeat(7,minmax(0,1fr)) 7px repeat(7,minmax(0,1fr)) 7px repeat(3,minmax(0,1fr));align-items:center;justify-items:center}
+.yhead .ydots{font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.yd{width:6px;height:6px;border-radius:50%}
+.yd.e{background:var(--ink)} .yd.m{background:var(--empty)} .yd.t{width:8px;height:8px;box-shadow:0 0 0 1.5px var(--ink) inset} .yd.f{width:2px;height:2px;background:#b9bbb2}
+.otd{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;text-align:left;width:100%}
+.otd .ti{font-family:var(--serif);font-size:26px;line-height:1.1}
+.otd .ex{font-size:14px;line-height:1.55;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.otd .none{font:italic 400 19px/1.35 var(--serif);color:var(--dimtext);text-wrap:balance}
+.otd .kicker{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.otd .go{display:flex;align-items:center;gap:4px;letter-spacing:.12em;color:var(--ink)}
+.otd.is-prev .ti.muted{color:var(--dimtext)}
+#otd.swap{animation:softin .4s var(--ease)}
+
+/* entry */
+#entry{background:var(--sheetbg)}
+.entry{padding:calc(var(--safe-t) + 8px) 24px 45vh}
+.enav{height:44px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:var(--safe-t);z-index:3;
+  margin:0 -24px;padding:0 14px 0 24px;background:var(--sheetbg);top:calc(var(--safe-t) + var(--vvtop, 0px))}
+.edate{display:flex;flex-direction:column;gap:2px;min-width:0}
+.edate .wd{font-size:15px;font-weight:600;color:var(--ink)}
+.edate .dn,.edate .dtm{display:none}
+.edate .dt{font-size:13px;font-weight:500;color:var(--olive);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:959px){ /* iPhone: kompakte Fassung der Mac-Randspalte – große Tageszahl, daneben Wochentag und Monat · Uhrzeit */
+  .enav{height:60px}
+  .edate{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;row-gap:3px;align-items:end}
+  .edate .dn{display:block;grid-column:1;grid-row:1 / span 2;align-self:center;font-family:var(--serif);font-size:42px;line-height:.9;letter-spacing:-.015em;color:var(--ink);font-variant-numeric:lining-nums}
+  .edate .wd{grid-column:2;grid-row:1;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
+  .edate .dt{display:none}
+  .edate .dtm{display:block;grid-column:2;grid-row:2;align-self:start;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .edate .savedot{grid-column:2;grid-row:1;position:static;justify-self:start;align-self:center;margin-left:0;transform-origin:left center}
+}
+.eact{position:relative;width:44px;height:44px;flex-shrink:0}
+.eact > button{position:absolute;inset:0}
+.trash{display:flex;align-items:center;justify-content:center;color:var(--muted);opacity:0;transform:scale(.7);pointer-events:none;
+  transition:opacity .2s var(--ease), transform .35s var(--sheet), color .2s var(--ease)}
+#entry.has-id:not(.is-typing) .trash{opacity:1;transform:none;pointer-events:auto}
+.trash:active{color:#9b4434;transform:scale(.9)}
+@media (hover:hover) and (pointer:fine){.trash:hover{color:#9b4434}}
+.ctxmenu{position:fixed;z-index:80;min-width:180px;padding:6px;background:var(--sheetbg);border-radius:10px;box-shadow:0 0 0 1px var(--line), 0 24px 40px -20px rgba(8,10,8,.45);
+  opacity:0;transform:scale(.96);transform-origin:0 0;transition:opacity .16s var(--ease), transform .22s var(--sheet)}
+.ctxmenu.show{opacity:1;transform:none}
+.ctxmenu button{display:flex;align-items:center;gap:10px;width:100%;height:36px;padding:0 12px;border-radius:6px;font-size:14px;color:var(--ink);text-align:left}
+.ctxmenu button:hover,.ctxmenu button:focus-visible{background:var(--stone);outline:none}
+.ctxmenu .danger{color:#9b4434}
+.done{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6);pointer-events:none;
+  transition:opacity .2s var(--ease), transform .35s var(--sheet)}
+#entry.is-typing .done{opacity:1;transform:none;pointer-events:auto}
+.done span{width:36px;height:36px;border-radius:50%;background:var(--night);color:var(--linen);display:flex;align-items:center;justify-content:center;transition:transform .12s var(--ease)}
+.done:active span{transform:scale(.9)}
+.eline{height:1px;background:var(--line);margin-top:16px}
+.ebody{margin-top:18px;font-size:18px;line-height:1.7;white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:30vh;caret-color:var(--copper)}
+.ebody:empty::before{content:attr(data-ph);color:var(--dimtext)}
+@media (max-width:959px){
+  /* Suche (iPhone): das Feld wächst aus der Lupe, der Kopf mit Monat/Woche/Jahr bleibt sichtbar */
+  .topbar{position:relative;z-index:7}
+  .dsearch{display:flex;align-items:center;position:absolute;right:44px;top:0;height:44px;width:0;opacity:0;overflow:hidden;pointer-events:none;
+    border-bottom:1px solid var(--nline);transition:width var(--t3) var(--sheet), opacity var(--t2) var(--ease), border-color var(--t2) var(--ease)}
+  #home.searching .dsearch{width:calc(100% - 44px);opacity:1;pointer-events:auto}
+  .dsearch:focus-within{border-bottom-color:var(--mist);outline:none}
+  .dsearch input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:var(--linen);font:400 24px/1 var(--serif);padding:0 4px 0 0}
+  .dsearch input::placeholder{color:var(--dim)}
+  .dsearch input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+  /* eingeklappt: Feld und X bleiben im Kopf – das Feld steht an der Stelle des Titels, die Lupe oben rechts wird zum X */
+  #home.sq > .list{min-height:100vh} /* Treffer-Liste immer lang genug, damit der Monat ganz zur Woche einklappen kann (nie halb stehen bleiben) */
+  #home.sqstuck .dsearch{position:fixed;left:24px;right:62px;top:calc(var(--safe-t) + 14px);width:auto;z-index:9;animation:softin var(--t2) var(--ease) both}
+  #home.sqstuck .stickytitle .title,#home.sqstuck .stickytitle .titlenext{opacity:0 !important;transition:opacity var(--t1) var(--ease)}
+  .stickysearch svg{transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet)} .stickysearch .i-x2{position:absolute;opacity:0;transform:rotate(-90deg) scale(.5)}
+  #home.searching .stickysearch .i-x2{opacity:1;transform:none} #home.searching .stickysearch svg:first-child{opacity:0;transform:rotate(90deg) scale(.5)}
+  /* Knöpfe: etwas runder und griffiger, passend zu den Karten */
+  .btn{height:50px;border-radius:12px}
+  .page.wide{padding-bottom:calc(var(--safe-b) + 130px)}
+  /* weicher Auslauf am unteren Rand, unter den runden Knöpfen – Text läuft nicht mehr hart aus */
+  .fadebot{position:sticky;bottom:0;z-index:4;height:calc(var(--safe-b) + 72px);margin-top:calc(-1 * (var(--safe-b) + 72px));pointer-events:none;
+    background:linear-gradient(to bottom, color-mix(in srgb, var(--paper) 0%, transparent), var(--paper) 88%)}
+}
+.fadebot{display:none}
+@media (max-width:959px){ .fadebot{display:block} }
+/* Zählwerk: Ziffern rollen einzeln (x/y Tage) */
+.ch{display:inline-block;position:relative}
+.ch > span{display:inline-block}
+.ch .chold{position:absolute;left:0;top:0;pointer-events:none}
+.sect .sub{margin-top:22px}
+/* Speicherpunkt: Ring = ungespeichert, gefüllter Tintenpunkt = gespeichert, blendet dann aus */
+.edate{position:relative}
+.savedot{width:6px;height:6px;border-radius:50%;flex:none;align-self:center;margin-left:10px;box-shadow:inset 0 0 0 1px var(--olive);opacity:0;transform:scale(.6);
+  transition:opacity .5s var(--ease), transform .5s var(--sheet), background-color .35s var(--ease)}
+.savedot.pending{opacity:.85;transform:none}
+.savedot.saved{opacity:.85;transform:none;background:var(--olive)}
+.savedot.saved.pop{animation:inkpop .6s var(--sheet)}
+.savedot.rest{opacity:0;transition:opacity 1.6s var(--ease)}
+@keyframes inkpop{0%{transform:scale(.6)}45%{transform:scale(1.35)}100%{transform:none}}
+@media (max-width:959px){.savedot{position:absolute;left:100%;bottom:6px;margin-left:8px}}
+/* Licht nach Tageszeit: Papier wird morgens frischer, abends wärmer, spät minimal gedämpft */
+html[data-light="morgen"]{--paper:#eeede8;--sheetbg:#f7f7f3}
+html[data-light="abend"]{--paper:#ede8df;--sheetbg:#f5f1e9}
+html[data-light="spaet"]{--paper:#e8e2d7;--sheetbg:#f0eadf;--stone:#ddd8cd}
+.app,.view,#entry,#home,.list{transition-property:background-color;transition-duration:1.2s}
+/* Nacht: dieselbe Palette, umgekehrt – der dunkle Kopf bleibt der dunkelste Ton */
+html.night{--dimtext:#8d998f;--copper:#c27a52;--card:rgba(242,243,239,.045);--cardh:rgba(242,243,239,.075);--cardp:rgba(242,243,239,.1);--paper:#181c17;--sheetbg:#1e231d;--stone:#252b24;--ink:#e4e7df;--ink2:#c3cac4;--muted:#9aa59c;--olive:#a3b4a7;--line:#2f3631;--empty:#353b36;--night:#0b0d0a}
+html.night .row.is-current,html.night :is(#list,.rep) .row.is-current{background:#2b322c}
+html.night .light .is-entry .dot{color:var(--night)}
+html.night :is(.btn:not(.ghost),.fxseg button[aria-checked="true"],.done span,.floatbtn,.toast){background:var(--linen);color:var(--night)}
+html.night .yd.f{background:#4a514b}
+html.night .view:not(#home){box-shadow:0 0 0 1px rgba(242,243,239,.07), 0 30px 60px -44px rgba(0,0,0,.8)}
+
+.ephotos{display:grid;gap:8px;margin-top:28px}
+.ephotos img{width:100%;height:auto;display:block;border-radius:8px;background:var(--stone)}
+.entry.in-l{animation:inl .42s var(--sheet)} .entry.in-r{animation:inr .42s var(--sheet)}
+
+/* settings */
+.ptitle{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:64px;line-height:64px;letter-spacing:-.015em}
+.sect{margin-top:16px;border-top:1px solid var(--line);padding-top:20px}
+.sect h2{margin:0 0 8px;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.1}
+.sect p{margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--ink2)}
+.sect + .sect{margin-top:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border-radius:8px;background:var(--night);color:var(--linen);font-size:15px;font-weight:500}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.fxsect{display:none}
+.fxseg{display:inline-flex;box-shadow:0 0 0 1px var(--ink) inset;border-radius:10px;padding:3px;gap:3px}
+.fxseg button{height:40px;padding:0 18px;border-radius:7px;font-size:14px;font-weight:500;color:var(--ink);transition:background-color .25s var(--ease), color .25s var(--ease)}
+.fxseg button[aria-checked="true"]{background:var(--night);color:var(--linen)}
+@media (hover:hover) and (pointer:fine){.fxseg button:not([aria-checked="true"]):hover{background:var(--stone)}}
+.note{margin-top:12px;font-size:14px;line-height:1.55;color:var(--muted);min-height:1em}
+.ptr{position:fixed;left:50%;top:calc(var(--safe-t) + 14px);z-index:30;width:30px;height:30px;margin-left:-15px;opacity:0;pointer-events:none;
+  transform:translateY(-14px);transition:opacity .3s var(--ease), transform .4s var(--sheet)}
+.ptr.pulling{transition:none}
+.ptr svg{display:block;transform:rotate(-90deg);overflow:visible}
+.ptr-track{fill:none;stroke:rgba(242,243,239,.14);stroke-width:1.5}
+.ptr-arc{fill:none;stroke:var(--linen);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:calc(100 - var(--p, 0) * 100)}
+.ptr.ready .ptr-arc{stroke-width:2}
+.ptr.spin .ptr-arc{stroke-dasharray:28 72;stroke-dashoffset:0;transition:stroke-dasharray .3s var(--ease)}
+.ptr.spin svg{animation:ptrspin .9s cubic-bezier(0.5, 0.15, 0.5, 0.85) infinite}
+@keyframes ptrspin{from{transform:rotate(-90deg)}to{transform:rotate(270deg)}}
+@media (min-width: 960px){.ptr{display:none}}
+/* Mac: Hintergrund dunkler als die Karten – die Einträge liegen hell darauf wie Blätter auf dem Tisch (je Lichtstufe) */
+@media (min-width: 960px){
+  html:not(.night){--card:rgba(255,255,255,.5);--cardh:rgba(255,255,255,.7);--cardp:rgba(255,255,255,.85)}
+  html:not(.night),html:not(.night)[data-light="tag"]{--paper:#e0ddd4}
+  html:not(.night)[data-light="morgen"]{--paper:#e1e0d9}
+  html:not(.night)[data-light="abend"]{--paper:#dfd8cc}
+  html:not(.night)[data-light="spaet"]{--paper:#d9d1c4}
+  html.night{--paper:#121510;--card:rgba(242,243,239,.055);--cardh:rgba(242,243,239,.085)}
+}
+/* Nacht verfeinert (Entwurf J1, 25.11.2026): ein feiner Rand trägt die Form statt Schatten; feste, leicht grüne Kartentöne; Text etwas ruhiger */
+html.night{color-scheme:dark;--hair:rgba(242,243,239,.07)}
+html.night .ebody{color:#d3d9d1}
+html.night .ephotos img{filter:brightness(.88)}
+html.night .confirm .cpanel{box-shadow:0 0 0 1px var(--hair), 0 30px 60px -30px rgba(0,0,0,.8)}
+html.night .ctxmenu{box-shadow:0 0 0 1px var(--hair), 0 24px 40px -20px rgba(0,0,0,.7)}
+@media (min-width: 960px){
+  /* Kalenderkarte: derselbe feine Rand wie das Blatt (drei Teile – oben, Mitte, unten) */
+  html.night #home > .hero:first-of-type{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair), inset 0 1px 0 var(--hair)}
+  html.night #home > .stickytitle{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair)}
+  html.night #home > .herorest{box-shadow:inset 1px 0 0 var(--hair), inset -1px 0 0 var(--hair), inset 0 -1px 0 var(--hair)}
+  html.night .view:not(#home){box-shadow:0 0 0 1px var(--hair), 0 30px 60px -44px rgba(0,0,0,.8)}
+  html.night .app.a4 #entry.view{box-shadow:0 0 0 1px rgba(242,243,239,.09), 0 70px 160px -50px #000, 0 24px 50px -28px rgba(0,0,0,.8)}
+}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field span{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
+.field input{height:48px;border:0;border-bottom:1px solid var(--line);background:transparent;font:400 17px var(--sans);color:var(--ink);outline:none;border-radius:0;padding:0}
+.field input:focus{border-bottom-color:var(--ink)}
+.field input::placeholder{color:var(--dimtext)}
+.toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 90px);transform:translate(-50%,10px);opacity:0;background:var(--night);color:var(--linen);
+  padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;transition:opacity .32s var(--ease), transform .32s var(--ease);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* desktop */
+@media (min-width: 960px){
+  .view{left:var(--side)}
+  #home::after{display:none}
+  #home{left:0;width:var(--side);right:auto;transform:none !important;visibility:visible !important;opacity:1 !important;border-right:0;z-index:10;background:var(--paper)}
+  /* Mac: Ansichten wechseln als ruhige Überblendung mit leichtem Zoom statt Hereinschieben */
+  .view{transition:transform .7s var(--sheet), opacity .42s var(--ease) .08s, visibility 0s linear 0s}
+  .view.is-top{box-shadow:none}
+  .view.is-off{transform:translate3d(0,14px,0) scale(.99);opacity:0;transition:transform .5s var(--sheet), opacity .2s var(--ease), visibility 0s linear .5s}
+  .view.is-under{transform:scale(.988);opacity:0;transition:transform .5s var(--sheet), opacity .2s var(--ease), visibility 0s}
+  .view::after{display:none}
+  .app{background:var(--paper)}
+  /* rechts: der Schreibbereich als schwebendes Blatt mit runden Ecken auf dem Papierton */
+  .view:not(#home){top:18px;right:18px;bottom:18px;left:var(--side);border-radius:14px;background:var(--sheetbg); /* 18px Luft rundum und auf beiden Seiten der Seitenleiste */
+    box-shadow:0 0 0 1px rgba(38,48,43,.15), 0 30px 60px -44px rgba(8,10,8,.4)}
+  @keyframes rise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
+  #settings.is-top .page > *{animation:rise .8s var(--sheet) both}
+  #settings.is-top .page > :nth-child(2){animation-delay:.06s} #settings.is-top .page > :nth-child(3){animation-delay:.11s}
+  #settings.is-top .page > :nth-child(4){animation-delay:.16s} #settings.is-top .page > :nth-child(5){animation-delay:.21s}
+  #settings.is-top .page > :nth-child(6){animation-delay:.26s} #settings.is-top .page > :nth-child(7){animation-delay:.31s}
+  @keyframes sink{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,-12px,0)}}
+  #settings.leaving .page > *{animation:sink .26s cubic-bezier(0.4, 0, 1, 1) both}
+  #settings.leaving .page > :nth-child(6){animation-delay:.01s} #settings.leaving .page > :nth-child(5){animation-delay:.02s} #settings.leaving .page > :nth-child(4){animation-delay:.04s}
+  #settings.leaving .page > :nth-child(3){animation-delay:.06s} #settings.leaving .page > :nth-child(2){animation-delay:.08s}
+  #settings.leaving .page > :nth-child(1){animation-delay:.1s}
+  #entry.returning .entry > *{animation:rise .8s var(--sheet) both}
+  @keyframes softrise{from{opacity:0;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
+  #entry.switching .entry > *{animation:softrise .62s cubic-bezier(0.25, 0.8, 0.25, 1) both}
+  #entry.switching .entry > :nth-child(2){animation-delay:.04s} #entry.switching .entry > :nth-child(3){animation-delay:.08s} #entry.switching .entry > :nth-child(4){animation-delay:.12s}
+  #entry.returning .entry > :nth-child(2){animation-delay:.06s} #entry.returning .entry > :nth-child(3){animation-delay:.12s}
+  #entry.returning .entry > :nth-child(4){animation-delay:.18s}
+  .setbtn circle{transition:transform .55s var(--sheet)}
+  #home.set-open .setbtn circle:first-of-type{transform:translateX(-8px)}
+  #home.set-open .setbtn circle:last-of-type{transform:translateX(8px)}
+  .hero{padding-top:12px}
+  .herofoot{display:none}
+  #entry .floatbtn{display:none}
+  .homeplus{display:none} /* am Mac sitzt „Neu“ als Symbol oben in der Kalenderkarte */
+  .newbtn{display:flex}
+  /* Seite: beim Schreiben gleitet das Blatt in voller Breite in die Mitte, alles andere tritt ins Dunkel zurück.
+     Nur transform/opacity – der Text bricht nie um, deshalb kann die Bewegung lang und ruhig sein. */
+  #entry.view{right:auto;width:calc(100vw - var(--side) - 18px);
+    transition:transform .7s var(--sheet), opacity .42s var(--ease) .08s, visibility 0s linear 0s, box-shadow 1.2s var(--ease)}
+  .app::before{content:'';position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;transition:opacity 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background:radial-gradient(120% 90% at 50% 42%, #22271f 0%, #161a14 55%, #0c0e0b 100%)}
+  html.night .app::before{background:radial-gradient(120% 90% at 50% 42%, #0f120e 0%, #080907 60%, #040504 100%)}
+  .app.a4::before{opacity:1;transition:opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1)}
+  .app.a4 #entry.view,.app.a4-out #entry.view{z-index:30}
+  .app.a4 #entry.view{transform:translate3d(calc(9px - var(--side) / 2),0,0);
+    box-shadow:0 0 0 1px rgba(0,0,0,.18), 0 70px 160px -50px rgba(0,0,0,.8), 0 24px 50px -28px rgba(0,0,0,.55);
+    transition:transform 1.9s cubic-bezier(0.65, 0, 0.18, 1), box-shadow 2.2s var(--ease), opacity .42s var(--ease), visibility 0s}
+  .app.a4 #home{transform:translate3d(-28px,0,0) scale(.985) !important;opacity:0 !important;pointer-events:none;
+    transition:transform 1.8s cubic-bezier(0.65, 0, 0.18, 1), opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1) !important}
+  .app.a4-out #entry.view{transition:transform 1.5s cubic-bezier(0.6, 0, 0.2, 1), box-shadow 1.4s var(--ease), opacity .42s var(--ease), visibility 0s}
+  .app.a4-out #home{transition:transform 1.5s cubic-bezier(0.6, 0, 0.2, 1), opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1) .35s !important}
+  .fxsect{display:block}
+  #list{padding-bottom:24px}
+  .stickytitle .title .t{font-size:56px;line-height:64px} .stickytitle .title .y{font-size:38px}
+  .herorest{padding-top:0}
+  .topbar{justify-content:flex-end;position:relative;z-index:7} /* Hinweis am Plus liegt über dem großen Titel */
+  .topbar .sctabs{display:flex;margin-right:auto;margin-left:0;transition:opacity .25s var(--ease)} /* links bündig mit dem Titel */
+  #home.searching .sctabs{opacity:0;pointer-events:none}
+  .dsearch{display:flex;align-items:center;position:absolute;right:44px;top:0;height:44px;width:0;opacity:0;overflow:hidden;pointer-events:none;
+    border-bottom:1px solid var(--nline);transition:width .55s var(--sheet), opacity .3s var(--ease), border-color .3s var(--ease)}
+  #home.searching .dsearch{width:calc(100% - 44px);opacity:1;pointer-events:auto}
+  .dsearch:focus-within{border-bottom-color:var(--mist);outline:none}
+  .dsearch input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:var(--linen);font:400 24px/1 var(--serif);padding:0 4px 0 0}
+  .dsearch input::placeholder{color:var(--dim)}
+  .dsearch input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+  .stickysearch{display:none}
+  .stickytitle{display:flex;align-items:baseline}
+  .stickytitle .title{clip-path:inset(-40px -40px -8px -40px)}
+  .stickytitle .title{flex:none}
+  .stickytitle #scStat{transition:opacity .3s var(--ease)}
+  #homeTitle .t,#homeTitle .y{display:inline-block;will-change:transform}
+  #homeTitle .y{padding-right:.12em} /* kursive Ziffern nicht abschneiden */
+  #home.cal-in .stickytitle #scStat{opacity:0}
+  .weekwrap,.mwd,.weekline,#todayLine,.ylinew,#skyH{display:none}
+  .scinner .yline{margin:0}
+  .scinner .skyw{padding:12px 0 2px;background:none}
+  #entry:not(.is-typing) .floatbtn{opacity:0;pointer-events:none}
+  .floatbtn{right:42px;bottom:42px}
+  .calhero{padding:40px max(24px, calc(50% - 200px)) 0}
+  .sidecal{display:block;overflow:hidden;margin:8px -24px 0;padding:0 24px} /* reicht bis an den Rand: nichts wird vorzeitig abgeschnitten */
+  .sidecal.snapping{transition:height .45s var(--sheet)}
+  .scinner{padding-bottom:6px;transform-origin:50% 0}
+  #home.cal-in .scinner{pointer-events:none}
+  .row .ti{font-size:22.5px;line-height:1.15} .row .n{font-size:28px}
+  #list{padding:0 18px 40px}
+  /* weicher Auslauf unten als ruhende Fläche über der Liste (keine Maske auf dem scrollenden Element – die ruckelt in Safari) */
+  .listfade{display:block;position:absolute;left:0;width:var(--side);bottom:18px;height:28px;pointer-events:none;z-index:2;
+    background:linear-gradient(to bottom, color-mix(in srgb, var(--paper) 0%, transparent), var(--paper))} /* die letzte Karte kann ganz über den weichen Rand gescrollt werden */
+  /* Seitenleiste: der dunkle Kalender als schwebende Karte mit runden Ecken – wie das Blatt rechts */
+  #home > .hero:first-of-type{margin:18px 18px 0;border-radius:14px 14px 0 0;padding:4px 16px 0}
+  #home > .stickytitle{margin:0 18px;padding:0 16px}
+  #home > .herorest{margin:0 18px;border-radius:0 0 14px 14px;padding:0 16px 8px}
+  #home .sidecal{margin:8px -16px 0;padding:0 16px}
+  #home .scview{margin:10px -16px 0}
+  #home .scview .calpanel,#sidecal .weekpanel{padding:0 16px}
+  .stickytitle .titlenext{left:16px}
+  #list .sep{padding-left:16px;padding-right:16px}
+  #list .row,#list .row.is-current{padding-left:16px;padding-right:16px}
+  #list .row::before{left:16px;right:16px}
+  .fabwrap{padding-bottom:20px}
+  .fab{width:100%;height:44px}
+  .entry,.page{margin:0;padding-top:40px;padding-left:64px;padding-right:64px;max-width:768px}
+  .ephotos{grid-template-columns:1fr 1fr}
+  #home{display:flex;flex-direction:column;overflow:hidden}
+  #home > *{flex:none}
+  #home > #list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-top:0;margin-top:10px;margin-bottom:18px;} /* Liste endet wie das Blatt 18px über dem Fensterrand */ /* Scrollbereich beginnt 18px unter dem Block – nichts rutscht unter das Datum */
+  .stickytitle::after{display:none}
+  #homeTitle{cursor:pointer}
+  #homeTitle:hover .y{color:var(--mist)}
+  #homeTitle .y{transition:color .2s var(--ease)}
+  /* rechts an der Seitenleiste ausgerichtet: Datum = Höhe der Tabs, Titel = Grundlinie des Monats, Text = Höhe des Kalenders */
+  .page{padding-top:0}
+  /* Blatt wie Entwurf D (Randspalte): links eine schmale Datumsspalte wie eine Randnotiz, getrennt durch eine Haarlinie,
+     rechts Titel und Text. Proportionen: Spalte 112px + 44px Luft, Textspalte ~55 Zeichen (19px) – ruhig fürs Auge. */
+  /* Buchseite: der TEXT steht mittig (gleicher Abstand links und rechts), die Datumsspalte hängt links daneben im Rand wie eine Randnotiz.
+     Ist dafür zu wenig Platz (kleiner Bildschirm), gleiten die Ränder stufenlos zurück auf je --m. */
+  .entry{--m:72px;--T:660px;--dc:156px;--pr:max(var(--m), calc((100% - var(--T)) / 2));
+    position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:44px;align-content:start;
+    padding:104px var(--pr) 45vh max(var(--m), calc(var(--pr) - var(--dc)));max-width:none}
+  .entry .enav{display:contents}
+  .entry .eact{position:absolute;top:22px;right:22px;transition:opacity .5s var(--ease)}
+  @media (hover:hover){ #entry:not(:hover) .entry .eact:not(:focus-within){opacity:0} }
+  .app.a4 .entry .eact{opacity:0;pointer-events:none} /* beim Schreiben in der Mitte: nur Papier und Text */ /* beim Schreiben nur Text – der Mülleimer kommt, wenn die Maus übers Blatt fährt */ /* fest in der oberen rechten Blattecke, unabhängig vom Text */ /* Mülleimer endet genau am rechten Rand des Satzspiegels */
+  .entry .edate{grid-column:1;grid-row:1 / span 2;align-self:start;position:static;flex-direction:column;align-items:flex-start;gap:0;
+    padding:4px 24px 6px 0;border-right:1px solid var(--line);text-align:left}
+  .entry .edate .dn{display:block;order:-1;font-family:var(--serif);font-size:68px;line-height:.86;letter-spacing:-.015em;color:var(--ink);font-variant-numeric:lining-nums}
+  .entry .edate .wd{margin-top:14px;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--olive)}
+  .entry .edate .dt{display:none}
+  .entry .edate .dtm{display:block;margin-top:6px;font-size:13px;font-weight:500;line-height:1.55;letter-spacing:.03em;color:var(--muted);white-space:pre-line}
+  .entry .savedot{position:absolute;left:auto;right:68px;top:41px;bottom:auto;margin:0}
+  .done{display:none} /* am Mac speichert die App automatisch – kein Haken nötig */
+  #entry.has-id .trash{opacity:1;transform:none;pointer-events:auto}
+  .entry .title{grid-column:2;font-style:normal;font-size:50px;line-height:58px;letter-spacing:-.015em;margin:-6px 0 0;max-width:none;text-align:left;padding-top:0;min-height:58px;display:block}
+  .ebody{grid-column:2;margin:26px 0 0;max-width:none}
+  .entry .ephotos{grid-column:2;max-width:none}
+  .page .title{margin:0;padding-top:8px;height:72px}
+  .page .title .t{font-size:56px;line-height:64px} .page .title .y{font-size:38px}
+  .page .title + .sect{margin-top:8px} /* erste Linie auf derselben Höhe wie links */
+  .ebody{font-size:19px;line-height:1.75} /* gleiche Spalte in beiden Ansichten – beim Gleiten in die Mitte bricht nichts um */
+  .view,.view.is-top{will-change:auto}
+  .enav{position:static;margin:0;padding:0}
+  .page{max-width:576px}
+  .page.wide{max-width:768px}
+}
+/* großer Bildschirm (z. B. externer Monitor): Satzspiegel wächst mit, Proportionen bleiben wie auf dem MacBook */
+@media (min-width: 1500px){
+  .entry{--m:88px;--T:800px;--dc:180px;grid-template-columns:128px minmax(0,1fr);column-gap:52px;padding-top:120px}
+  .entry .edate .dn{font-size:78px}
+  .entry .edate .wd{font-size:13px}
+  .entry .edate .dtm{font-size:14px}
+  .entry .title{font-size:58px;line-height:66px}
+  .ebody{font-size:21px}
+}
+/* sehr breite Bildschirme: Textspalte noch etwas breiter und Schrift eine Spur größer – weniger leeres Papier, Zeilen bleiben gut lesbar (~78 Zeichen) */
+@media (min-width: 1800px){
+  .entry{--T:880px;--m:80px}
+  .ebody{font-size:22px}
+  .entry .title{font-size:62px;line-height:70px}
+}
+@media (prefers-reduced-motion: reduce){
+  #settings.is-top .page > *{animation:none}
+  .view,.view.is-off,.view::after{transition:none}
+  .entry.in-l,.entry.in-r{animation:none}
+}
+/* ===== iPhone-Feinschliff (25.11.2026, Teil 2): Systeme vom Mac übernommen ===== */
+@media (max-width:959px){
+  /* eigene Scroll-Leiste statt des hellen iOS-Balkens: beginnt an der Kante der Liste, nicht ganz oben */
+  #home{scrollbar-width:none} #home::-webkit-scrollbar{display:none}
+  .rail{width:26px}
+  .rail.on{pointer-events:none} .rail.on .rail-t{pointer-events:auto} /* nur der Daumen ist greifbar – daneben scrollt man normal */
+  .rail-t::before{content:'';position:absolute;top:-12px;bottom:-12px;left:-14px;right:-5px}
+  .rail-t{right:5px;width:3px;background:rgba(38,48,43,.38)}
+  .rail::before{right:5.5px}
+  .rail.legend .rail-t,.rail.drag .rail-t{width:6px;right:3.5px;background:rgba(38,48,43,.6)}
+  html.night .rail-t{background:rgba(242,243,239,.34)} html.night .rail.legend .rail-t,html.night .rail.drag .rail-t{background:rgba(242,243,239,.55)}
+  .rail-y{right:24px}
+  .ry{font-size:17px;padding:4px 9px 5px}
+  /* Heute-Kapsel wie am Mac: unter der Woche neben dem Kalender-Symbol, im Kalender rechts in der Zählzeile */
+  .twbtn{display:none}
+  .todayline.on{--hw:0px}
+  .herofoot .hfr{display:flex;align-items:center;gap:8px}
+  .calhero{position:relative}
+  .calpill{position:absolute;right:24px;margin-top:-46px}
+  /* Kapsel am iPhone breiter und griffiger (Mac bleibt 32px/34px) */
+  .scpill{height:36px;border-radius:9px}
+  .scpill .scp-a{width:52px}
+  .scpill .scp-h{font-size:18px}
+  .scpill .scp-h.on{max-width:120px;padding:0 20px 0 19px}
+  /* Woche: wie am Mac folgen beim Wischen nur die Tage gedämpft dem Finger, Wochentage bleiben stehen */
+  /* Heute-Kapsel iPhone: schlank, ohne Pfeile (dort wischt man), ein Pfeil zeigt zu heute; nur sichtbar, wenn man woanders ist */
+  .scpill.wkpill{background:none;box-shadow:none;border-radius:0;overflow:visible}
+  .wkpill .scp-a{display:none}
+  .scpill.wkpill .scp-h{height:34px;border-radius:17px;font-size:19px;box-shadow:inset 0 0 0 1px rgba(242,243,239,0)}
+  .scpill.wkpill .scp-h.on{max-width:120px;padding:0 15px 0 11px;box-shadow:inset 0 0 0 1px rgba(242,243,239,.2)}
+  .wkpill .scp-h span{display:flex;align-items:center;gap:6px}
+  .wkpill .scp-h svg{transition:transform var(--t2) var(--sheet)}
+  .wkpill .scp-h.dir-r svg{transform:rotate(180deg)}
+  #weektrack .dragging :is(.wday,.mday) .dot{transform:translate3d(var(--dx,0px),0,0);opacity:var(--do,1);transition:none}
+  /* Pfeil nach oben im weichen Auslauf */
+  .totop{position:fixed;left:50%;bottom:calc(var(--safe-b) + 14px);z-index:14;width:44px;height:44px;margin-left:-22px;display:flex;align-items:center;justify-content:center;
+    color:var(--olive);opacity:0;transform:translate3d(0,10px,0) scale(.9);pointer-events:none;
+    transition:opacity .35s var(--ease), transform .5s var(--sheet), color .2s var(--ease)}
+  .totop::before{content:'';position:absolute;inset:7px;border-radius:50%;background:color-mix(in srgb, var(--paper) 72%, transparent);
+    box-shadow:0 0 0 1px rgba(38,48,43,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .totop svg{position:relative}
+  .totop.on{opacity:1;transform:none;pointer-events:auto}
+  .totop:active svg{transform:translateY(-2px)} .totop:active{color:var(--ink)}
+  .totop svg{transition:transform .3s var(--sheet)}
+  html.night .totop::before{box-shadow:0 0 0 1px rgba(242,243,239,.1)}
+  html.night .totop{color:var(--mist)}
+  /* Speicherpunkt neben dem Wochentag statt darüber */
+  .edate{grid-template-columns:auto auto 1fr}
+  .edate .wd{grid-column:2}
+  .edate .dtm{grid-column:2 / span 2}
+  .edate .savedot{grid-column:3;grid-row:1;margin-left:9px}
+  .ebody{font-size:16px;line-height:1.75} /* Eric: 18px war zu groß – ein Wort mehr pro Zeile */
+}
+.light .todaypulse,.page .todaypulse{box-shadow:0 0 0 1px var(--ink)}
+.dark .todaypulse{box-shadow:0 0 0 1px var(--linen)}
+@media (min-width:960px){ .calpill,.totop{display:none} }
+
+/* Grundlagen: Typografie, Schreibmarke, Textmarkierung */
+.dsearch input,.field input{caret-color:var(--copper)}
+::selection{background:rgba(163,95,58,.22)}
+html.night ::selection{background:rgba(194,122,82,.22)}
+.tm,.row .wd,.edate,.row .mt,.otd .go,.stats .count,.count{font-variant-numeric:tabular-nums}
+.ebody{font-variant-numeric:oldstyle-nums}
+.title,.stickytitle,.row .ti,.entry .title,h1,h2,h3{text-wrap:balance}
+.ebody,.row .ex,.otd .ti,p{text-wrap:pretty}
+.row .ti{letter-spacing:-.015em}
+
+/* Schritt 6 · Das Blatt „Schlicht“: kein Titelfeld – die erste Zeile ist der Titel; Buchsatz in Newsreader */
+.ebody{font-family:'Newsreader', Georgia, serif;font-optical-sizing:auto;font-size:17px;line-height:1.6;color:#2b2722;font-kerning:normal;font-variant-numeric:oldstyle-nums proportional-nums;hyphens:auto;-webkit-hyphens:auto;margin-top:22px}
+html.night .ebody{color:#d3d9d1}
+.ebody > div + div{margin-top:1.05em}
+.ebody > div.bl,.ebody > div.bl + div{margin-top:0} /* Leerzeile im Text: wirkt wie ein Absatz, nicht doppelt */
+.ebody:empty::before{font-family:var(--serif);font-style:italic;font-size:1.2em;color:var(--dimtext)}
+/* Initiale: nur zum Lesen – beim Bearbeiten steht der Buchstabe normal, damit die Schreibmarke immer stimmt */
+.ebody:not(:focus) > div:first-child::first-letter{float:left;font-family:var(--serif);font-size:78px;line-height:.78;margin:.07em .1em -.06em -.02em;color:var(--copper);font-variant-numeric:normal;letter-spacing:0}
+.erule{display:none}
+.emeta{display:none}
+.emeta .sb{display:inline-flex;align-items:center;gap:6px;color:var(--dim)}
+.emeta .sb svg{flex:none}
+.emetap:not(:empty){display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px;font-size:12.5px;color:var(--dimtext);font-variant-numeric:tabular-nums}
+@media (min-width:960px){
+  .ebody{font-size:20.5px;line-height:1.6;margin:0}
+  .ebody:not(:focus) > div:first-child::first-letter{font-size:96px;margin:.08em .1em -.06em -.02em}
+  .emetap{display:none !important}
+  .entry .erule{display:block;width:28px;height:1px;background:var(--copper);margin:18px 0 12px}
+  .entry .emeta:not(:empty){display:flex;flex-direction:column;font-size:12.5px;line-height:1.7;color:var(--dimtext);font-variant-numeric:tabular-nums}
+  .entry .emeta .sb{gap:7px}
+}
+@media (min-width:1500px){ .ebody{font-size:21.5px} }
+@media (min-width:1800px){ .ebody{font-size:22.5px} }
+
+/* Schritt 5 · Tagesimpuls (nur auf neuen, leeren Blättern) */
+.eimp{margin-top:26px;overflow:hidden}
+.eimp[hidden]{display:none}
+.eimp .ig{overflow:hidden;max-height:90px;transition:max-height var(--t4) var(--sheet), opacity var(--t3) var(--ease), filter var(--t3) var(--ease), margin var(--t4) var(--sheet)}
+.egreet{display:none}
+.ik{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;font-size:9.5px;font-weight:600;letter-spacing:.2em;color:var(--olive);text-transform:uppercase}
+.ino{font-family:var(--serif);font-style:italic;font-weight:400;font-size:15px;letter-spacing:0;text-transform:none;color:var(--dimtext);font-variant-numeric:tabular-nums}
+.pbox{height:98px;overflow:hidden;font-family:var(--serif);font-size:25px;line-height:1.28;letter-spacing:-.008em;text-wrap:balance;color:var(--ink);
+  transition:height var(--t4) var(--sheet), font-size var(--t4) var(--sheet), color var(--t4) var(--ease)}
+.pbox.sm{font-size:21.5px}
+.pbox.xs{font-size:18.5px}
+.wq{display:inline-block;transition:opacity var(--t3) var(--ease), filter var(--t3) var(--ease), transform var(--t4) var(--ease)}
+.iph.out .wq{opacity:0;filter:blur(6px);transform:translateY(-6px);transition-duration:var(--t2)}
+.iph.pre .wq{opacity:0;filter:blur(6px);transform:translateY(8px);transition:none}
+.isrc{font-size:11px;letter-spacing:.04em;color:var(--dimtext);height:16px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:10px;transition:opacity var(--t3) var(--ease) .35s, filter var(--t3) var(--ease) .35s, max-height var(--t4) var(--sheet)}
+.iph:is(.out,.pre) .isrc{opacity:0;filter:blur(4px);transition:opacity .2s var(--ease), filter .2s var(--ease)}
+.irl{height:1px;margin-top:14px;background:var(--line);transform-origin:0 50%;transition:transform var(--t4) var(--sheet)}
+.iph:is(.out,.pre) .irl{transform:scaleX(0);transition:transform var(--t2) var(--ease)}
+.ibar{display:flex;align-items:center;margin:4px 0 0}
+.ilnk{display:inline-flex;align-items:center;gap:6px;padding:8px 0;font-size:13px;color:var(--olive)}
+.ilnk svg{transition:transform var(--t3) var(--sheet)} .ilnk:active svg{transform:rotate(-180deg)}
+/* beim Tippen: der Impuls wird klein über dem Text und bleibt */
+.eimp.wr .ig{max-height:0;opacity:0;filter:blur(4px);margin-top:0;margin-bottom:0;transition:max-height var(--t4) var(--sheet), opacity var(--t2) var(--ease), filter var(--t2) var(--ease), margin var(--t4) var(--sheet)}
+.eimp.wr .pbox{height:40px;font-size:15px;color:var(--dimtext)}
+.eimp.wr .irl{transform:scaleX(0)}
+.eimp.wr + .ebody{margin-top:14px}
+@media (min-width:960px){
+  .eimp{grid-column:2;margin:-4px 0 30px}
+  .eimp.wr{margin-bottom:18px}
+  .eimp.wr + .ebody{margin-top:0}
+  .egreet{display:block;font-family:var(--serif);font-size:34px;line-height:1.15;letter-spacing:-.015em;color:var(--ink);margin-bottom:22px}
+  .pbox{height:118px;font-size:30px}
+  .pbox.sm{font-size:26px}
+  .pbox.xs{font-size:22px}
+  .eimp.wr .pbox{height:44px;font-size:16px}
+}
+/* Heute vor einem Jahr: Karte unten auf dem leeren Blatt, Antippen klappt sie auf */
+.emem{position:absolute;z-index:2;left:12px;right:88px;bottom:calc(var(--safe-b) + 30px);display:block;text-align:left;background:var(--paper);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);padding:14px 16px;color:var(--ink);
+  max-height:76px;overflow:hidden;transition:opacity var(--t3) var(--ease), transform var(--t4) var(--sheet), max-height var(--t4) var(--sheet)}
+.emem[hidden]{display:none}
+.emem.open{max-height:240px}
+.emem.off{opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity var(--t2) var(--ease), transform var(--t3) var(--sheet), max-height var(--t4) var(--sheet)}
+.emem .mk{display:block;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--dimtext)}
+.emem .mt2{display:block;font-family:var(--serif);font-size:20px;line-height:1.2;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emem .mx{display:block;font-size:13px;line-height:1.6;color:var(--ink2);margin-top:10px;text-wrap:pretty;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.emem .mw{display:block;font-size:11px;color:var(--dimtext);margin-top:8px;font-variant-numeric:tabular-nums}
+.emem .mw:empty{display:none}
+html.night .emem{box-shadow:0 0 0 1px var(--hair)}
+@media (min-width:960px){ .emem{right:auto;width:460px;bottom:40px} }
+/* Einstellungen › Beim Schreiben: Federschalter */
+.wsets{border-bottom:1px solid var(--line)}
+.wrow{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:14px 0;border-top:1px solid var(--line);text-align:left;color:var(--ink)}
+.wrow .wl{display:block;font-size:15px}
+.wrow .ws{display:block;font-size:12px;color:var(--dimtext);margin-top:2px}
+.fsw{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;transition:background-color var(--t3) var(--ease)}
+.fsw::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform var(--t3) cubic-bezier(.3,1.3,.5,1)}
+.wrow[aria-checked="true"] .fsw{background:var(--ink)}
+.wrow[aria-checked="true"] .fsw::after{transform:translateX(18px)}
+html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
+
+/* Karte wird Blatt (iPhone): die angetippte Karte wächst zum Blatt und kehrt beim Schließen genau dorthin zurück */
+.etov{display:none}
+@media (max-width:959px){
+  #entry{border-radius:16px 16px 0 0}
+  #entry.is-top{box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
+  html.night #entry.is-top{box-shadow:inset 0 1px 0 rgba(242,243,239,.06), 0 -1px 0 rgba(8,10,8,.05), 0 -18px 40px -24px rgba(8,10,8,.5)}
+  .view.is-under.under-sheet{filter:brightness(.6) saturate(.85);--dim:0;border-radius:16px}
+  .enav::after{content:'';position:absolute;left:24px;right:24px;bottom:0;height:1px;background:var(--line);transform-origin:0 50%;transition:transform var(--t4) var(--sheet) .3s, opacity var(--t2) var(--ease) .3s}
+  .rep .row{margin:0 !important;width:100%;height:100%;background:transparent !important;transition:none;content-visibility:visible;pointer-events:none}
+  .rep{position:absolute;left:0;top:0;z-index:2;pointer-events:none}
+  #entry:not(.fx) .rep{display:none}
+}
+@media (max-width:959px) and (prefers-reduced-motion:no-preference){
+  /* Rückfall ohne Karte (Plus, Kalendertag): Blatt gleitet von unten herein */
+  #entry.is-top:not(.fx){transition:transform var(--t3) var(--sheet), background-color 1.2s var(--ease)}
+  .app.sfx :is(#home,#calendar,#settings):is(.is-top,.is-under):not(.dragging){transition:transform var(--t3) var(--sheet), border-radius var(--t3) var(--sheet), filter var(--t3) var(--sheet), background-color 1.2s, visibility 0s}
+  .app.sfx.card :is(#home,#calendar,#settings):is(.is-top,.is-under):not(.dragging){transition-duration:var(--t4),var(--t4),var(--t4),1.2s,0s}
+  /* Blatt in Bewegung (.fx): Geometrie läuft von Karte zu Blatt, .pre = Karte, .closing = zurück zur Karte */
+  #entry.fx{z-index:4;transform:none;visibility:visible;overflow:hidden;
+    transition:top var(--t4) var(--sheet), left var(--t4) var(--sheet), right var(--t4) var(--sheet), bottom var(--t4) var(--sheet), border-radius var(--t4) var(--sheet), background-color var(--t4) var(--ease), box-shadow var(--t4) var(--sheet), transform var(--t3) var(--sheet)}
+  #entry.fx.closing{transition:top var(--t4) var(--sheet), left var(--t4) var(--sheet), right var(--t4) var(--sheet), bottom var(--t4) var(--sheet), border-radius var(--t4) var(--sheet), background-color var(--t4) var(--ease), box-shadow var(--t4) var(--sheet), transform var(--t4) var(--sheet)}
+  #entry.fx.nt,#entry.fx.nt *{transition:none !important}
+  #entry.fx.drag{transition:none;transform-origin:50% 0}
+  #entry.fx.down{transform:translate3d(0,100%,0);transition:transform var(--t3) var(--sheet)}
+  #entry.fx #entryInner{width:var(--fw)}
+  #entry.fx .enav{background:transparent}
+  #entry.fx .enav::after,#entry.fx.pre .enav::after{transition:transform var(--t4) var(--sheet) .3s, opacity var(--t2) var(--ease) .3s}
+  #entry.fx:is(.pre,.closing) .enav::after{transform:scaleX(0);opacity:0;transition:transform var(--t2) var(--sheet), opacity var(--t1) var(--ease)}
+  /* Tageszahl und Titel gleiten zwischen Karte und Blatt */
+  #entry.fx #eDn,#entry.fx .etov{transform-origin:0 0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .04s}
+  #entry.fx:is(.pre,.closing) #eDn,#entry.fx:is(.pre,.closing) .etov{transform:var(--ntf,none)}
+  #entry.fx:is(.pre,.closing) .etov{transform:var(--ttf,none)}
+  #entry.fx.closing.ml .etov{transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .05s}
+  #entry.fx.pre #eDn,#entry.fx.pre .etov{opacity:0;transition:none}
+  #entry.fx.closing #eDn,#entry.fx.closing .etov{opacity:0;transition:transform var(--t4) var(--sheet), opacity var(--t2) var(--ease) .46s}
+  #entry.fx.ovon .etov{display:block;position:absolute;margin:0;font-family:var(--serif);font-weight:400;color:var(--ink);pointer-events:none;z-index:1;overflow-wrap:break-word;text-wrap:balance}
+  #entry.fx.ovon:not(.pre):not(.closing):not(.drag) .etov{animation:ovOpen var(--t4) var(--ease) both}
+  #entry.fx.ovon.closing:not(.ml) .etov{animation:ovClose var(--t4) var(--ease) both}
+  #entry.fx.drag .etov{opacity:0}
+  @keyframes ovOpen{0%{opacity:0}18%{opacity:1}50%{opacity:1}100%{opacity:0}}
+  @keyframes ovClose{0%{opacity:0}22%{opacity:1}56%{opacity:1}100%{opacity:0}}
+  /* Datum und Mülleimer blenden verzögert ein, beim Zurück schnell aus */
+  #entry.fx :is(.edate .wd,.edate .dtm,.eact){transition:opacity var(--t3) var(--ease) .35s}
+  #entry.fx:is(.pre,.closing) :is(.edate .wd,.edate .dtm,.eact){opacity:0;transition:opacity .2s var(--ease)}
+  /* Zurück-Knopf: bleibt am Platz, verschwindet dort */
+  #entry.fx #entryBtn{transition:opacity var(--t3) var(--ease) .3s, transform var(--t3) var(--sheet) .3s, filter var(--t3) var(--ease) .3s}
+  #entry.fx:is(.pre,.closing,.far,.down) #entryBtn{opacity:0;transform:scale(.86);filter:blur(4px);pointer-events:none;transition:opacity .22s var(--ease), transform var(--t2) cubic-bezier(.4,0,1,1), filter .22s var(--ease)}
+  /* exakte Kopie der Karte */
+  .rep{opacity:0;transition:opacity .22s var(--ease)}
+  #entry.fx.pre .rep{opacity:1;transition:none}
+  #entry.fx.closing .rep{opacity:1;transition:opacity .34s var(--ease) .44s}
+  /* Text wird von oben nach unten freigelegt (Maskenkante wie revealDown am Mac) */
+  #entry.rv :is(#eBody,#ePhotos){-webkit-mask-image:linear-gradient(#000 45%,transparent 55%);mask-image:linear-gradient(#000 45%,transparent 55%);-webkit-mask-size:100% 260%;mask-size:100% 260%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:0 0;mask-position:0 0;
+    transition:opacity var(--t3) var(--ease) .2s, transform var(--t4) var(--sheet) .2s, -webkit-mask-position 1.15s cubic-bezier(.4,0,.2,1) .25s, mask-position 1.15s cubic-bezier(.4,0,.2,1) .25s}
+  #entry.rv.rvpre :is(#eBody,#ePhotos){opacity:0;transform:translateY(16px);-webkit-mask-position:0 100%;mask-position:0 100%;transition:none}
+  #entry.fx.closing :is(#eBody,#ePhotos){opacity:0;transform:translateY(6px);transition:opacity var(--t1) var(--ease), transform var(--t2) var(--sheet)}
+  #entry.fx:not(.rv) :is(#eBody,#ePhotos){transition:opacity var(--t3) var(--ease) .1s}
+}
+
+/* ---------- iPhone: Gedrückt halten (Vorschau + Menü) ---------- */
+@media (max-width:959px){
+  #list .row{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
+    transition:background-color .38s var(--ease), color .38s var(--ease), transform var(--t2) var(--ease)}
+  #list .row.lp-press{transform:scale(.965);transition:background-color .38s var(--ease), color .38s var(--ease), transform var(--t3) var(--ease)}
+  .lp-dim{position:fixed;inset:0;z-index:55;background:rgba(14,17,13,.28);-webkit-backdrop-filter:blur(14px) saturate(.9);backdrop-filter:blur(14px) saturate(.9);
+    touch-action:none;transition:opacity var(--t3) var(--sheet)}
+  html.night .lp-dim{background:rgba(4,6,4,.4)}
+  .lp-dim.off{opacity:0}
+  .lp-pv{position:fixed;z-index:56;border-radius:16px;background:var(--sheetbg);overflow:hidden;touch-action:none;color:var(--ink);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 30px 70px rgba(10,12,9,.35), 0 0 0 1px rgba(38,48,43,.08);
+    transition:top var(--t3) var(--sheet), left var(--t3) var(--sheet), width var(--t3) var(--sheet), height var(--t3) var(--sheet), border-radius var(--t3) var(--sheet),
+      background-color var(--t3) var(--sheet), box-shadow var(--t3) var(--sheet), transform var(--t3) var(--sheet), opacity var(--t2) var(--ease)}
+  html.night .lp-pv{box-shadow:inset 0 1px 0 rgba(242,243,239,.06), 0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(242,243,239,.05)}
+  .lp-pv.small{box-shadow:0 0 0 rgba(0,0,0,0)}
+  .lp-pv .rep{opacity:0;transition:opacity var(--t2) var(--ease)}
+  .lp-pv.pre .rep{opacity:1;transition:none}
+  .lp-pv.closing .rep{opacity:1;transition:opacity var(--t2) var(--ease) .22s}
+  .lp-pv .inner{padding:22px 22px 0;transition:opacity var(--t2) var(--ease) .1s}
+  .lp-pv.small .inner{opacity:0;transition:opacity var(--t1) var(--ease)}
+  .lp-pv.gone{opacity:0}
+  .lp-hd{display:flex;align-items:flex-end;gap:12px}
+  .lp-dn{font-family:var(--serif);font-size:40px;line-height:.85;font-variant-numeric:tabular-nums}
+  .lp-dl{line-height:1.35;min-width:0}
+  .lp-dl b{display:block;font-size:10.5px;font-weight:600;letter-spacing:.18em;color:var(--olive)}
+  .lp-dl i{display:block;font-family:var(--serif);font-size:15px;color:var(--muted)}
+  .lp-ti{font-family:var(--serif);font-size:32px;line-height:1.1;letter-spacing:-.015em;margin-top:18px;text-wrap:balance;overflow-wrap:break-word}
+  .lp-tx{margin-top:10px;font-size:16px;line-height:1.6;white-space:pre-line;overflow-wrap:break-word;text-wrap:pretty;font-variant-numeric:oldstyle-nums;
+    -webkit-mask-image:linear-gradient(#000 calc(100% - 64px),transparent);mask-image:linear-gradient(#000 calc(100% - 64px),transparent);overflow:hidden}
+  .lp-menu{position:fixed;z-index:57;border-radius:14px;overflow:hidden;transform-origin:100% 0;
+    background:color-mix(in srgb,var(--sheetbg) 94%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 20px 50px rgba(10,12,9,.25);
+    transition:opacity var(--t2) var(--ease) .16s, transform var(--t3) var(--sheet) .1s}
+  html.night .lp-menu{box-shadow:inset 0 1px 0 rgba(242,243,239,.06), 0 20px 50px rgba(0,0,0,.55)}
+  .lp-menu.off{opacity:0;transform:scale(.9) translateY(-6px);pointer-events:none;transition:opacity var(--t1) var(--ease), transform var(--t2) cubic-bezier(.4,0,1,1)}
+  .lp-mi{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 18px;font-size:15px;color:var(--ink);text-align:left;transition:background-color var(--t2) var(--ease)}
+  .lp-mi:active{background:var(--cardh)}
+  .lp-mi + .lp-mi{border-top:1px solid var(--line)}
+  .lp-mi.danger{color:#9b4434}
+  html.night .lp-mi.danger{color:#d98a77}
+}
+@media (max-width:959px) and (prefers-reduced-motion:reduce){
+  #list .row.lp-press{transform:none}
+  .lp-dim{transition:opacity var(--t1) var(--ease)}
+  .lp-pv.rm{opacity:0;transition:opacity var(--t1) var(--ease)} .lp-pv.rm.in{opacity:1}
+  .lp-menu,.lp-menu.off{transition:opacity var(--t1) var(--ease);transform:none}
+}
+
+.hap{position:fixed;left:-60px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+/* Regel 3 (iPhone): Einstellungen wachsen aus dem Regler-Symbol und kehren dorthin zurück; reine Übergänge, also jederzeit umkehrbar (Regel 2) */
+@media (max-width:959px){
+  #settings{transform-origin:var(--ox,90%) var(--oy,48px)}
+  #settings.is-off{transform:scale(.12);opacity:0;border-radius:40px;transition:transform .39s var(--sheet), opacity .2s var(--ease) .1s, border-radius .39s var(--sheet), visibility 0s linear .39s}
+  #settings.is-top:not(.dragging){transition:transform var(--t3) var(--sheet), opacity var(--t1) var(--ease), border-radius var(--t3) var(--sheet)}
+  #home.is-under:has(~ #settings.is-top){transform:scale(.96);border-radius:14px;transform-origin:50% 0}
+}
+/* prefers-reduced-motion (PLAN 8): alle Bewegungen werden zu kurzen Überblendungen */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;scroll-behavior:auto !important}
+  *:not(.dragging),*:not(.dragging)::before,*:not(.dragging)::after{transition-duration:var(--t1) !important;transition-delay:0s !important}
+  #settings.is-off{transform:none}
+}

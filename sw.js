@@ -1,6 +1,6 @@
 // Journal – Service Worker: macht die App offline nutzbar.
 const VERSION = 'journal-v115';
-const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'impulse.json'];
+const SHELL = ['./', 'index.html', 'styles.css', 'js/core.js', 'js/home.js', 'js/calendar.js', 'js/side.js', 'js/entry.js', 'js/sky.js', 'js/save.js', 'js/nav.js', 'js/ui.js', 'js/gestures.js', 'js/io.js', 'js/sync.js', 'js/start.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'impulse.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
