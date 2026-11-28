@@ -1,5 +1,5 @@
 // Journal – Service Worker: macht die App offline nutzbar.
-const VERSION = 'journal-v115';
+const VERSION = 'journal-v116';
 const SHELL = ['./', 'index.html', 'styles.css', 'js/core.js', 'js/home.js', 'js/calendar.js', 'js/side.js', 'js/entry.js', 'js/sky.js', 'js/save.js', 'js/nav.js', 'js/ui.js', 'js/gestures.js', 'js/io.js', 'js/sync.js', 'js/start.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/icon-maskable-512.png', 'impulse.json', 'fonts/fonts.css', 'fonts/instrument-serif-latin-400-italic.woff2', 'fonts/instrument-serif-latin-400-normal.woff2', 'fonts/manrope-latin-400-normal.woff2', 'fonts/manrope-latin-500-normal.woff2', 'fonts/manrope-latin-600-normal.woff2', 'fonts/newsreader-latin-opsz-italic.woff2', 'fonts/newsreader-latin-opsz-normal.woff2'];
 
 self.addEventListener('install', (e) => {

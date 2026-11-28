@@ -289,9 +289,9 @@ async function deleteEntry(id) {
 try { S.light = localStorage.getItem('journal.light') || 'auto'; } catch (e) { S.light = 'auto'; }
 /* Licht: Tageszeit (Papier verändert sich ganz leicht), Hell oder Nacht */
 function applyLight() {
-  const h = new Date().getHours(), html = document.documentElement, night = S.light === 'nacht';
+  const html = document.documentElement, night = S.light === 'nacht';
   html.classList.toggle('night', night);
-  html.dataset.light = S.light === 'auto' ? (h >= 5 && h < 10 ? 'morgen' : h >= 17 && h < 21 ? 'abend' : (h >= 21 || h < 5) ? 'spaet' : 'tag') : 'tag';
+  html.dataset.light = S.light === 'auto' ? window.lightStage(new Date()) : 'tag'; /* Regel samt Sonnenzeiten steht im Skript im <head> von index.html */
   setTheme();
   document.querySelectorAll('[data-act=setlight]').forEach((x) => x.setAttribute('aria-checked', x.dataset.light === S.light));
 }
@@ -300,7 +300,8 @@ function applyLight() {
 function setTheme() {
   const tc = document.querySelector('meta[name="theme-color"]'); if (!tc) return;
   const night = document.documentElement.classList.contains('night');
-  let c = night ? '#0b0d0a' : '#12150f';
+  const HEAD = { morgen: '#151a17', tag: '#12150f', abend: '#15130f', spaet: '#0d0f0b' }; /* Ton des dunklen Kopfs je Lichtstufe (Zielwert, kein Zwischenwert des Übergangs) */
+  let c = night ? '#0b0d0a' : HEAD[document.documentElement.dataset.light] || '#12150f';
   if (isDesktop()) c = $('app').classList.contains('a4') ? (night ? '#060705' : '#161a14') : getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || '#eeece6';
   if (tc.content !== c) tc.content = c;
 }

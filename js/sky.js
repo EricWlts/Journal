@@ -47,6 +47,7 @@ function paintSky() {
   const yp = ((now - y0) / 864e5 / days * 100).toFixed(2) + '%', doy = Math.floor((now - y0) / 864e5) + 1;
   document.querySelectorAll('.yline').forEach((l) => { l.style.setProperty('--yp', yp); l.title = 'Tag ' + doy + ' von ' + days; });
   if (sig === SKY.sig) return; SKY.sig = sig;
+  if (t && t.rise) { try { localStorage.setItem('journal.sunday', JSON.stringify({ d: day, r: t.rise.getHours() * 60 + t.rise.getMinutes(), s: t.set.getHours() * 60 + t.set.getMinutes() })); } catch (e) {} if (typeof applyLight === 'function') applyLight(); } /* nur heutige Zeiten in Minuten, keine Koordinaten */
   const mi = moonInfo(now);
   document.querySelectorAll('.sky').forEach((el, k) => {
     const sv = el.querySelector('.moon'); sv.innerHTML = moonSVG(mi.a, k); sv.setAttribute('aria-label', mi.nm);

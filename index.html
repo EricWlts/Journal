@@ -5,9 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Journal</title>
 <meta name="theme-color" content="#12150f">
-<script>/* Licht schon vor dem ersten Bild setzen – sonst blendet der Hintergrund beim Öffnen sichtbar nach */
-try { var L = localStorage.getItem('journal.light') || 'auto', H = new Date().getHours(), R = document.documentElement;
-  R.dataset.light = L === 'auto' ? (H >= 5 && H < 10 ? 'morgen' : H >= 17 && H < 21 ? 'abend' : (H >= 21 || H < 5) ? 'spaet' : 'tag') : 'tag';
+<script>/* Licht schon vor dem ersten Bild setzen – sonst blendet der Hintergrund beim Öffnen sichtbar nach.
+  lightStage(date): Stufe nach echten Sonnenzeiten (journal.sunday = {d,r,s} in Minuten, nur wenn d = heute), sonst nach Uhrzeit; applyLight (nav.js) nutzt dieselbe Regel */
+window.lightStage = function (d) {
+  var h = d.getHours(), m = h * 60 + d.getMinutes();
+  try { var j = JSON.parse(localStorage.getItem('journal.sunday') || 'null'), k = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    if (j && j.d === k && typeof j.r === 'number' && typeof j.s === 'number' && j.r < j.s)
+      return m >= j.r - 60 && m < j.r + 180 ? 'morgen' : m >= j.r + 180 && m < j.s - 90 ? 'tag' : m >= j.s - 90 && m < j.s + 120 ? 'abend' : 'spaet'; } catch (e) {}
+  return h >= 5 && h < 10 ? 'morgen' : h >= 17 && h < 21 ? 'abend' : (h >= 21 || h < 5) ? 'spaet' : 'tag';
+};
+try { var L = localStorage.getItem('journal.light') || 'auto', R = document.documentElement;
+  R.dataset.light = L === 'auto' ? window.lightStage(new Date()) : 'tag';
   if (L === 'nacht') R.classList.add('night'); } catch (e) {}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">

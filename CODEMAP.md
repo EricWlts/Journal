@@ -18,7 +18,7 @@ Stand: 2026-11-28. Zeilen per grep -n ermittelt, Stichproben mit sed geprüft. S
 - `js/io.js` (152): ZIP lesen, Day-One-Import, Sicherung
 - `js/sync.js` (167): Abgleich mit GitHub (Sync, applyRemote)
 - `js/start.js` (31): Start (läuft zuletzt)
-- `sw.js` (33): Service Worker, Cache-Version `journal-v115` (Zeile 2)
+- `sw.js` (33): Service Worker, Cache-Version `journal-v116` (Zeile 2)
 
 ## index.html
 - `hapL` 25 (haptischer Schalter), `app` 27 (Rahmen)
