@@ -1224,3 +1224,8 @@ html.night .wrow[aria-checked="true"] .fsw::after{background:#1d221c}
   .sl-ts .t,.sl-ts .t.cur,.sl-d,.sline::after{transition-duration:.12s !important}
   .sline.live .sl-ts .t{transition-delay:0s !important}
 }
+/* Abnahme: Mac – in Ruhe keine Fläche hinter der Linie (passte abends/nachts nicht zum Lampenlicht); nur beim Berühren ein weicher Grund */
+@media (min-width:960px){ .sline::before{display:none} }
+/* Abnahme: iPhone-Layout auf breiten Fenstern (600–959px) – Satzspiegel statt 100 Zeichen pro Zeile */
+@media (min-width:600px) and (max-width:959px){ #entry .entry{padding-left:max(24px, calc((100% - 640px) / 2));padding-right:max(24px, calc((100% - 640px) / 2))} .sline{left:max(24px, calc((100% - 640px) / 2))} }
+html.night .btn.ghost{box-shadow:0 0 0 1px rgba(242,243,239,.3) inset} /* Abnahme: Rahmen im Nachtmodus sichtbar */
