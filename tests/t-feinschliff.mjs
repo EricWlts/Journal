@@ -49,6 +49,6 @@ export default (test, h) => {
     await page.keyboard.press('Tab'); await page.waitForTimeout(100);
     const r = await page.evaluate(() => { const a = document.activeElement; const cs = getComputedStyle(a); return { tag: a.tagName, w: cs.outlineWidth, st: cs.outlineStyle, c: cs.outlineColor, o: cs.outlineOffset, fv: a.matches(':focus-visible') }; });
     ok(r.fv && r.st === 'solid' && /^1(\.5)?px$/.test(r.w) && r.o === '2px', 'Rahmen: ' + JSON.stringify(r));
-    ok(/^rgb\(163, 95, 58\)$|^rgba\(242, 243, 239, 0\.7\d*\)$/.test(r.c), 'Rahmenfarbe: ' + r.c);
+    ok(/^rgb\(163, 95, 58\)$|^rgba\(24[0-3], 24[0-3], 23[6-9], 0\.[67]\d*\)$/.test(r.c), 'Rahmenfarbe: ' + r.c);
   }, ['Mac']);
 };

@@ -8,6 +8,7 @@ async function renderEntry(dir) {
   $('eDt').textContent = d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
   $('eDn').textContent = d.getDate(); $('eDtm').textContent = MONTHS[d.getMonth()] + (isDesktop() ? '\n' : ' ') + d.getFullYear(); // Mac: Randspalte, bewusst zwei Zeilen
   syncTrash(); saveMark(null);
+  if (window.lineRender) lineRender(); // Phase 5 · Stille Linie
   setBody(fullOf(e));
   writeAids();
   const ph = $('ePhotos'); ph.innerHTML = '';

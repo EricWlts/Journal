@@ -30,7 +30,7 @@ export async function open(device, url, opts = {}) {
   page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource|net::ERR/.test(m.text())) errors.push('console: ' + m.text()); });
   if (opts.sync) await page.addInitScript((c) => { if (!localStorage.getItem('journal.sync')) localStorage.setItem('journal.sync', c); }, SYNC_CFG);
   await page.goto(url);
-  await page.waitForFunction(() => typeof S !== 'undefined' && document.getElementById('home') && S.stack);
+  await page.waitForFunction(() => typeof S !== 'undefined' && document.getElementById('home') && S.stack && typeof DB !== 'undefined' && DB.db);
   return { ctx, page, mock, errors, external };
 }
 export const dbAll = (page) => page.evaluate(() => new Promise((res, rej) => {

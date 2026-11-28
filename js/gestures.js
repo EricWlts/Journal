@@ -53,6 +53,7 @@
   }
   app.addEventListener('touchstart', (e) => {
     if (e.touches.length !== 1 || trackBusy) { cand = mode = null; return; }
+    if (e.target.closest && e.target.closest('.sline')) { cand = mode = null; return; } // Stille Linie: eigene Geste
     const p = e.touches[0]; sx = p.clientX; sy = p.clientY; dx = dy = 0; W = innerWidth; H = innerHeight; mode = null; cand = null;
     samples = [{ t: performance.now(), x: sx, y: sy }];
     const top = S.stack[S.stack.length - 1];
